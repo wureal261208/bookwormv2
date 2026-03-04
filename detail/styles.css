@@ -1,0 +1,156 @@
+/* detail/styles.css - styles specific to the book detail page */
+
+/* make the action buttons look nice outside of .item-card context */
+.btn-action {
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.btn-read {
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    color: var(--white);
+}
+
+.btn-read:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(112, 137, 147, 0.4);
+}
+
+.btn-details {
+    background: transparent;
+    border: 2px solid var(--accent) !important;
+    color: var(--text);
+}
+
+.btn-details:hover {
+    background: var(--accent) !important;
+    color: var(--white);
+}
+
+/* chapter list scroll styling for better appearance */
+#chapter-container {
+    background: var(--bg); /* use page background instead of white */
+    /* height to show exactly 5 rows with 6 columns */
+    max-height: calc((2.25rem + 0.5rem) * 5);
+    overflow-y: auto;
+}
+#chapter-container::-webkit-scrollbar {
+    width: 6px;
+}
+#chapter-container::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 3px;
+}
+
+/* chapter links grid layout */
+#chapter-list {
+    display: grid;
+    /* six columns for five rows (30 items per page) */
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#chapter-list li {
+    background: var(--white);
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+#chapter-list li:hover {
+    background: rgba(161, 194, 189, 0.2);
+}
+
+#chapter-list a {
+    display: block;
+    padding: 0.5rem;
+    color: var(--secondary-color);
+    text-decoration: none;
+    text-align: center;
+}
+
+#chapter-list a:hover,
+#chapter-list a:focus {
+    text-decoration: underline;
+}
+
+/* comment entries */
+#comments-list > div {
+    background: #f9f9f9;
+    border: 1px solid #e2e2e2;
+}
+
+/* mobile menu adjustments */
+.mobile-menu {
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    padding: 1rem;
+    transition: max-height 0.3s ease;
+}
+
+.mobile-menu a {
+    color: var(--white);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.mobile-menu-btn[aria-expanded="true"] i {
+    transform: rotate(90deg);
+    transition: transform 0.3s;
+}
+
+/* focus states */
+.btn-action:focus,
+.mobile-menu-btn:focus,
+a:focus,
+input:focus,
+textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* input/textarea improvements */
+input.custom-input,
+textarea {
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* dark text for search input and dropdown */
+#search-wrapper input,
+#search-dropdown,
+#search-dropdown * {
+    color: #000 !important;
+}
+
+#search-wrapper input::placeholder {
+    color: #666666;
+}
+
+input.custom-input:focus,
+textarea:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(112, 137, 147, 0.3);
+}
+
+/* utility tweaks */
+.getStarted {
+    color: var(--white);
+    background: rgba(255,255,255,0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    transition: background 0.3s;
+}
+
+.getStarted:hover {
+    background: rgba(255,255,255,0.3);
+}

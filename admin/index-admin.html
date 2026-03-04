@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - BookWorm</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <aside class="admin-sidebar">
+        <div class="admin-logo">
+            <img src="/img/logo.jpg" alt="BookWorm">
+            <span>BookWorm</span>
+        </div>
+        
+        <nav class="admin-nav">
+            <a href="#" class="admin-nav-item active" onclick="navigateTo('overview')">
+                <i class='bx bx-grid-alt'></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="admin-nav-item" onclick="navigateTo('books')">
+                <i class='bx bx-book'></i>
+                <span>Books</span>
+            </a>
+            <a href="#" class="admin-nav-item" onclick="navigateTo('stats')">
+                <i class='bx bx-bar-chart-alt-2'></i>
+                <span>Statistics</span>
+            </a>
+            <a href="#" class="admin-nav-item" onclick="navigateTo('users')">
+                <i class='bx bx-user-circle'></i>
+                <span>Users</span>
+            </a>
+        </nav>
+
+        <div class="admin-user-info">
+            <img id="admin-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Admin">
+            <div class="user-details">
+                <div class="user-name" id="user-name">Admin User</div>
+                <div class="user-role" id="user-role">Administrator</div>
+            </div>
+            <!-- home link removed as requested -->
+            <i class='bx bx-log-out admin-logout' title="Logout" onclick="logout()"></i>
+        </div>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-header">
+            <!-- hamburger visible on smaller screens to toggle sidebar -->
+            <i class='bx bx-menu sidebar-toggle' onclick="toggleSidebar()" title="Menu"></i>
+            <h1><i class='bx bx-dashboard'></i> Admin Dashboard</h1>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <i class='bx bx-book'></i>
+                <div class="stat-number" id="stat-total-books">0</div>
+                <div class="stat-label">Total Books</div>
+            </div>
+            <div class="stat-card">
+                <i class='bx bx-book-open'></i>
+                <div class="stat-number" id="stat-published">0</div>
+                <div class="stat-label">Published</div>
+            </div>
+            <div class="stat-card">
+                <i class='bx bx-edit'></i>
+                <div class="stat-number" id="stat-drafts">0</div>
+                <div class="stat-label">Drafts</div>
+            </div>
+            <div class="stat-card">
+                <i class='bx bx-group'></i>
+                <div class="stat-number" id="stat-users">0</div>
+                <div class="stat-label">Users</div>
+            </div>
+        </section>
+
+        <section class="dashboard-grid">
+            <div class="dashboard-card" id="books-column">
+                <h3><i class='bx bx-book'></i> Books Management</h3>
+                <div class="books-header">
+                    <button class="add-btn" onclick="openModal('book')">
+                        <i class='bx bx-plus'></i> Add New Book
+                    </button>
+                    <div class="search-container">
+                        <i class='bx bx-search'></i>
+                        <input type="text" id="book-search" class="search-input" placeholder="Search books by title, author, or genre..." oninput="searchBooks(this.value)">
+                        <i class='bx bx-x search-clear' onclick="clearSearch()" title="Clear search"></i>
+                    </div>
+                </div>
+                <div class="search-results-info" id="search-results-info"></div>
+                <div class="books-list" id="books-list">
+                </div>
+            </div>
+
+            <div class="dashboard-card" id="users-column" style="display: none;">
+                <h3><i class='bx bx-user-circle'></i> Users Management</h3>
+                    <div class="users-list" id="users-list">
+                </div>
+            </div>
+
+            <div class="dashboard-card" id="stats-column">
+                <h3><i class='bx bx-bar-chart-alt-2'></i> Statistics Overview</h3>
+                <div class="stats-content" id="stats-content">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal-overlay" id="book-modal">
+        <div class="modal modal-large">
+            <h2><i class='bx bx-book-add'></i> Add New Book</h2>
+            <form class="modal-form" onsubmit="addBook(event)">
+                <!-- Basic Info Row -->
+                <div class="form-row">
+                    <div class="form-group flex-2">
+                        <label for="book-title"><i class='bx bx-book'></i> Book Title *</label>
+                        <input type="text" id="book-title" placeholder="Enter book title" required>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="book-author"><i class='bx bx-user'></i> Author *</label>
+                        <input type="text" id="book-author" placeholder="Author name" required>
+                    </div>
+                </div>
+
+                <!-- Cover Image -->
+                <div class="form-group">
+                    <label for="book-image"><i class='bx bx-image'></i> Cover Image URL</label>
+                    <input type="url" id="book-image" placeholder="https://example.com/image.jpg (optional)">
+                    <span class="field-hint">Leave empty for default cover</span>
+                </div>
+
+                <!-- Genre and Pages Row -->
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="book-genre"><i class='bx bx-category'></i> Genre *</label>
+                        <input type="text" id="book-genre" placeholder="e.g., Fantasy, Romance" required>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="book-pages"><i class='bx bx-file'></i> Number of Pages *</label>
+                        <input type="number" id="book-pages" placeholder="Total pages" min="1" required>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="book-description"><i class='bx bx-text'></i> Description</label>
+                    <textarea id="book-description" rows="4" placeholder="Enter book description (optional)"></textarea>
+                </div>
+
+                <!-- Book Type -->
+                <div class="form-group">
+                    <label for="book-type"><i class='bx bx-tag'></i> Book Type</label>
+                    <select id="book-type">
+                        <option value="img">Picture Book (img)</option>
+                        <option value="text">Chapter Book (text)</option>
+                    </select>
+                    <span class="field-hint">Select the type of book: picture book or chapter book</span>
+                </div>
+
+                <!-- Additional Details Row -->
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="book-publisher"><i class='bx bx-building'></i> Publisher</label>
+                        <input type="text" id="book-publisher" placeholder="Publisher name (optional)">
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="book-pubdate"><i class='bx bx-calendar'></i> Publication Date</label>
+                        <input type="date" id="book-pubdate">
+                    </div>
+                </div>
+
+                <!-- More Details Row -->
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="book-isbn"><i class='bx bx-barcode'></i> ISBN</label>
+                        <input type="text" id="book-isbn" placeholder="ISBN-10 or ISBN-13 (optional)">
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="book-language"><i class='bx bx-globe'></i> Language</label>
+                        <select id="book-language">
+                            <option value="English">English</option>
+                            <option value="Vietnamese">Vietnamese</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="French">French</option>
+                            <option value="German">German</option>
+                            <option value="Japanese">Japanese</option>
+                            <option value="Korean">Korean</option>
+                            <option value="Chinese">Chinese</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="form-group">
+                    <label for="book-status"><i class='bx bx-flag'></i> Status</label>
+                    <select id="book-status">
+                        <option value="draft">Draft</option>
+                        <option value="published">Published</option>
+                    </select>
+                </div>
+                
+                <!-- Chapters Section -->
+                <div class="chapters-section">
+                    <h4><i class='bx bx-list-ul'></i> Chapters</h4>
+                    <div id="chapters-container">
+                        <div class="chapter-input-row">
+                            <input type="text" class="chapter-title" placeholder="Chapter Title" required>
+                            <button type="button" class="btn-remove-chapter" onclick="removeChapterRow(this)">
+                                <i class='bx bx-trash'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add-chapter" onclick="addChapterRow()">
+                        <i class='bx bx-plus'></i> Add Chapter
+                    </button>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeModal('book')">Cancel</button>
+                    <button type="submit" class="btn-save">Add Book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Book Modal -->
+    <div class="modal-overlay" id="edit-book-modal">
+        <div class="modal modal-large">
+            <h2><i class='bx bx-edit'></i> Edit Book</h2>
+            <form class="modal-form" onsubmit="editBook(event)">
+                <input type="hidden" id="edit-book-id">
+                
+                <!-- Basic Info Row -->
+                <div class="form-row">
+                    <div class="form-group flex-2">
+                        <label for="edit-book-title"><i class='bx bx-book'></i> Book Title *</label>
+                        <input type="text" id="edit-book-title" placeholder="Enter book title" required>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="edit-book-author"><i class='bx bx-user'></i> Author *</label>
+                        <input type="text" id="edit-book-author" placeholder="Author name" required>
+                    </div>
+                </div>
+
+                <!-- Cover Image -->
+                <div class="form-group">
+                    <label for="edit-book-image"><i class='bx bx-image'></i> Cover Image URL</label>
+                    <input type="url" id="edit-book-image" placeholder="https://example.com/image.jpg (optional)">
+                    <span class="field-hint">Leave empty for default cover</span>
+                </div>
+
+                <!-- Genre and Pages Row -->
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="edit-book-genre"><i class='bx bx-category'></i> Genre *</label>
+                        <input type="text" id="edit-book-genre" placeholder="e.g., Fantasy, Romance" required>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="edit-book-pages"><i class='bx bx-file'></i> Number of Pages *</label>
+                        <input type="number" id="edit-book-pages" placeholder="Total pages" min="1" required>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="edit-book-description"><i class='bx bx-text'></i> Description</label>
+                    <textarea id="edit-book-description" rows="4" placeholder="Enter book description (optional)"></textarea>
+                </div>
+
+                <!-- Book Type -->
+                <div class="form-group">
+                    <label for="edit-book-type"><i class='bx bx-tag'></i> Book Type</label>
+                    <select id="edit-book-type">
+                        <option value="img">Picture Book (img)</option>
+                        <option value="text">Chapter Book (text)</option>
+                    </select>
+                    <span class="field-hint">Select the type of book: picture book or chapter book</span>
+                </div>
+
+                <!-- Additional Details Row -->
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="edit-book-publisher"><i class='bx bx-building'></i> Publisher</label>
+                        <input type="text" id="edit-book-publisher" placeholder="Publisher name (optional)">
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="edit-book-pubdate"><i class='bx bx-calendar'></i> Publication Date</label>
+                        <input type="date" id="edit-book-pubdate">
+                    </div>
+                </div>
+
+                <!-- More Details Row -->
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="edit-book-isbn"><i class='bx bx-barcode'></i> ISBN</label>
+                        <input type="text" id="edit-book-isbn" placeholder="ISBN-10 or ISBN-13 (optional)">
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="edit-book-language"><i class='bx bx-globe'></i> Language</label>
+                        <select id="edit-book-language">
+                            <option value="English">English</option>
+                            <option value="Vietnamese">Vietnamese</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="French">French</option>
+                            <option value="German">German</option>
+                            <option value="Japanese">Japanese</option>
+                            <option value="Korean">Korean</option>
+                            <option value="Chinese">Chinese</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="form-group">
+                    <label for="edit-book-status"><i class='bx bx-flag'></i> Status</label>
+                    <select id="edit-book-status">
+                        <option value="draft">Draft</option>
+                        <option value="published">Published</option>
+                    </select>
+                </div>
+                
+                <!-- Chapters Section -->
+                <div class="chapters-section">
+                    <h4><i class='bx bx-list-ul'></i> Chapters</h4>
+                    <div id="edit-chapters-container">
+                        <div class="chapter-input-row">
+                            <input type="text" class="chapter-title" placeholder="Chapter Title" required>
+                            <button type="button" class="btn-remove-chapter" onclick="removeEditChapterRow(this)">
+                                <i class='bx bx-trash'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add-chapter" onclick="addEditChapterRow()">
+                        <i class='bx bx-plus'></i> Add Chapter
+                    </button>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeModal('edit-book')">Cancel</button>
+                    <button type="submit" class="btn-save">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../script/lazyLoad.js" defer></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

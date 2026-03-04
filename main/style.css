@@ -1,0 +1,812 @@
+:root {
+    /* Exact Color Palette - Black, White, Grey */
+    --primary-color: #333333;
+    --secondary-color: #666666;
+    --black: #000000;
+    --white: #ffffff;
+    --gray: #e0e0e0;
+    --gray-2: #888888;
+    --text: #1a1a1a;
+    
+    /* Additional colors */
+    --bg: #f5f5f5;
+    --accent: #333333;
+    --muted: #666666;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Story+Script&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Story Script", sans-serif;
+    background: var(--gray);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* hide any horizontal overflow caused by hover transforms */
+    overflow-x: hidden;
+}
+
+/* Navbar Category Dropdown */
+.custom-dropdown {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.custom-dropdown:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.custom-dropdown:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Style the options in navbar dropdown */
+.custom-dropdown option {
+    background: var(--secondary-color);
+    color: white;
+    padding: 10px;
+}
+
+/* Navbar - SOLID BACKGROUND */
+.custom-navbar {
+    background: var(--black);
+    border-bottom: 3px solid var(--accent);
+    box-shadow: 0 4px 20px rgba(112, 137, 147, 0.3);
+}
+
+.custom-navbar a,
+.custom-navbar .text-sm,
+.custom-navbar button {
+    color: var(--white);
+}
+
+.nav-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-link {
+    padding: .5rem .75rem;
+    border-radius: .375rem;
+    color: var(--white);                   /* keep text white on dark navbar */
+    background: transparent;
+    text-decoration: none;
+    font-weight: 600;                      /* make letters bolder */
+    transition: color 0.2s, background 0.3s;
+}
+
+/* higher contrast hover states so letters remain visible */
+.nav-link:hover {
+    color: var(--white);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.nav-link:focus {
+    color: var(--white);
+    /* No background change on focus - only hover */
+    outline: none;
+}
+
+.nav-link.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.getStarted {
+    color: var(--white);
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.getStarted:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.custom-input {
+    width: 16rem;
+    padding-left: 2.5rem;
+    padding-right: 1rem;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    background: #ffffff;
+    border: 2px solid #808080;
+    border-radius: .5rem;
+    color: #1a1a1a;
+}
+
+.custom-input::placeholder {
+    color: #666666;
+}
+
+.custom-input:focus {
+    outline: none;
+    background: #ffffff;
+    border-color: #666666;
+    box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.2);
+}
+
+.mobile-menu {
+    animation: slideDown 0.3s ease-out;
+}
+
+/* Force dark text for search bar and dropdown items */
+#search-wrapper input,
+#search-dropdown,
+#search-dropdown * {
+    color: #000 !important;
+}
+
+/* keep placeholder grey but text black */
+#search-wrapper input::placeholder {
+    color: #666666;
+}
+
+/* ensure individual search result texts are dark */
+.search-result-item {
+    color: #000;
+}
+.search-result-item .text-gray-500 {
+    color: #666 !important; /* author text stays grey */
+}
+
+.mobile-menu.hidden {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-10px); }
+    to { transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Metadata and chapters styling */
+#book-chapters ul li a {
+    color: var(--secondary-color);
+    font-weight: 500;
+    text-decoration: none;
+}
+#book-chapters ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Carousel */
+.carousel {
+    width: 100%;
+    max-width: 1200px;
+    overflow: hidden;
+    position: relative;
+}
+
+.slider {
+    display: flex;
+    width: max-content;
+    animation: slide 30s linear infinite;
+}
+
+.slider:hover {
+    animation-play-state: paused;
+}
+
+.slide {
+    height: 150px;
+    width: 250px;
+    flex-shrink: 0;
+    margin-right: 2rem;
+    background: linear-gradient(135deg, #333333, #666666);
+    color: var(--white);
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.slide:hover {
+    transform: scale(1.08) translateY(-5px);
+    box-shadow: 0 16px 32px rgba(112, 137, 147, 0.35);
+}
+
+@keyframes slide {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+/* Tabs */
+.tab-btn:hover:not(.active) {
+    background: rgba(161, 194, 189, 0.3) !important;
+    color: var(--text) !important;
+}
+
+/* Avatar dropdown link styling */
+.dropdown-item {
+    color: var(--text);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    margin: 0.25rem 0.5rem;
+    padding: 0.625rem 0.75rem !important;
+}
+
+.dropdown-item:hover {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
+    color: white !important;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(238, 90, 36, 0.3);
+}
+
+.dropdown-item i {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-item:hover i {
+    transform: scale(1.2);
+}
+
+/* BALANCED CARDS - All cards same height */
+#items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    /* prevent grid overflow when cards translate on hover */
+    overflow-x: hidden;
+}
+
+.item-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%) !important;
+    border: 2px solid #808080 !important;
+    border-radius: 16px !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 420px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.item-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2) !important;
+    border-color: #333333 !important;
+}
+
+.item-card .card-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px 14px 0 0;
+}
+
+.item-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.item-card:hover img {
+    transform: scale(1.05);
+}
+
+.item-card .card-content {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.item-card h3 {
+    color: var(--text);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.item-card .author {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+}
+
+.item-card .card-description {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+    flex: 1;
+    /* Text truncation - limit to 2 lines with ellipsis */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-card .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+}
+
+.item-card .card-meta i {
+    font-size: 1rem;
+    color: #666666;
+}
+
+.item-card .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(112, 137, 147, 0.2);
+}
+
+.item-card .category-tag {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.75rem;
+    background: rgba(161, 194, 189, 0.3);
+    color: var(--text);
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.item-card .rating {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.item-card .rating-stars {
+    color: #facc15;
+    font-size: 0.9rem;
+}
+
+.item-card .rating-count {
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+/* Card Actions */
+.item-card .card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.item-card .btn-action {
+    flex: 1;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.item-card .btn-read {
+    background: linear-gradient(135deg, #333333, #666666);
+    color: var(--white);
+}
+
+.item-card .btn-read:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.item-card .btn-details {
+    background: transparent;
+    border: 2px solid #808080 !important;
+    color: var(--text);
+}
+
+.item-card .btn-details:hover {
+    background: #808080 !important;
+}
+
+/* Favorite button */
+.item-card .fav-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    z-index: 10;
+}
+
+.item-card .fav-btn:hover {
+    background: var(--white);
+    border-color: #ef4444;
+    color: #ef4444;
+    transform: scale(1.1);
+}
+
+.item-card .fav-btn.active {
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+/* Book Type Tags */
+.item-card .book-type-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 5;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.item-card .book-type-tag.type-img {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+}
+
+.item-card .book-type-tag.type-text {
+    background: linear-gradient(135deg, #4ecdc4, #45b7aa);
+    color: white;
+}
+
+/* Footer - Clean Design */
+.site-footer {
+    background: linear-gradient(180deg, #f5f5f5 0%, #e0e0e0 100%);
+    color: var(--text);
+    padding: 4rem 0 2rem;
+    font-size: 0.95rem;
+    border-top: 3px solid #808080;
+}
+
+.footer-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.footer-top {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.footer-brand .logo-text {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.footer-brand .tagline {
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.footer-brand .brand-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.footer-links h3 {
+    color: var(--text);
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+    font-weight: 600;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.footer-links a:hover {
+    color: var(--text);
+    padding-left: 0.5rem;
+}
+
+.footer-connect h3 {
+    color: var(--text);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.footer-connect p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+}
+
+.social-links {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.social-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #333333, #666666);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.social-icon:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(112, 137, 147, 0.3);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.contact-info {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.contact-info a {
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.contact-info a:hover {
+    color: var(--text);
+}
+
+.footer-legal {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(112, 137, 147, 0.3);
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.footer-legal a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-legal a:hover {
+    color: var(--text);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .footer-top {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .item-card {
+        min-height: 380px;
+    }
+    
+    .footer-top {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+    
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .slide {
+        height: 120px;
+        width: 200px;
+        margin-right: 1.5rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .item-card {
+        min-height: 350px;
+    }
+    
+    .item-card img {
+        height: 160px;
+    }
+    
+    .item-card .card-actions {
+        flex-direction: column;
+    }
+    
+    .item-card .btn-action {
+        padding: 0.5rem;
+    }
+    
+    .slide {
+        height: 100px;
+        width: 160px;
+        margin-right: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .item-card {
+        min-height: 320px;
+    }
+    
+    .item-card img {
+        height: 140px;
+    }
+    
+    .item-card h3 {
+        font-size: 1rem;
+    }
+}
+
+/* New Book Badge */
+.new-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Notification Badge Pulse Animation */
+@keyframes notificationPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 6px rgba(220, 38, 38, 0);
+    }
+}
+
+#notification-badge.animate-pulse {
+    animation: notificationPulse 2s infinite;
+}
+
+/* Notification Dropdown Styles */
+#notification-container {
+    position: relative;
+}
+
+#notification-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0.5rem;
+    /* ensure dropdown text is readable by default */
+    color: #000; /* black text for all items */
+}
+
+/* force any nested elements to remain black even if utility classes apply different colors */
+#notification-dropdown *,
+#notification-dropdown .notification-item {
+    color: #000 !important;
+}
+
+#notification-dropdown.opacity-0 {
+    opacity: 0;
+}
+
+#notification-dropdown.invisible {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Notification Item Hover */
+.notification-item {
+    transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+    background-color: #f9fafb;
+}
+
+/* Pagination Styles */
+#pagination-container button {
+    transition: all 0.3s ease;
+}
+
+#pagination-container button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+#pagination-container button:disabled {
+    cursor: not-allowed;
+}
+
+/* User Email Display in Dropdown */
+#user-email-display {
+    color: #000000 !important;
+}

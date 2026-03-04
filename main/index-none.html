@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookWorm - Your Reading Library</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Story+Script&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 custom-navbar border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="#" class="text-2xl font-bold flex items-center gap-2">
+                            <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm">
+                            <span>BookWorm</span>
+                        </a>
+                    </div>
+                    <div class="hidden md:block ml-10">
+                        <div class="flex items-baseline space-x-4 nav-links">
+                            <a href="#" class="px-3 py-2 rounded-md text-sm font-medium nav-link active"><i
+                                    class='bx bx-search' aria-hidden="true"></i> Browse</a>
+                            <a href="#" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
+                                    class='bx bx-category' aria-hidden="true"></i> Categories</a>
+                            <a href="#" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
+                                    class='bx bx-compass' aria-hidden="true"></i> Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Search Bar with Dropdown -->
+                    <div class="relative hidden sm:block" id="search-wrapper">
+                        <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'
+                            aria-hidden="true"></i>
+                        <input type="text" id="main-search-input" placeholder="Search books..."
+                            class="custom-input text-sm pl-10 pr-10" autocomplete="off">
+                        <button type="button" id="search-clear-btn"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
+                            <i class='bx bx-x'></i>
+                        </button>
+                        <!-- Search Results Dropdown -->
+                        <div id="search-dropdown"
+                            class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg max-h-96 overflow-y-auto z-50 hidden">
+                            <div id="search-results"></div>
+                        </div>
+                    </div>
+                    <a href="../login/index.html"
+                        class="flex items-center gap-2 focus:outline-none getStarted px-4 py-2 rounded-md text-sm font-medium">
+                        <i class='bx bx-log-in' aria-hidden="true"></i>
+                        Get Started
+                    </a>
+                    <div class="md:hidden">
+                        <button
+                            class="mobile-menu-btn inline-flex items-center justify-center p-2 rounded-md text-white">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 z-40"
+            style="background:linear-gradient(135deg,var(--secondary-color),var(--primary-color))">
+            <div class="px-4 py-4 space-y-2">
+                <a href="#" class="block px-3 py-2 rounded-md text-sm font-medium nav-link active">Browse</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Categories</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Explore</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="h-16"></div>
+
+    <!-- Carousel -->
+    <div class="carousel max-w-7xl mx-auto px-4 mt-8">
+        <section class="max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-6" style="color:var(--text)">Try this!</h2>
+            <div class="slider">
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide1"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide2"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide3"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide4"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide5"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide6"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide1"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide2"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide3"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide4"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide5"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide6"></div>
+            </div>
+        </section>
+    </div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Balanced Grid Cards - Loaded from Admin Dashboard -->
+        <div id="items-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Books will be loaded dynamically from localStorage (admin dashboard) -->
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination-container" class="flex justify-center items-center gap-4 mt-8">
+            <button id="prev-btn"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class='bx bx-chevron-left'></i> Previous
+            </button>
+            <span id="page-info" class="text-gray-600">Page 1 of 1</span>
+            <button id="next-btn"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                Next <i class='bx bx-chevron-right'></i>
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img class="h-10 w-auto" src="/img/logo.jpg" alt="BookWorm">
+                        <span class="logo-text">BookWorm</span>
+                    </div>
+                    <p class="tagline">Your gateway to infinite stories</p>
+                    <p class="brand-desc">Discover millions of books, comics, and manga from around the world. Join our
+                        community of book lovers today.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Explore</h3>
+                    <ul>
+                        <li><a href="#">Trending</a></li>
+                        <li><a href="#">New Releases</a></li>
+                        <li><a href="#">Categories</a></li>
+                        <li><a href="#">Collections</a></li>
+                        <li><a href="#">Recommendations</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Accessibility</a></li>
+                    </ul>
+                </div>
+                <div class="footer-connect">
+                    <h3>Connect</h3>
+                    <p>Join our community of book lovers.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook" class="social-icon"><i class='bx bxl-facebook'></i></a>
+                        <a href="#" aria-label="Instagram" class="social-icon"><i class='bx bxl-instagram-alt'></i></a>
+                        <a href="#" aria-label="Twitter" class="social-icon"><i class='bx bxl-twitter'></i></a>
+                        <a href="#" aria-label="TikTok" class="social-icon"><i class='bx bxl-tiktok'></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="contact-info">
+                    <p><strong>BookWorm</strong> • hello@bookworm.vn</p>
+                    <p><a href="tel:+842839301234">+84 28 3930 1234</a> • Ho Chi Minh City, Vietnam</p>
+                </div>
+            </div>
+            <div class="footer-legal">
+                <p>© 2025 BookWorm. All rights reserved. • <a href="/privacy">Privacy Policy</a> • <a
+                        href="/terms">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script/lazyLoad.js" defer></script>
+    <script src="script-none.js"></script>
+</body>
+
+</html>

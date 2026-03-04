@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="container" class="container">
+        <!-- FORM SECTION -->
+        <div class="row">
+            <!-- SIGN UP -->
+            <div class="col align-items-center flex-col sign-up">
+                <div class="form-wrapper align-items-center">
+                    <div class="form sign-up">
+                        <div class="input-group">
+                            <i class='bx bx-envelope'></i>
+                            <input type="email" id="inputUser" placeholder="Email">
+                            <span class="errorMessage" id="errorUserReg"></span>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password" id="inputPass" placeholder="Password">
+                            <i class='toggle-password bx bx-show' data-target="inputPass"></i>
+                            <span class="errorMessage" id="errorPassReg"></span>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password" id="inputRedeemPass" placeholder="Confirm password">
+                            <i class='toggle-password bx bx-show' data-target="inputRedeemPass"></i>
+                            <span class="errorMessage" id="errorRedeemPass"></span>
+                        </div>
+                        <button id="btnRegister">
+                            Register now
+                        </button>
+                        <p>
+                            <span style="font-size: 0.8rem; color: var(--text);">
+                                Already have an account?
+                            </span>
+                            <b style="font-size: 0.8rem; color: var(--text); cursor: pointer;" onclick="toggle()"
+                                class="pointer">
+                                Login here
+                            </b>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+            <!-- END SIGN UP -->
+            <!-- SIGN IN -->
+            <div class="col align-items-center flex-col sign-in">
+                <div class="form-wrapper align-items-center">
+                    <div class="form sign-in">
+                        <div class="input-group">
+                            <i class='bx bxs-user'></i>
+                            <input type="email" id="signin-username" placeholder="Email">
+                            <span class="errorMessage" id="errorUserLogin"></span>
+                        </div>
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password" id="signin-password" placeholder="Password">
+                            <span class="errorMessage" id="errorPassLogin"></span>
+                        </div>
+                        <button id="signin-btn">
+                            Login now
+                        </button>
+                        <p style="display: flex; justify-content: space-between; width: 100%;">
+                            <a href="../main/index-none.html"
+                                style="text-decoration: none; font-size: 0.8rem; color: var(--text);">
+                                <i class='bx bx-arrow-back'></i>
+                                Back to Home
+                            </a>
+                            <a href="forgotPass.html"
+                                style="text-decoration: none; font-size: 0.8rem; color: var(--text);"
+                                id="forgot-password">
+                                Forgot password?
+                            </a>
+                        </p>
+                        <p>
+                            <span style="font-size: 0.8rem; color: var(--text);">
+                                Don't have an account?
+                            </span>
+                            <b style="font-size: 0.8rem; color: var(--text); cursor: pointer;" onclick="toggle()"
+                                class="pointer">
+                                Sign up here
+                            </b>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-wrapper">
+
+                </div>
+            </div>
+            <!-- END SIGN IN -->
+        </div>
+        <!-- END FORM SECTION -->
+        <!-- CONTENT SECTION -->
+        <div class="row content-row">
+            <!-- SIGN IN CONTENT -->
+            <div class="col align-items-center flex-col">
+                <div class="text sign-in">
+                    <h2>
+                        Welcome back
+                    </h2>
+
+                </div>
+                <div class="img sign-in">
+
+                </div>
+            </div>
+            <!-- END SIGN IN CONTENT -->
+            <!-- SIGN UP CONTENT -->
+            <div class="col align-items-center flex-col">
+                <div class="img sign-up">
+
+                </div>
+                <div class="text sign-up">
+                    <h2>
+                        Join with us
+                    </h2>
+
+                </div>
+            </div>
+            <!-- END SIGN UP CONTENT -->
+        </div>
+        <!-- END CONTENT SECTION -->
+    </div>
+
+    <script src="../script/lazyLoad.js" defer></script>
+    <script src="script.js"></script>
+    <script>
+        // Password toggle functionality
+        document.querySelectorAll('.toggle-password').forEach(icon => {
+            icon.style.cursor = 'pointer';
+            icon.addEventListener('click', function () {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                if (!input) return;
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    this.classList.remove('bx-show');
+                    this.classList.add('bx-hide');
+                } else {
+                    input.type = 'password';
+                    this.classList.remove('bx-hide');
+                    this.classList.add('bx-show');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

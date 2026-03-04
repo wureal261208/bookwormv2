@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookWorm - Your Reading Library</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 custom-navbar border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="#" class="text-2xl font-bold flex items-center gap-2">
+                            <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm">
+                            <span>BookWorm</span>
+                        </a>
+                    </div>
+                    <div class="hidden md:block ml-10">
+                        <div class="flex items-baseline space-x-4 nav-links">
+                            <a href="#" class="px-3 py-2 rounded-md text-sm font-medium nav-link active"><i
+                                    class='bx bx-search' aria-hidden="true"></i> Browse</a>
+                            <a href="#" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
+                                    class='bx bx-category' aria-hidden="true"></i> Categories</a>
+                            <a href="#" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
+                                    class='bx bx-library' aria-hidden="true"></i> My Library</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Search Bar with Dropdown -->
+                    <div class="relative hidden sm:block" id="search-wrapper">
+                        <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'
+                            aria-hidden="true"></i>
+                        <input type="text" id="main-search-input" placeholder="Search books..."
+                            class="custom-input text-sm pl-10 pr-10" autocomplete="off">
+                        <button type="button" id="search-clear-btn"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
+                            <i class='bx bx-x'></i>
+                        </button>
+                        <!-- Search Results Dropdown -->
+                        <div id="search-dropdown"
+                            class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg max-h-96 overflow-y-auto z-50 hidden">
+                            <div id="search-results"></div>
+                        </div>
+                    </div>
+                    <!-- Notification -->
+                    <div class="relative" id="notification-container">
+                        <button id="notification-btn" class="p-1.5 rounded-full text-white hover:bg-white/20">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                            <span id="notification-badge"
+                                class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden shadow-lg border-2 border-white"></span>
+                        </button>
+                        <!-- Notification Dropdown -->
+                        <div id="notification-dropdown"
+                            class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 max-h-96 overflow-y-auto">
+                            <div class="px-4 py-2 border-b border-gray-200">
+                                <h4 class="font-semibold text-black">Notifications</h4>
+                            </div>
+                            <div id="notification-list" class="max-h-64 overflow-y-auto">
+                                <p class="px-4 py-3 text-sm text-black text-center">No new notifications</p>
+                            </div>
+                            <div class="px-4 py-2 border-t border-gray-200">
+                                <button id="mark-all-read" class="text-sm text-blue-600 hover:text-blue-800">Mark all as
+                                    read</button>
+                            </div>
+                        </div>
+                        <!-- Show dropdown on click for notification button -->
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const notifBtn = document.getElementById('notification-btn');
+                                const notifDropdown = document.getElementById('notification-dropdown');
+                                const container = document.getElementById('notification-container');
+
+                                if (notifBtn && notifDropdown && container) {
+                                    notifBtn.addEventListener('click', function (e) {
+                                        e.stopPropagation();
+                                        notifDropdown.classList.toggle('opacity-0');
+                                        notifDropdown.classList.toggle('invisible');
+                                    });
+
+                                    document.addEventListener('click', function (e) {
+                                        if (!container.contains(e.target)) {
+                                            notifDropdown.classList.add('opacity-0');
+                                            notifDropdown.classList.add('invisible');
+                                        }
+                                    });
+                                }
+                            });
+                        </script>
+                    </div>
+                    <!-- Avatar -->
+                    <div class="relative group">
+                        <button class="flex items-center gap-2">
+                            <img class="h-9 w-9 rounded-full object-cover border-2 border-white/50"
+                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                alt="User">
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <p id="user-email-display" class="px-4 py-2 text-sm font-semibold text-gray-800 truncate">
+                            </p>
+                            <a style="color: #333333" href="../login/index.html"
+                                class="dropdown-item block px-4 py-2 text-sm font-semibold">
+                                <i class='bx bx-log-out'></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                    <div class="md:hidden">
+                        <button
+                            class="mobile-menu-btn inline-flex items-center justify-center p-2 rounded-md text-white">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 z-40"
+            style="background:linear-gradient(135deg,var(--secondary-color),var(--primary-color))">
+            <div class="px-4 py-4 space-y-2">
+                <a href="#" class="block px-3 py-2 rounded-md text-sm font-medium nav-link active">Browse</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Categories</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">My Library</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="h-16"></div>
+
+    <!-- Carousel -->
+    <div class="carousel max-w-7xl mx-auto px-4 mt-8">
+        <section class="max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-6" style="color:var(--text)">Try this!</h2>
+            <div class="slider">
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide1"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide2"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide3"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide4"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide5"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide6"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide1"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide2"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide3"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide4"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide5"></div>
+                <div class="slide"><img src="https://images.unsplash.com/photo-..."
+                        class="w-full h-full object-cover rounded-xl" alt="slide6"></div>
+            </div>
+        </section>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Balanced Grid Cards -->
+        <div id="items-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+            <!-- Card 1 -->
+            <div class="item-card" data-category="fantasy" data-rating="5" data-year="2007">
+                <div class="card-image">
+                    <img src="https://images1.penguinrandomhouse.com/smedia/9780756413712" alt="The Name of the Wind">
+                </div>
+                <div class="card-content">
+                    <h3>The Name of the Wind</h3>
+                    <p class="author">Patrick Rothfuss</p>
+                    <p class="card-description">The tale of Kvothe, from his childhood to his years as a notorious
+                        magician.</p>
+                    <div class="card-meta">
+                        <span><i class='bx bx-book-open'></i> 662 pages</span>
+                        <span><i class='bx bx-calendar'></i> 2007</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="category-tag">Fantasy</span>
+                        <div class="rating">
+                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-count">(2.4k)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="item-card" data-category="comic" data-rating="4" data-year="1986">
+                <div class="card-image">
+                    <img src="https://i.ebayimg.com/images/g/1hcAAOSwZ8dkCjZM/s-l1200.png" alt="Batman">
+                </div>
+                <div class="card-content">
+                    <h3>Batman: The Dark Knight Returns</h3>
+                    <p class="author">Frank Miller</p>
+                    <p class="card-description">Batman returns to face old enemies and new threats in this legendary
+                        graphic novel.</p>
+                    <div class="card-meta">
+                        <span><i class='bx bx-book-open'></i> 244 pages</span>
+                        <span><i class='bx bx-calendar'></i> 1986</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="category-tag">Comic</span>
+                        <div class="rating">
+                            <span class="rating-stars">★★★★☆</span>
+                            <span class="rating-count">(1.8k)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="item-card" data-category="manga" data-rating="5" data-year="2012">
+                <div class="card-image">
+                    <img src="https://m.media-amazon.com/images/I/61MCVYbopSL._AC_UF1000,1000_QL80_.jpg"
+                        alt="Attack on Titan">
+                </div>
+                <div class="card-content">
+                    <h3>Attack on Titan Vol.1</h3>
+                    <p class="author">Hajime Isayama</p>
+                    <p class="card-description">Humanity lives inside cities surrounded by enormous walls due to the
+                        Titans.</p>
+                    <div class="card-meta">
+                        <span><i class='bx bx-book-open'></i> 208 pages</span>
+                        <span><i class='bx bx-calendar'></i> 2012</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="category-tag">Manga</span>
+                        <div class="rating">
+                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-count">(3.2k)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="item-card" data-category="sci-fi" data-rating="5" data-year="1965">
+                <div class="card-image">
+                    <img src="https://www.raptisrarebooks.com/wp-content/uploads/2026/01/RRB-150361-scaled.jpg"
+                        alt="Dune">
+                </div>
+                <div class="card-content">
+                    <h3>Dune</h3>
+                    <p class="author">Frank Herbert</p>
+                    <p class="card-description">Set on the desert planet Arrakis, Dune is the story of Paul Atreides.
+                    </p>
+                    <div class="card-meta">
+                        <span><i class='bx bx-book-open'></i> 688 pages</span>
+                        <span><i class='bx bx-calendar'></i> 1965</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="category-tag">Sci-Fi</span>
+                        <div class="rating">
+                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-count">(4.1k)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="item-card" data-category="manga" data-rating="5" data-year="1997">
+                <div class="card-image">
+                    <img src="https://m.media-amazon.com/images/I/71936D6JvvL._AC_UF1000,1000_QL80_.jpg"
+                        alt="One Piece">
+                </div>
+                <div class="card-content">
+                    <h3>One Piece (East Blue)</h3>
+                    <p class="author">Eiichiro Oda</p>
+                    <p class="card-description">Monkey D. Luffy sets sail with his crew to find the ultimate treasure.
+                    </p>
+                    <div class="card-meta">
+                        <span><i class='bx bx-book-open'></i> 192 pages</span>
+                        <span><i class='bx bx-calendar'></i> 1997</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="category-tag">Manga</span>
+                        <div class="rating">
+                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-count">(5.6k)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="item-card" data-category="comic" data-rating="5" data-year="1986">
+                <div class="card-image">
+                    <img src="https://m.media-amazon.com/images/I/71hIHnZbkTL.jpg" alt="Watchmen">
+                </div>
+                <div class="card-content">
+                    <h3>Watchmen</h3>
+                    <p class="author">Alan Moore & Dave Gibbons</p>
+                    <p class="card-description">A groundbreaking deconstruction of superhero tropes in alternate
+                        history.</p>
+                    <div class="card-meta">
+                        <span><i class='bx bx-book-open'></i> 416 pages</span>
+                        <span><i class='bx bx-calendar'></i> 1986</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="category-tag">Comic</span>
+                        <div class="rating">
+                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-count">(2.9k)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="item-card" data-category="comic" data-rating="5" data-year="1986">
+                <div class="card-image">
+                    <img src="https://m.media-amazon.com/images/I/71hIHnZbkTL.jpg" alt="Watchmen">
+                </div>
+                <div class="card-content">
+                    <h3>Watchmen</h3>
+                    <p class="author">Alan Moore & Dave Gibbons</p>
+                    <p class="card-description">A groundbreaking deconstruction of superhero tropes in alternate
+                        history.</p>
+                    <div class="card-meta">
+                        <span><i class='bx bx-book-open'></i> 416 pages</span>
+                        <span><i class='bx bx-calendar'></i> 1986</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="category-tag">Comic</span>
+                        <div class="rating">
+                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-count">(2.9k)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="item-card" data-category="comic" data-rating="5" data-year="1986">
+                <div class="card-image">
+                    <img src="https://m.media-amazon.com/images/I/71hIHnZbkTL.jpg" alt="Watchmen">
+                </div>
+                <div class="card-content">
+                    <h3>Watchmen</h3>
+                    <p class="author">Alan Moore & Dave Gibbons</p>
+                    <p class="card-description">A groundbreaking deconstruction of superhero tropes in alternate
+                        history.</p>
+                    <div class="card-meta">
+                        <span><i class='bx bx-book-open'></i> 416 pages</span>
+                        <span><i class='bx bx-calendar'></i> 1986</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="category-tag">Comic</span>
+                        <div class="rating">
+                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-count">(2.9k)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="item-card" data-category="comic" data-rating="5" data-year="1986">
+                <div class="card-image">
+                    <img src="https://m.media-amazon.com/images/I/71hIHnZbkTL.jpg" alt="Watchmen">
+                </div>
+                <div class="card-content">
+                    <h3>Watchmen</h3>
+                    <p class="author">Alan Moore & Dave Gibbons</p>
+                    <p class="card-description">A groundbreaking deconstruction of superhero tropes in alternate
+                        history.</p>
+                    <div class="card-meta">
+                        <span><i class='bx bx-book-open'></i> 416 pages</span>
+                        <span><i class='bx bx-calendar'></i> 1986</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="category-tag">Comic</span>
+                        <div class="rating">
+                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-count">(2.9k)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="item-card" data-category="comic" data-rating="5" data-year="1986">
+                <div class="card-image">
+                    <img src="https://m.media-amazon.com/images/I/71hIHnZbkTL.jpg" alt="Watchmen">
+                </div>
+                <div class="card-content">
+                    <h3>Watchmen</h3>
+                    <p class="author">Alan Moore & Dave Gibbons</p>
+                    <p class="card-description">A groundbreaking deconstruction of superhero tropes in alternate
+                        history.</p>
+                    <div class="card-meta">
+                        <span><i class='bx bx-book-open'></i> 416 pages</span>
+                        <span><i class='bx bx-calendar'></i> 1986</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="category-tag">Comic</span>
+                        <div class="rating">
+                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-count">(2.9k)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="item-card" data-category="comic" data-rating="5" data-year="1986">
+                <div class="card-image">
+                    <img src="https://m.media-amazon.com/images/I/71hIHnZbkTL.jpg" alt="Watchmen">
+                </div>
+                <div class="card-content">
+                    <h3>Watchmen</h3>
+                    <p class="author">Alan Moore & Dave Gibbons</p>
+                    <p class="card-description">A groundbreaking deconstruction of superhero tropes in alternate
+                        history.</p>
+                    <div class="card-meta">
+                        <span><i class='bx bx-book-open'></i> 416 pages</span>
+                        <span><i class='bx bx-calendar'></i> 1986</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="category-tag">Comic</span>
+                        <div class="rating">
+                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-count">(2.9k)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="item-card" data-category="comic" data-rating="5" data-year="1986">
+                <div class="card-image">
+                    <img src="https://m.media-amazon.com/images/I/71hIHnZbkTL.jpg" alt="Watchmen">
+                </div>
+                <div class="card-content">
+                    <h3>Watchmen</h3>
+                    <p class="author">Alan Moore & Dave Gibbons</p>
+                    <p class="card-description">A groundbreaking deconstruction of superhero tropes in alternate
+                        history.</p>
+                    <div class="card-meta">
+                        <span><i class='bx bx-book-open'></i> 416 pages</span>
+                        <span><i class='bx bx-calendar'></i> 1986</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="category-tag">Comic</span>
+                        <div class="rating">
+                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-count">(2.9k)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination-container" class="flex justify-center items-center gap-4 mt-8">
+            <button id="prev-btn"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class='bx bx-chevron-left'></i> Previous
+            </button>
+            <span id="page-info" class="text-gray-600">Page 1 of 1</span>
+            <button id="next-btn"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                Next <i class='bx bx-chevron-right'></i>
+            </button>
+        </div>
+    </main>
+
+    <div id="sentinel" style="height: 1px;"></div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img class="h-10 w-auto" src="/img/logo.jpg" alt="BookWorm">
+                        <span class="logo-text">BookWorm</span>
+                    </div>
+                    <p class="tagline">Your gateway to infinite stories</p>
+                    <p class="brand-desc">Discover millions of books, comics, and manga from around the world. Join our
+                        community of book lovers today.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Explore</h3>
+                    <ul>
+                        <li><a href="#">Trending</a></li>
+                        <li><a href="#">New Releases</a></li>
+                        <li><a href="#">Categories</a></li>
+                        <li><a href="#">Collections</a></li>
+                        <li><a href="#">Recommendations</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Accessibility</a></li>
+                    </ul>
+                </div>
+                <div class="footer-connect">
+                    <h3>Connect</h3>
+                    <p>Join our community of book lovers.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook" class="social-icon"><i class='bx bxl-facebook'></i></a>
+                        <a href="#" aria-label="Instagram" class="social-icon"><i class='bx bxl-instagram-alt'></i></a>
+                        <a href="#" aria-label="Twitter" class="social-icon"><i class='bx bxl-twitter'></i></a>
+                        <a href="#" aria-label="TikTok" class="social-icon"><i class='bx bxl-tiktok'></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="contact-info">
+                    <p><strong>BookWorm</strong> • hello@bookworm.vn</p>
+                    <p><a href="tel:+842839301234">+84 28 3930 1234</a> • Ho Chi Minh City, Vietnam</p>
+                </div>
+            </div>
+            <div class="footer-legal">
+                <p>© 2025 BookWorm. All rights reserved. • <a href="/privacy">Privacy Policy</a> • <a
+                        href="/terms">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script/lazyLoad.js" defer></script>
+    <script src="script-acc.js"></script>
+</body>
+
+</html>
