@@ -300,6 +300,9 @@ document.addEventListener('DOMContentLoaded', function() {
             books = JSON.parse(storedBooks);
         }
         
+        // Only search published books (exclude drafts)
+        books = books.filter(book => book.status === 'published');
+        
         // Filter books by title and author (case-insensitive)
         const queryLower = query.toLowerCase();
         const filteredBooks = books.filter(book => {
