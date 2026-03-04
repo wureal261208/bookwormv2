@@ -24,53 +24,100 @@ function saveBooksToStorage() {
     localStorage.setItem('adminBooks', JSON.stringify(books));
 }
 
-// Function to add a new chapter input row
-function addChapterRow() {
-    const container = document.getElementById('chapters-container');
+// Function to add a new edition input row
+function addEditionRow() {
+    const container = document.getElementById('edition-container');
     const row = document.createElement('div');
-    row.className = 'chapter-input-row';
+    row.className = 'edition-input-row';
     row.innerHTML = `
-        <input type="text" class="chapter-title" placeholder="Chapter Title" required>
-        <button type="button" class="btn-remove-chapter" onclick="removeChapterRow(this)">
+        <input type="text" class="edition-title" placeholder="Edition Title">
+        <input type="url" class="edition-image" placeholder="Edition Image URL (optional)">
+        <button type="button" class="btn-remove-edition" onclick="removeEditionRow(this)">
             <i class='bx bx-trash'></i>
         </button>
     `;
     container.appendChild(row);
 }
 
-// Function to remove a chapter input row
-function removeChapterRow(button) {
-    const container = document.getElementById('chapters-container');
-    const rows = container.querySelectorAll('.chapter-input-row');
-    if (rows.length > 1) {
-        button.parentElement.remove();
+// Function to toggle edition section visibility (Add Book modal)
+function toggleEditionSection() {
+    const checkbox = document.getElementById('has-editions');
+    const container = document.getElementById('edition-container');
+    const addBtn = document.getElementById('btn-add-edition');
+    
+    if (checkbox.checked) {
+        container.style.display = 'block';
+        addBtn.style.display = 'block';
     } else {
-        showNotification('At least one chapter is required!', 'error');
+        container.style.display = 'none';
+        addBtn.style.display = 'none';
+        // Clear any editions when toggled off
+        clearEditionsForm();
     }
 }
 
-// Function to collect chapters from input fields
-function collectChapters() {
-    const chapterInputs = document.querySelectorAll('.chapter-title');
-    const chapters = [];
-    chapterInputs.forEach((input, index) => {
+// Function to remove a edition input row
+function removeEditionRow(button) {
+    const container = document.getElementById('edition-container');
+    const rows = container.querySelectorAll('.edition-input-row');
+    if (rows.length > 1) {
+        button.parentElement.remove();
+    } else {
+        // Since editions are optional, just clear the row instead of showing error
+        const row = button.parentElement;
+        row.querySelector('.edition-title').value = '';
+        row.querySelector('.edition-image').value = '';
+    }
+}
+
+// Function to collect editions from input fields
+function collectEditions() {
+    const checkbox = document.getElementById('has-editions');
+    const editionInputs = document.querySelectorAll('.edition-title');
+    const editionImages = document.querySelectorAll('.edition-image');
+    const editions = [];
+    
+    // If checkbox is not checked, return empty array (no editions)
+    if (!checkbox || !checkbox.checked) {
+        return editions;
+    }
+    
+    editionInputs.forEach((input, index) => {
         if (input.value.trim()) {
-            chapters.push({
+            const imageInput = editionImages[index];
+            editions.push({
                 number: index + 1,
-                title: input.value.trim()
+                title: input.value.trim(),
+                image: imageInput && imageInput.value.trim() ? imageInput.value.trim() : ''
             });
         }
     });
-    return chapters;
+    return editions;
 }
 
-// Clear chapters form when modal closes
-function clearChaptersForm() {
-    const container = document.getElementById('chapters-container');
+// Clear editions form when modal closes
+function clearEditionsForm() {
+    const container = document.getElementById('edition-container');
+    const checkbox = document.getElementById('has-editions');
+    
+    // Reset checkbox
+    if (checkbox) {
+        checkbox.checked = false;
+    }
+    
+    // Hide edition rows
+    container.style.display = 'none';
+    const addBtn = document.getElementById('btn-add-edition');
+    if (addBtn) {
+        addBtn.style.display = 'none';
+    }
+    
+    // Reset the container with one empty row
     container.innerHTML = `
-        <div class="chapter-input-row">
-            <input type="text" class="chapter-title" placeholder="Chapter Title" required>
-            <button type="button" class="btn-remove-chapter" onclick="removeChapterRow(this)">
+        <div class="edition-input-row">
+            <input type="text" class="edition-title" placeholder="Edition Title">
+            <input type="url" class="edition-image" placeholder="Edition Image URL (optional)">
+            <button type="button" class="btn-remove-edition" onclick="removeEditionRow(this)">
                 <i class='bx bx-trash'></i>
             </button>
         </div>
@@ -455,8 +502,8 @@ function addBook(event) {
     // Remove duplicate warning if exists
     removeDuplicateWarning();
     
-    // Collect chapters
-    const chapters = collectChapters();
+    // Collect editions
+    const editions = collectEditions();
     
     // Default cover image if none provided
     const defaultImage = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
@@ -484,7 +531,7 @@ function addBook(event) {
             genre,
             pages: parseInt(pages),
             status,
-            chapters,
+            editions,
             // Additional fields (optional)
             description: description || '',
             tags: [bookType], // Store book type as single-element array
@@ -503,7 +550,7 @@ function addBook(event) {
         updateStatsCards();
         closeModal('book');
         event.target.reset();
-        clearChaptersForm();
+        clearEditionsForm();
         clearFormValidation('book-modal');
         
         // Remove loading state
@@ -512,7 +559,7 @@ function addBook(event) {
             saveBtn.disabled = false;
         }
         
-        showNotification(`Book "${title}" added successfully with ${chapters.length} chapter(s)!`, 'success');
+        showNotification(`Book "${title}" added successfully with ${editions.length} edition(s)!`, 'success');
     }, 500);
 }
 
@@ -804,13 +851,13 @@ function openModal(type) {
 function closeModal(type) {
     if (type === 'book') {
         document.getElementById('book-modal').classList.remove('active');
-        clearChaptersForm(); // Clear chapters when modal closes
+        clearEditionsForm(); // Clear editions when modal closes
         clearFormValidation('book-modal'); // Clear validation when modal closes
         removeDuplicateWarning(); // Remove duplicate warning if exists
     }
     if (type === 'edit-book') {
         document.getElementById('edit-book-modal').classList.remove('active');
-        clearEditChaptersForm(); // Clear chapters when edit modal closes
+        clearEditEditionsForm(); // Clear editions when edit modal closes
         clearFormValidation('edit-book-modal'); // Clear validation when modal closes
     }
 }
@@ -832,8 +879,8 @@ function addBook(event) {
     const language = document.getElementById('book-language').value;
     const status = document.getElementById('book-status').value;
     
-    // Collect chapters
-    const chapters = collectChapters();
+    // Collect editions
+    const editions = collectEditions();
     
     // Default cover image if none provided
     const defaultImage = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
@@ -852,7 +899,7 @@ function addBook(event) {
         genre,
         pages: parseInt(pages),
         status,
-        chapters,
+        editions,
         // Additional fields (optional)
         description: description || '',
         tags: [bookType], // Store book type as single-element array
@@ -871,8 +918,8 @@ function addBook(event) {
     updateStatsCards();
     closeModal('book');
     event.target.reset();
-    clearChaptersForm();
-    showNotification(`Book "${title}" added successfully with ${chapters.length} chapter(s)!`, 'success');
+    clearEditionsForm();
+    showNotification(`Book "${title}" added successfully with ${editions.length} edition(s)!`, 'success');
 }
 
 // ═════════════════════════════════════════════════════════════
@@ -906,23 +953,37 @@ function openEditModal(bookId) {
     document.getElementById('edit-book-language').value = book.language || 'English';
     document.getElementById('edit-book-status').value = book.status || 'draft';
     
-    // Populate chapters
-    populateEditChapters(book.chapters || []);
+    // Populate editions
+    populateEditEditions(book.editions || []);
     
     // Show modal
     document.getElementById('edit-book-modal').classList.add('active');
 }
 
-// Function to populate chapters in edit modal
-function populateEditChapters(chapters) {
-    const container = document.getElementById('edit-chapters-container');
+// Function to populate editions in edit modal
+function populateEditEditions(editions) {
+    const container = document.getElementById('edit-edition-container');
+    const checkbox = document.getElementById('edit-has-editions');
+    const addBtn = document.getElementById('btn-edit-add-edition');
     
-    if (chapters.length === 0) {
-        // Add one empty chapter row if no chapters exist
+    // If there are editions or editions array exists, check the checkbox and show
+    if (editions && editions.length > 0) {
+        if (checkbox) checkbox.checked = true;
+        container.style.display = 'block';
+        if (addBtn) addBtn.style.display = 'block';
+    } else {
+        if (checkbox) checkbox.checked = false;
+        container.style.display = 'none';
+        if (addBtn) addBtn.style.display = 'none';
+    }
+    
+    if (!editions || editions.length === 0) {
+        // Add one empty edition row if no editions exist
         container.innerHTML = `
-            <div class="chapter-input-row">
-                <input type="text" class="chapter-title" placeholder="Chapter Title" required>
-                <button type="button" class="btn-remove-chapter" onclick="removeEditChapterRow(this)">
+            <div class="edition-input-row">
+                <input type="text" class="edition-title" placeholder="Edition Title">
+                <input type="url" class="edition-image" placeholder="Edition Image URL (optional)">
+                <button type="button" class="btn-remove-edition" onclick="removeEditEditionRow(this)">
                     <i class='bx bx-trash'></i>
                 </button>
             </div>
@@ -930,67 +991,147 @@ function populateEditChapters(chapters) {
         return;
     }
     
-    container.innerHTML = chapters.map((chapter, index) => `
-        <div class="chapter-input-row">
-            <input type="text" class="chapter-title" placeholder="Chapter Title" value="${chapter.title || ''}" required>
-            <button type="button" class="btn-remove-chapter" onclick="removeEditChapterRow(this)">
+    container.innerHTML = editions.map((edition, index) => `
+        <div class="edition-input-row">
+            <input type="text" class="edition-title" placeholder="Edition Title" value="${edition.title || ''}">
+            <input type="url" class="edition-image" placeholder="Edition Image URL (optional)" value="${edition.image || ''}">
+            <input type="hidden" class="edition-index" value="${index}">
+            <button type="button" class="btn-remove-edition" onclick="deleteExistingEdition(${index})" title="Remove Edition">
                 <i class='bx bx-trash'></i>
             </button>
         </div>
     `).join('');
 }
 
-// Function to add chapter row in edit modal
-function addEditChapterRow() {
-    const container = document.getElementById('edit-chapters-container');
+// Function to toggle edition section visibility (Edit Book modal)
+function toggleEditEditionSection() {
+    const checkbox = document.getElementById('edit-has-editions');
+    const container = document.getElementById('edit-edition-container');
+    const addBtn = document.getElementById('btn-edit-add-edition');
+    
+    if (checkbox.checked) {
+        container.style.display = 'block';
+        addBtn.style.display = 'block';
+    } else {
+        container.style.display = 'none';
+        addBtn.style.display = 'none';
+        // Clear any editions when toggled off
+        clearEditEditionsForm();
+    }
+}
+
+// Function to delete an existing edition from the book
+function deleteExistingEdition(editionIndex) {
+    const bookId = parseInt(document.getElementById('edit-book-id').value);
+    const book = books.find(b => b.id === bookId);
+    
+    if (book && book.editions && book.editions[editionIndex]) {
+        const editionTitle = book.editions[editionIndex].title;
+        if (confirm(`Are you sure you want to remove edition "${editionTitle}"?`)) {
+            // Remove the edition from the book's editions array
+            book.editions.splice(editionIndex, 1);
+            
+            // Re-number the remaining editions
+            book.editions.forEach((edition, idx) => {
+                edition.number = idx + 1;
+            });
+            
+            // Update the book's editions in the books array
+            const bookIndex = books.findIndex(b => b.id === bookId);
+            if (bookIndex !== -1) {
+                books[bookIndex].editions = book.editions;
+                saveBooksToStorage();
+            }
+            
+            // Re-populate the editions display
+            populateEditEditions(book.editions);
+            
+            showNotification(`Edition "${editionTitle}" removed successfully!`, 'success');
+        }
+    }
+}
+
+// Function to add edition row in edit modal
+function addEditEditionRow() {
+    const container = document.getElementById('edit-edition-container');
     const row = document.createElement('div');
-    row.className = 'chapter-input-row';
+    row.className = 'edition-input-row';
     row.innerHTML = `
-        <input type="text" class="chapter-title" placeholder="Chapter Title" required>
-        <button type="button" class="btn-remove-chapter" onclick="removeEditChapterRow(this)">
+        <input type="text" class="edition-title" placeholder="Edition Title">
+        <input type="url" class="edition-image" placeholder="Edition Image URL (optional)">
+        <button type="button" class="btn-remove-edition" onclick="removeEditEditionRow(this)">
             <i class='bx bx-trash'></i>
         </button>
     `;
     container.appendChild(row);
 }
 
-// Function to remove chapter row in edit modal
-function removeEditChapterRow(button) {
-    const container = document.getElementById('edit-chapters-container');
-    const rows = container.querySelectorAll('.chapter-input-row');
+// Function to remove edition row in edit modal
+function removeEditEditionRow(button) {
+    const container = document.getElementById('edit-edition-container');
+    const rows = container.querySelectorAll('.edition-input-row');
     if (rows.length > 1) {
         button.parentElement.remove();
     } else {
-        showNotification('At least one chapter is required!', 'error');
+        // Since editions are optional, just clear the row instead of showing error
+        const row = button.parentElement;
+        row.querySelector('.edition-title').value = '';
+        row.querySelector('.edition-image').value = '';
     }
 }
 
-// Function to clear edit chapters form
-function clearEditChaptersForm() {
-    const container = document.getElementById('edit-chapters-container');
+// Function to clear edit editions form
+function clearEditEditionsForm() {
+    const container = document.getElementById('edit-edition-container');
+    const checkbox = document.getElementById('edit-has-editions');
+    const addBtn = document.getElementById('btn-edit-add-edition');
+    
+    // Reset checkbox
+    if (checkbox) {
+        checkbox.checked = false;
+    }
+    
+    // Hide edition rows
+    container.style.display = 'none';
+    if (addBtn) {
+        addBtn.style.display = 'none';
+    }
+    
+    // Reset the container with one empty row
     container.innerHTML = `
-        <div class="chapter-input-row">
-            <input type="text" class="chapter-title" placeholder="Chapter Title" required>
-            <button type="button" class="btn-remove-chapter" onclick="removeEditChapterRow(this)">
+        <div class="edition-input-row">
+            <input type="text" class="edition-title" placeholder="Edition Title">
+            <input type="url" class="edition-image" placeholder="Edition Image URL (optional)">
+            <button type="button" class="btn-remove-edition" onclick="removeEditEditionRow(this)">
                 <i class='bx bx-trash'></i>
             </button>
         </div>
     `;
 }
 
-// Function to collect chapters from edit form
-function collectEditChapters() {
-    const chapterInputs = document.querySelectorAll('#edit-chapters-container .chapter-title');
-    const chapters = [];
-    chapterInputs.forEach((input, index) => {
+// Function to collect editions from edit form
+function collectEditEditions() {
+    const checkbox = document.getElementById('edit-has-editions');
+    const editionInputs = document.querySelectorAll('#edit-edition-container .edition-title');
+    const editionImages = document.querySelectorAll('#edit-edition-container .edition-image');
+    const editions = [];
+    
+    // If checkbox is not checked, return empty array (no editions)
+    if (!checkbox || !checkbox.checked) {
+        return editions;
+    }
+    
+    editionInputs.forEach((input, index) => {
         if (input.value.trim()) {
-            chapters.push({
+            const imageInput = editionImages[index];
+            editions.push({
                 number: index + 1,
-                title: input.value.trim()
+                title: input.value.trim(),
+                image: imageInput && imageInput.value.trim() ? imageInput.value.trim() : ''
             });
         }
     });
-    return chapters;
+    return editions;
 }
 
 // Function to handle edit book form submission
@@ -1020,8 +1161,8 @@ function editBook(event) {
     const language = document.getElementById('edit-book-language').value;
     const status = document.getElementById('edit-book-status').value;
     
-    // Collect chapters
-    const chapters = collectEditChapters();
+    // Collect editions
+    const editions = collectEditEditions();
     
     // Default cover image if none provided
     const defaultImage = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
@@ -1050,7 +1191,7 @@ function editBook(event) {
             genre,
             pages: parseInt(pages),
             status,
-            chapters,
+            editions,
             description: description || '',
             tags: [bookType], // Store book type as single-element array
             publisher: publisher || '',
@@ -1065,7 +1206,7 @@ function editBook(event) {
         updateStatsCards();
         closeModal('edit-book');
         event.target.reset();
-        clearEditChaptersForm();
+        clearEditEditionsForm();
         
         // Remove loading state
         if (saveBtn) {

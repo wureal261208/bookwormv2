@@ -206,19 +206,27 @@
                     </select>
                 </div>
                 
-                <!-- Chapters Section -->
-                <div class="chapters-section">
-                    <h4><i class='bx bx-list-ul'></i> Chapters</h4>
-                    <div id="chapters-container">
-                        <div class="chapter-input-row">
-                            <input type="text" class="chapter-title" placeholder="Chapter Title" required>
-                            <button type="button" class="btn-remove-chapter" onclick="removeChapterRow(this)">
+                <!-- Edition Section -->
+                <div class="edition-section">
+                    <h4><i class='bx bx-list-ul'></i> Edition</h4>
+                    <div class="edition-toggle">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="has-editions" onchange="toggleEditionSection()">
+                            <span class="toggle-switch"></span>
+                            <span class="toggle-text">This book has editions</span>
+                        </label>
+                    </div>
+                    <div id="edition-container" class="edition-rows" style="display: none;">
+                        <div class="edition-input-row">
+                            <input type="text" class="edition-title" placeholder="Edition Title">
+                            <input type="url" class="edition-image" placeholder="Edition Image URL (optional)">
+                            <button type="button" class="btn-remove-edition" onclick="removeEditionRow(this)">
                                 <i class='bx bx-trash'></i>
                             </button>
                         </div>
                     </div>
-                    <button type="button" class="btn-add-chapter" onclick="addChapterRow()">
-                        <i class='bx bx-plus'></i> Add Chapter
+                    <button type="button" class="btn-add-edition" id="btn-add-edition" onclick="addEditionRow()" style="display: none;">
+                        <i class='bx bx-plus'></i> Add Edition
                     </button>
                 </div>
                 
@@ -327,19 +335,27 @@
                     </select>
                 </div>
                 
-                <!-- Chapters Section -->
-                <div class="chapters-section">
-                    <h4><i class='bx bx-list-ul'></i> Chapters</h4>
-                    <div id="edit-chapters-container">
-                        <div class="chapter-input-row">
-                            <input type="text" class="chapter-title" placeholder="Chapter Title" required>
-                            <button type="button" class="btn-remove-chapter" onclick="removeEditChapterRow(this)">
+                <!-- Edition Section -->
+                <div class="edition-section">
+                    <h4><i class='bx bx-list-ul'></i> Edition</h4>
+                    <div class="edition-toggle">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="edit-has-editions" onchange="toggleEditEditionSection()">
+                            <span class="toggle-switch"></span>
+                            <span class="toggle-text">This book has editions</span>
+                        </label>
+                    </div>
+                    <div id="edit-edition-container" class="edition-rows" style="display: none;">
+                        <div class="edition-input-row">
+                            <input type="text" class="edition-title" placeholder="Edition Title">
+                            <input type="url" class="edition-image" placeholder="Edition Image URL (optional)">
+                            <button type="button" class="btn-remove-edition" onclick="removeEditEditionRow(this)">
                                 <i class='bx bx-trash'></i>
                             </button>
                         </div>
                     </div>
-                    <button type="button" class="btn-add-chapter" onclick="addEditChapterRow()">
-                        <i class='bx bx-plus'></i> Add Chapter
+                    <button type="button" class="btn-add-edition" id="btn-edit-add-edition" onclick="addEditEditionRow()" style="display: none;">
+                        <i class='bx bx-plus'></i> Add Edition
                     </button>
                 </div>
                 

@@ -203,6 +203,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const overrideCover = params.get('cover');
         const bookId = params.get('id');
 
+        // Store chapters data globally for use in renderChapters
+        window.bookChapters = [];
+
         if (storedBook) {
             // Use data from localStorage
             const book = JSON.parse(storedBook);
@@ -213,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
             rating = '★★★★★';
             ratingCount = '(NEW)';
             description = book.description || '';
-            chapters = book.pages || 200;
+            window.bookChapters = book.chapters || [];
             if (overrideCover && isValidUrl(overrideCover)) {
                 cover = overrideCover;
             } else if (book.image) {
@@ -239,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 rating = '★★★★★';
                 ratingCount = '(NEW)';
                 description = adminBook.description || '';
-                chapters = adminBook.pages || 200;
+                window.bookChapters = adminBook.chapters || [];
                 cover = (adminBook.image && isValidUrl(adminBook.image)) ? adminBook.image : '';
             } else {
                 // Fall back to URL query parameters
@@ -251,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 ratingCount = params.get('ratingCount') || '(1234 reviews)';
                 description = params.get('desc') || '';
                 cover = overrideCover || params.get('cover');
-                chapters = parseInt(params.get('chapters')) || 200;
             }
         } else {
             // Fall back to URL query parameters
@@ -265,7 +267,6 @@ document.addEventListener('DOMContentLoaded', () => {
             description = params.get('desc') || '';
             // if we reach here without localStorage data use query params (including cover override)
             cover = overrideCover || params.get('cover');
-            chapters = parseInt(params.get('chapters')) || 200;
         }
 
         document.getElementById('book-title').textContent = title;
@@ -279,7 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set book cover image - use book image or fallback to default
         const defaultCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
         document.getElementById('book-cover').src = cover || defaultCover;
-        return chapters;
+        
+        // Return total chapters count based on actual chapter data or fallback to pages
+        return window.bookChapters.length > 0 ? window.bookChapters.length : (parseInt(params.get('chapters')) || 200);
     }
 
     // chapters pagination - five rows of six columns per page
@@ -293,58 +296,41 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderChapters() {
         if (!chapList) return [];
         chapList.innerHTML = '';
+        
         const start = currentPage * pageSize + 1;
         const end = Math.min(totalChapters, start + pageSize - 1);
+
         const links = [];
+
         for (let i = start; i <= end; i++) {
             const li = document.createElement('li');
             const a = document.createElement('a');
-function renderChapters() {
-    if (!chapList) return [];
-    chapList.innerHTML = '';
 
-    const start = currentPage * pageSize + 1;
-    const end = Math.min(totalChapters, start + pageSize - 1);
+            // Get chapter title from stored data or generate default
+            const chapterData = window.bookChapters && window.bookChapters[i - 1];
+            const chapterTitle = chapterData ? chapterData.title : `Chapter ${i}`;
 
-    const links = [];
+            // Điều hướng theo chapter
+            if (i === 1) {
+                a.href = "../reading/index-read-img.html";
+            } else if (i === 2) {
+                a.href = "../reading/index-read-novel.html";
+            } else {
+                a.href = `../reading/index-read-novel.html?chapter=${i}`;
+            }
 
-    for (let i = start; i <= end; i++) {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-
-        // Điều hướng theo chapter
-        if (i === 1) {
-            a.href = "../reading/index-read-img.html";
-        } else if (i === 2) {
-            a.href = "../reading/index-read-novel.html";
-        } else {
-            a.href = `../reading/index-read-novel.html?chapter=${i}`;
-        }
-
-        a.textContent = `Chapter ${i}`;
-        a.className = 'text-blue-600 hover:underline focus:outline-none focus:ring';
-
-        li.appendChild(a);
-        chapList.appendChild(li);
-        links.push(a);
-    }
-
-    if (btnPrev) btnPrev.disabled = currentPage === 0;
-    if (btnNext) btnNext.disabled = end === totalChapters;
-
-    return links;
-}
-
-            a.href = `../reading/index-read-img.html?chapter=${i}`;
-            a.textContent = `Chapter ${i}`;
+            a.textContent = chapterTitle;
             a.className = 'text-blue-600 hover:underline focus:outline-none focus:ring';
             a.setAttribute('tabindex', '0');
+
             li.appendChild(a);
             chapList.appendChild(li);
             links.push(a);
         }
+
         if (btnPrev) btnPrev.disabled = currentPage === 0;
         if (btnNext) btnNext.disabled = end === totalChapters;
+
         return links;
     }
 
