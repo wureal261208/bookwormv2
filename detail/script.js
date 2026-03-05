@@ -203,9 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const overrideCover = params.get('cover');
         const bookId = params.get('id');
 
-        // Store chapters data globally for use in renderChapters
-        window.bookChapters = [];
-
         if (storedBook) {
             // Use data from localStorage
             const book = JSON.parse(storedBook);
@@ -216,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             rating = '★★★★★';
             ratingCount = '(NEW)';
             description = book.description || '';
-            window.bookChapters = book.chapters || [];
+            chapters = book.pages || 200;
             if (overrideCover && isValidUrl(overrideCover)) {
                 cover = overrideCover;
             } else if (book.image) {
@@ -242,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 rating = '★★★★★';
                 ratingCount = '(NEW)';
                 description = adminBook.description || '';
-                window.bookChapters = adminBook.chapters || [];
+                chapters = adminBook.pages || 200;
                 cover = (adminBook.image && isValidUrl(adminBook.image)) ? adminBook.image : '';
             } else {
                 // Fall back to URL query parameters
@@ -254,6 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ratingCount = params.get('ratingCount') || '(1234 reviews)';
                 description = params.get('desc') || '';
                 cover = overrideCover || params.get('cover');
+                chapters = parseInt(params.get('chapters')) || 200;
             }
         } else {
             // Fall back to URL query parameters
@@ -267,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
             description = params.get('desc') || '';
             // if we reach here without localStorage data use query params (including cover override)
             cover = overrideCover || params.get('cover');
+            chapters = parseInt(params.get('chapters')) || 200;
         }
 
         document.getElementById('book-title').textContent = title;
@@ -280,57 +279,95 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set book cover image - use book image or fallback to default
         const defaultCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
         document.getElementById('book-cover').src = cover || defaultCover;
-        
-        // Return total chapters count based on actual chapter data or fallback to pages
-        return window.bookChapters.length > 0 ? window.bookChapters.length : (parseInt(params.get('chapters')) || 200);
+        return chapters;
     }
 
     // chapters pagination - five rows of six columns per page
-    const totalChapters = loadBook();   // uses the returned number
-    const pageSize = 30; // six columns × five rows
+    const totalEditions = loadBook();   // uses the returned number
+    const pageSize = 1; // six columns × five rows
     let currentPage = 0;
-    const chapList = document.getElementById('chapter-list');
+    const editionList = document.getElementById('chapter-list');
     const btnPrev = document.getElementById('chap-prev');
     const btnNext = document.getElementById('chap-next');
 
     function renderChapters() {
-        if (!chapList) return [];
-        chapList.innerHTML = '';
-        
+        if (!editionList) return [];
+        editionList.innerHTML = '';
         const start = currentPage * pageSize + 1;
-        const end = Math.min(totalChapters, start + pageSize - 1);
-
+        const end = Math.min(totalEditions, start + pageSize - 1);
         const links = [];
-
         for (let i = start; i <= end; i++) {
-            const li = document.createElement('li');
-            const a = document.createElement('a');
+    const li = document.createElement('li');
 
-            // Get chapter title from stored data or generate default
-            const chapterData = window.bookChapters && window.bookChapters[i - 1];
-            const chapterTitle = chapterData ? chapterData.title : `Chapter ${i}`;
+    li.className =
+    "flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50";
 
-            // Điều hướng theo chapter
-            if (i === 1) {
-                a.href = "../reading/index-read-img.html";
-            } else if (i === 2) {
-                a.href = "../reading/index-read-novel.html";
-            } else {
-                a.href = `../reading/index-read-novel.html?chapter=${i}`;
-            }
+    li.innerHTML = `
+    <div class="flex items-center gap-3">
 
-            a.textContent = chapterTitle;
-            a.className = 'text-blue-600 hover:underline focus:outline-none focus:ring';
-            a.setAttribute('tabindex', '0');
+    <img src="https://images.unsplash.com/photo-1543002588-bfa74090ca80?w=80"
+    class="w-10 h-14 object-cover rounded">
 
-            li.appendChild(a);
-            chapList.appendChild(li);
-            links.push(a);
+    <div>
+    <p class="font-semibold">Edition ${i}</p>
+    <p class="text-sm text-gray-500">Language: English</p>
+    </div>
+
+    </div>
+
+    <a href="../reading/index-read-img.html?edition=${i}"
+    class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+    Read
+    </a>
+    `;
+
+    editionList.appendChild(li);
+function renderChapters() {
+    if (!editionList) return [];
+    editionList.innerHTML = '';
+
+    const start = currentPage * pageSize + 1;
+    const end = Math.min(totalEditions, start + pageSize - 1);
+
+    const links = [];
+
+    for (let i = start; i <= end; i++) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+
+        // Điều hướng theo chapter
+        if (i === 1) {
+            a.href = "../reading/index-read-img.html";
+        } else if (i === 2) {
+            a.href = "../reading/index-read-novel.html";
+        } else {
+            a.href = `../reading/index-read-novel.html?chapter=${i}`;
         }
 
-        if (btnPrev) btnPrev.disabled = currentPage === 0;
-        if (btnNext) btnNext.disabled = end === totalChapters;
+        a.textContent = `Edition ${i}`;
+        a.className = 'text-blue-600 hover:underline focus:outline-none focus:ring';
 
+        li.appendChild(a);
+        editionList.appendChild(li);
+        links.push(a);
+    }
+
+    if (btnPrev) btnPrev.disabled = currentPage === 0;
+    if (btnNext) btnNext.disabled = end === totalEditions;
+
+    return links;
+}
+
+            a.href = `../reading/index-read-img.html?edition=${i}`;
+            a.textContent = `Edition ${i}`;
+            a.className = 'text-blue-600 hover:underline focus:outline-none focus:ring';
+            a.setAttribute('tabindex', '0');
+            li.appendChild(a);
+            editionList.appendChild(li);
+            links.push(a);
+        }
+        if (btnPrev) btnPrev.disabled = currentPage === 0;
+        if (btnNext) btnNext.disabled = end === totalEditions;
         return links;
     }
 
@@ -344,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (btnNext) {
         btnNext.addEventListener('click', () => {
-            const maxPage = Math.floor((totalChapters - 1) / pageSize);
+            const maxPage = Math.floor((totalEditions - 1) / pageSize);
             if (currentPage < maxPage) {
                 currentPage++;
                 focusFirstChapter();

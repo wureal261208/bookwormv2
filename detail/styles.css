@@ -52,37 +52,50 @@
 }
 
 /* chapter links grid layout */
+/* ===== Edition List ===== */
+
 #chapter-list {
-    display: grid;
-    /* six columns for five rows (30 items per page) */
-    grid-template-columns: repeat(6, 1fr);
-    gap: 0.5rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
+/* mỗi edition */
 #chapter-list li {
-    background: var(--white);
-    border-radius: 6px;
-    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 10px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+
+    background: white;
+    transition: 0.2s;
 }
 
 #chapter-list li:hover {
-    background: rgba(161, 194, 189, 0.2);
+    background: #f9fafb;
 }
 
-#chapter-list a {
-    display: block;
-    padding: 0.5rem;
-    color: var(--secondary-color);
+/* thông tin edition */
+.edition-info {
+    display: flex;
+    flex-direction: column;
+}
+
+/* nút đọc */
+.edition-read {
+    padding: 6px 14px;
+    background: black;
+    color: white;
+    border-radius: 20px;
+    font-size: 14px;
     text-decoration: none;
-    text-align: center;
 }
 
-#chapter-list a:hover,
-#chapter-list a:focus {
-    text-decoration: underline;
+.edition-read:hover {
+    opacity: 0.8;
 }
 
 /* comment entries */

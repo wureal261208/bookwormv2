@@ -1,93 +1,54 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>BookWorm · Book Details</title>
     <!-- global theme & utilities -->
-    <link rel="stylesheet" href="../main/style.css" />
+    <link rel="stylesheet" href="../main/style.css">
     <!-- Tailwind for rapid layout tweaks (kept for other pages consistency) -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com" defer></script>
     <!-- overrides for this page -->
-    <link rel="stylesheet" href="styles.css" />
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 
 <body>
-    <!-- Navbar for authenticated users -->
+    <!-- Navbar component (identical to other pages) -->
     <header>
         <nav aria-label="Main navigation" class="fixed inset-x-0 top-0 z-50 custom-navbar border-b">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
                     <div class="flex items-center">
-                        <a href="../main/index-acc.html" class="flex items-center gap-2 text-2xl font-bold">
-                            <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm logo" />
+                        <a href="../main/index-none.html" class="flex items-center gap-2 text-2xl font-bold">
+                            <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm logo">
                             <span>BookWorm</span>
                         </a>
                         <div class="hidden md:block ml-10">
                             <div class="flex items-baseline space-x-4 nav-links">
-                                <a href="#" class="nav-link active" aria-current="page"><i class="bx bx-search"></i>
+                                <a href="#" class="nav-link active" aria-current="page"><i class='bx bx-search'></i>
                                     Browse</a>
-                                <a href="#" class="nav-link"><i class="bx bx-category"></i> Categories</a>
-                                <a href="#" class="nav-link"><i class="bx bx-library"></i> My Library</a>
+                                <a href="#" class="nav-link"><i class='bx bx-category'></i> Categories</a>
+                                <a href="#" class="nav-link"><i class='bx bx-compass'></i> Explore</a>
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
                         <div class="relative hidden sm:block">
                             <i
-                                class="bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'></i>
                             <input type="search" placeholder="Search books..." class="custom-input text-sm pl-10"
-                                aria-label="Search books" />
+                                aria-label="Search books">
                         </div>
-                        <!-- notification icon -->
-                        <div class="relative">
-                            <button id="notification-btn" class="p-1.5 rounded-full text-black hover:bg-gray-200">
-                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                </svg>
-                                <span id="notification-badge"
-                                    class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
-                            </button>
-                            <!-- Notification Dropdown -->
-                            <div id="notification-dropdown"
-                                class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible transition-all duration-200 z-50 max-h-96 overflow-y-auto">
-                                <div class="px-4 py-2 border-b flex justify-between items-center bg-white">
-                                    <h4 class="font-semibold text-black">Notifications</h4>
-                                    <button id="clear-notifications" class="text-xs text-red-500 hover:text-red-700">
-                                        Clear All
-                                    </button>
-                                </div>
-                                <div id="notification-list" class="max-h-64 overflow-y-auto bg-white">
-                                    <p class="px-4 py-4 text-gray-500 text-center text-sm">
-                                        No new notifications
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- user avatar -->
-                        <div class="relative group">
-                            <button class="flex items-center gap-2">
-                                <img class="h-9 w-9 rounded-full object-cover border-2 border-white/50"
-                                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                    alt="User" />
-                            </button>
-                            <!-- Dropdown Menu -->
-                            <div
-                                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                <a style="color: #333333" href="../login/index.html"
-                                    class="dropdown-item block px-4 py-2 text-sm font-semibold">
-                                    <i class="bx bx-log-out"></i> Logout
-                                </a>
-                            </div>
-                        </div>
+                        <a href="../login/index.html" class="getStarted flex items-center gap-1">
+                            <i class='bx bx-log-in'></i><span>Get&nbsp;Started</span>
+                        </a>
                         <button class="mobile-menu-btn md:hidden p-2 focus:outline-none" aria-expanded="false"
                             aria-controls="mobile-menu">
                             <span class="sr-only">Open menu</span>
-                            <i class="bx bx-menu text-2xl"></i>
+                            <i class='bx bx-menu text-2xl'></i>
                         </button>
                     </div>
                 </div>
@@ -95,7 +56,7 @@
             <div id="mobile-menu" class="mobile-menu hidden md:hidden">
                 <a href="#" class="block nav-link active">Browse</a>
                 <a href="#" class="block nav-link">Categories</a>
-                <a href="#" class="block nav-link">My Library</a>
+                <a href="#" class="block nav-link">Explore</a>
             </div>
         </nav>
     </header>
@@ -107,13 +68,11 @@
         <article class="md:flex gap-8" aria-labelledby="book-title">
             <figure class="md:w-1/3">
                 <img id="book-cover" src="https://images1.penguinrandomhouse.com/smedia/9780756413712" alt="Book cover"
-                    class="rounded-lg shadow-lg w-full max-w-xs mx-auto block" />
+                    class="rounded-lg shadow-lg w-full">
             </figure>
             <div class="md:w-2/3">
                 <h1 id="book-title" class="text-3xl font-bold mb-2">Book Title</h1>
-                <p id="book-author" class="text-lg text-gray-700 mb-1">
-                    by Author Name
-                </p>
+                <p id="book-author" class="text-lg text-gray-700 mb-1">by Author Name</p>
                 <dl class="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
                     <div>
                         <dt class="sr-only">Status</dt>
@@ -125,91 +84,58 @@
                     </div>
                     <div id="book-rating-row" class="flex items-center">
                         <dt class="sr-only">Rating</dt>
-                        <dd id="book-rating" class="text-yellow-400">★★★★★</dd>
-                        <dd id="book-rating-count" class="ml-1 text-gray-600">
-                            (1234 reviews)
-                        </dd>
+                        <dd id="book-rating" class="text-yellow-400">★★★★★ </dd>
+                        <dd id="book-rating-count" class="ml-1 text-gray-600">(1234 reviews)</dd>
                     </div>
                 </dl>
                 <section class="mb-6" aria-labelledby="summary-heading">
-                    <h2 id="summary-heading" class="text-xl font-semibold mb-2">
-                        Summary
-                    </h2>
+                    <h2 id="summary-heading" class="text-xl font-semibold mb-2">Summary</h2>
                     <p id="book-description" class="text-gray-800 leading-relaxed">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
-                        sit amet accumsan tortor. Sed venenatis velit vitae neque
-                        ultricies, et auctor orci vulputate.
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet accumsan tortor. Sed
+                        venenatis velit vitae neque ultricies, et auctor orci vulputate.
                     </p>
                 </section>
             </div>
         </article>
 
         <nav id="book-chapters" class="mb-6" aria-labelledby="chapters-heading">
-            <h2 id="chapters-heading" class="text-xl font-semibold mb-2">
-                Chapters
-            </h2>
+            <h2 id="chapters-heading" class="text-xl font-semibold mb-2">Editions</h2>
             <div id="chapter-container" class="max-h-64 overflow-y-auto border rounded p-2">
-                <ul id="chapter-list" class="text-gray-700"></ul>
+                <ul id="chapter-list" class="space-y-3"></ul>
             </div>
             <div class="flex justify-between mt-2">
-                <button id="chap-prev" class="btn-action btn-details" disabled>
-                    Previous
-                </button>
+                <button id="chap-prev" class="btn-action btn-details" disabled>Previous</button>
                 <button id="chap-next" class="btn-action btn-read">Next</button>
             </div>
         </nav>
     </main>
 
-    <div class="flex flex-col items-center justify-center my-8 gap-3 text-center">
-        <a id="continue-btn" href="#"
-            class="hidden px-6 py-2 bg-black text-white rounded-full hover:scale-105 transition">
-            Continue Reading
-        </a>
-
-        <div class="w-48 bg-gray-200 rounded-full h-1.5">
-            <div id="progress-bar" class="bg-black h-1.5 rounded-full transition-all duration-300" style="width: 0%">
-            </div>
-        </div>
-
-        <span id="progress-text" class="text-xs text-gray-500">0%</span>
-    </div>
-
     <footer class="site-footer mt-12" aria-labelledby="feedback-heading">
         <div class="footer-container">
             <div class="footer-top">
-                <h3 id="feedback-heading" class="text-xl font-semibold mb-2">
-                    Share your thoughts
-                </h3>
+                <h3 id="feedback-heading" class="text-xl font-semibold mb-2">Share your thoughts</h3>
                 <div id="comments-list" class="mb-4 max-h-48 overflow-y-auto border p-2 rounded bg-white">
-                    <p class="text-gray-500">
-                        No comments yet. Be the first to share your thoughts!
-                    </p>
+                    <p class="text-gray-500">No comments yet. Be the first to share your thoughts!</p>
                 </div>
                 <form id="comment-form" class="w-full">
                     <label for="comment-input" class="sr-only">Comment</label>
                     <textarea id="comment-input" class="w-full p-2 border rounded mb-4" rows="3"
                         placeholder="Share your thoughts about the book..."></textarea>
-                    <button type="submit" class="btn-action btn-read">
-                        Post Comment
-                    </button>
+                    <button type="submit" class="btn-action btn-read">Post Comment</button>
                 </form>
             </div>
             <div class="footer-bottom">
                 <div class="contact-info">
                     <p><strong>BookWorm</strong> • hello@bookworm.vn</p>
-                    <p>
-                        <a href="tel:+842839301234">+84 28 3930 1234</a> •
-                        Ho Chi Minh City, Vietnam
-                    </p>
+                    <p><a href="tel:+842839301234">+84 28 3930 1234</a> • Ho Chi Minh City, Vietnam</p>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script src="../script/lazyLoad.js" defer></script>
     <!-- page logic separated into external script -->
+    <script src="../script/lazyLoad.js" defer></script>
     <script src="script.js" defer></script>
-    <script src="Progressing-bar.js"></script>
 </body>
 
 </html>
