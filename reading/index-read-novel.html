@@ -10,18 +10,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-    :root {
-    /* Exact Color Palette from User */
+:root {
+    /* Exact Color Palette - Match main/style.css */
+    --primary-color: #333333;
+    --secondary-color: #666666;
     --black: #000000;
     --white: #ffffff;
-    --gray: #efefef;
-    --gray-2: #757575;
-    --text: #333333;
+    --gray: #e0e0e0;
+    --gray-2: #888888;
+    --text: #1a1a1a;
     
-    /* Additional colors */
-    --bg: #E7F2EF;
-    --accent: #A1C2BD;
-    --muted: #708993;
+    /* Additional colors - Match main/style.css */
+    --bg: #f5f5f5;
+    --accent: #333333;
+    --muted: #666666;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -33,7 +35,7 @@
 }
 
 body {
-    font-family: "Story Script", sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
@@ -127,20 +129,20 @@ body {
     padding-top: .5rem;
     padding-bottom: .5rem;
     background: #ffffff;
-    border: 2px solid #A1C2BD;
+    border: 2px solid #808080;
     border-radius: .5rem;
-    color: #333333;
+    color: #1a1a1a;
 }
 
 .custom-input::placeholder {
-    color: #708993;
+    color: #666666;
 }
 
 .custom-input:focus {
     outline: none;
     background: #ffffff;
-    border-color: #708993;
-    box-shadow: 0 0 0 3px rgba(161, 194, 189, 0.3);
+    border-color: #666666;
+    box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.2);
 }
 
 .mobile-menu {
@@ -365,10 +367,10 @@ body {
             </div>
 
             <div class="mt-8 flex justify-center gap-4">
-                <button class="px-6 py-3 rounded-xl bg-gray-700 text-white">
+                <button class="px-6 py-3 rounded-xl bg-gray-700 text-white hover:bg-gray-600 transition">
                     ← Chapter trước
                 </button>
-                <button class="px-6 py-3 rounded-xl bg-indigo-900 text-white">
+                <button class="px-6 py-3 rounded-xl bg-indigo-900 text-white hover:bg-indigo-800 transition">
                     Chapter sau →
                 </button>
             </div>

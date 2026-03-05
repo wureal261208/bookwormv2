@@ -10,18 +10,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-        :root {
-    /* Exact Color Palette from User */
+:root {
+    /* Exact Color Palette - Match main/style.css */
+    --primary-color: #333333;
+    --secondary-color: #666666;
     --black: #000000;
     --white: #ffffff;
-    --gray: #efefef;
-    --gray-2: #757575;
-    --text: #333333;
+    --gray: #e0e0e0;
+    --gray-2: #888888;
+    --text: #1a1a1a;
     
-    /* Additional colors */
-    --bg: #E7F2EF;
-    --accent: #A1C2BD;
-    --muted: #708993;
+    /* Additional colors - Match main/style.css */
+    --bg: #f5f5f5;
+    --accent: #333333;
+    --muted: #666666;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -127,20 +129,20 @@ body {
     padding-top: .5rem;
     padding-bottom: .5rem;
     background: #ffffff;
-    border: 2px solid #A1C2BD;
+    border: 2px solid #808080;
     border-radius: .5rem;
-    color: #333333;
+    color: #1a1a1a;
 }
 
 .custom-input::placeholder {
-    color: #708993;
+    color: #666666;
 }
 
 .custom-input:focus {
     outline: none;
     background: #ffffff;
-    border-color: #708993;
-    box-shadow: 0 0 0 3px rgba(161, 194, 189, 0.3);
+    border-color: #666666;
+    box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.2);
 }
 
 .mobile-menu {
@@ -275,11 +277,11 @@ body {
 
     <section id="readerSection" class="py-12">
         <div class="max-w-4xl mx-auto px-4">
-            <div class="text-center mb-8">
+<div class="text-center mb-8">
                 <h1 class="text-3xl font-semibold">The Name of the Wind</h1>
                 <p class="text-lg text-gray-500 mt-2">Chapter 1</p>
                 <button onclick="toggleMode()"
-                    class="mt-4 px-5 py-2 rounded-lg bg-indigo-900 text-white hover:bg-indigo-800 transition">
+                    class="mt-4 px-5 py-2 rounded-lg bg-gradient-to-r from-gray-700 to-gray-900 text-white hover:from-gray-600 hover:to-gray-800 transition shadow-md">
                     Đổi chế độ đọc
                 </button>
             </div>
@@ -318,11 +320,11 @@ body {
                 </div>
             </div>
 
-            <div class="chapter-nav-center mt-8 flex justify-center items-center gap-4">
-                <button id="prevChapterBtn" class="px-6 py-3 rounded-xl bg-gray-700 text-white hover:bg-gray-600 transition">
+<div class="chapter-nav-center mt-8 flex justify-center items-center gap-4">
+                <button id="prevChapterBtn" class="px-6 py-3 rounded-xl bg-gradient-to-r from-gray-700 to-gray-900 text-white hover:from-gray-600 hover:to-gray-800 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                     ← Chapter trước
                 </button>
-                <button id="nextChapterBtn" class="px-6 py-3 rounded-xl bg-indigo-900 text-white hover:bg-indigo-800 transition">
+                <button id="nextChapterBtn" class="px-6 py-3 rounded-xl bg-gradient-to-r from-gray-700 to-gray-900 text-white hover:from-gray-600 hover:to-gray-800 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                     Chapter sau →
                 </button>
             </div>
