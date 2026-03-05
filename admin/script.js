@@ -24,6 +24,85 @@ function saveBooksToStorage() {
     localStorage.setItem('adminBooks', JSON.stringify(books));
 }
 
+// ═════════════════════════════════════════════════════════════
+// BOOK COVER LOCALSTORAGE MANAGEMENT
+// ═════════════════════════════════════════════════════════════
+
+// Default cover images for fallback
+const DEFAULT_COVERS = [
+    "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80",
+    "https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80",
+    "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80",
+    "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80",
+    "https://images.unsplash.com/photo-1476275466078-4007374efbbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80"
+];
+
+// Get default cover image
+function getDefaultCover() {
+    return DEFAULT_COVERS[0];
+}
+
+// Get random default cover
+function getRandomDefaultCover() {
+    return DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)];
+}
+
+// Validate if URL is valid
+function isValidCoverUrl(url) {
+    if (!url || typeof url !== 'string') return false;
+    try {
+        new URL(url);
+        return url.startsWith('http://') || url.startsWith('https://');
+    } catch {
+        return false;
+    }
+}
+
+// Get book cover from localStorage
+function getBookCover(bookId) {
+    const storedBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+    const book = storedBooks.find(b => b.id === bookId);
+    if (book && book.image) {
+        if (isValidCoverUrl(book.image)) {
+            return book.image;
+        }
+    }
+    return getDefaultCover();
+}
+
+// Save book cover to localStorage
+function saveBookCover(bookId, coverUrl) {
+    const storedBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+    const bookIndex = storedBooks.findIndex(b => b.id === bookId);
+    
+    if (bookIndex !== -1) {
+        // Validate URL or use default
+        const validCover = isValidCoverUrl(coverUrl) ? coverUrl : getDefaultCover();
+        storedBooks[bookIndex].image = validCover;
+        storedBooks[bookIndex].updatedAt = new Date().toISOString();
+        localStorage.setItem('adminBooks', JSON.stringify(storedBooks));
+        
+        // Update in-memory books array
+        const localBookIndex = books.findIndex(b => b.id === bookId);
+        if (localBookIndex !== -1) {
+            books[localBookIndex].image = validCover;
+        }
+        
+        return validCover;
+    }
+    return getDefaultCover();
+}
+
+// Get all book covers from localStorage (returns array of cover URLs)
+function getAllBookCovers() {
+    const storedBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+    return storedBooks.map(book => ({
+        id: book.id,
+        title: book.title,
+        image: isValidCoverUrl(book.image) ? book.image : getDefaultCover()
+    }));
+}
+
 // Function to add a new edition input row
 function addEditionRow() {
     const container = document.getElementById('edition-container');
@@ -505,12 +584,9 @@ function addBook(event) {
     // Collect editions
     const editions = collectEditions();
     
-    // Default cover image if none provided
-    const defaultImage = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
-    
-    // Ensure a usable image string; if the user entered something but it's not a valid URL we still fall back
-    const finalImage = (imageUrl && /^https?:\/\//i.test(imageUrl)) ? imageUrl : defaultImage;
-    if (imageUrl && finalImage === defaultImage) {
+    // Use localStorage helper functions for cover image management
+    const finalImage = isValidCoverUrl(imageUrl) ? imageUrl : getDefaultCover();
+    if (imageUrl && finalImage === getDefaultCover()) {
         showNotification('Invalid image URL. Using default cover.', 'warning');
     }
     
@@ -752,8 +828,8 @@ function renderBooks() {
     
     container.innerHTML = booksToRender.map(book => `
         <div class="book-item">
-            <!-- cover URL comes from localStorage object; fallback to default if missing -->
-            <img src="${book.image || 'https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80'}" alt="${book.title}">
+            <!-- cover URL comes from localStorage using getBookCover helper -->
+            <img src="${getBookCover(book.id)}" alt="${book.title}">
             <div class="book-info">
                 <div class="book-title">${highlightMatch(book.title, currentSearchQuery)}</div>
                 <div class="book-author">${highlightMatch(book.author, currentSearchQuery)}</div>
@@ -882,12 +958,9 @@ function addBook(event) {
     // Collect editions
     const editions = collectEditions();
     
-    // Default cover image if none provided
-    const defaultImage = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
-    
-    // ensure a usable image string; if the user entered something but it's not a valid URL we still fall back
-    const finalImage = (imageUrl && /^https?:\/\//i.test(imageUrl)) ? imageUrl : defaultImage;
-    if (imageUrl && finalImage === defaultImage) {
+    // Use localStorage helper functions for cover image management
+    const finalImage = isValidCoverUrl(imageUrl) ? imageUrl : getDefaultCover();
+    if (imageUrl && finalImage === getDefaultCover()) {
         showNotification('Invalid image URL. Using default cover.', 'warning');
     }
 
@@ -1164,12 +1237,9 @@ function editBook(event) {
     // Collect editions
     const editions = collectEditEditions();
     
-    // Default cover image if none provided
-    const defaultImage = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
-    
-    // Ensure a usable image string
-    const finalImage = (imageUrl && /^https?:\/\//i.test(imageUrl)) ? imageUrl : defaultImage;
-    if (imageUrl && finalImage === defaultImage) {
+    // Use localStorage helper functions for cover image management
+    const finalImage = isValidCoverUrl(imageUrl) ? imageUrl : getDefaultCover();
+    if (imageUrl && finalImage === getDefaultCover()) {
         showNotification('Invalid image URL. Using default cover.', 'warning');
     }
     
@@ -1182,12 +1252,12 @@ function editBook(event) {
     
     // Simulate a small delay for better UX
     setTimeout(() => {
-        // Update book
+        // Update book - use saveBookCover to properly store in localStorage
         books[bookIndex] = {
             ...books[bookIndex],
             title,
             author,
-            image: finalImage,
+            image: saveBookCover(bookId, finalImage),
             genre,
             pages: parseInt(pages),
             status,
