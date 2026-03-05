@@ -128,10 +128,23 @@
                     </div>
                 </div>
 
-                <!-- Cover Image -->
+                <!-- Cover Image with Upload Option -->
                 <div class="form-group">
-                    <label for="book-image"><i class='bx bx-image'></i> Cover Image URL</label>
-                    <input type="url" id="book-image" placeholder="https://example.com/image.jpg (optional)">
+                    <label for="book-image"><i class='bx bx-image'></i> Cover Image</label>
+                    <div class="image-upload-container">
+                        <input type="url" id="book-image" class="image-url-input" placeholder="https://example.com/image.jpg (optional)" onchange="previewImage(this, 'book-image-preview')">
+                        <span class="field-hint">Or upload from device:</span>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="book-image-file" class="file-input" accept="image/*" onchange="handleImageUpload(this, 'book-image', 'book-image-preview')">
+                            <label for="book-image-file" class="file-upload-label">
+                                <i class='bx bx-upload'></i> Choose Image
+                            </label>
+                            <button type="button" class="btn-clear-image" onclick="clearImageUpload('book-image', 'book-image-preview')" title="Clear image">
+                                <i class='bx bx-x'></i>
+                            </button>
+                        </div>
+                        <div id="book-image-preview" class="image-preview"></div>
+                    </div>
                     <span class="field-hint">Leave empty for default cover</span>
                 </div>
 
@@ -257,10 +270,23 @@
                     </div>
                 </div>
 
-                <!-- Cover Image -->
+                <!-- Cover Image with Upload Option -->
                 <div class="form-group">
-                    <label for="edit-book-image"><i class='bx bx-image'></i> Cover Image URL</label>
-                    <input type="url" id="edit-book-image" placeholder="https://example.com/image.jpg (optional)">
+                    <label for="edit-book-image"><i class='bx bx-image'></i> Cover Image</label>
+                    <div class="image-upload-container">
+                        <input type="url" id="edit-book-image" class="image-url-input" placeholder="https://example.com/image.jpg (optional)" onchange="previewImage(this, 'edit-book-image-preview')">
+                        <span class="field-hint">Or upload from device:</span>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="edit-book-image-file" class="file-input" accept="image/*" onchange="handleImageUpload(this, 'edit-book-image', 'edit-book-image-preview')">
+                            <label for="edit-book-image-file" class="file-upload-label">
+                                <i class='bx bx-upload'></i> Choose Image
+                            </label>
+                            <button type="button" class="btn-clear-image" onclick="clearImageUpload('edit-book-image', 'edit-book-image-preview')" title="Clear image">
+                                <i class='bx bx-x'></i>
+                            </button>
+                        </div>
+                        <div id="edit-book-image-preview" class="image-preview"></div>
+                    </div>
                     <span class="field-hint">Leave empty for default cover</span>
                 </div>
 

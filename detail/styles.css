@@ -84,6 +84,13 @@
     flex-direction: column;
 }
 
+/* edition actions container */
+.edition-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
 /* nút đọc */
 .edition-read {
     padding: 6px 14px;
@@ -92,10 +99,27 @@
     border-radius: 20px;
     font-size: 14px;
     text-decoration: none;
+    transition: opacity 0.2s;
 }
 
 .edition-read:hover {
     opacity: 0.8;
+}
+
+/* nút about */
+.edition-about {
+    padding: 6px 14px;
+    background: transparent;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+    border-radius: 20px;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.edition-about:hover {
+    background-color: #f3f4f6;
 }
 
 /* comment entries */

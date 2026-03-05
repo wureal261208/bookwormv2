@@ -153,19 +153,110 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // comment system using form
+    // =====================
+    // COMMENT SYSTEM (linked with main page)
+    // =====================
     const commentForm = document.getElementById('comment-form');
     const commentInput = document.getElementById('comment-input');
     const commentsList = document.getElementById('comments-list');
 
+    // Get current book ID for comments storage
+    function getCurrentBookId() {
+        const params = new URLSearchParams(window.location.search);
+        const bookId = params.get('id');
+        if (bookId) return bookId;
+        
+        const storedBook = localStorage.getItem('currentBook');
+        if (storedBook) {
+            const book = JSON.parse(storedBook);
+            return book.id || 'default';
+        }
+        return 'default';
+    }
+
+    // Save comment to localStorage
+    function saveComment(bookId, text) {
+        const commentsKey = `bookComments_${bookId}`;
+        const existingComments = JSON.parse(localStorage.getItem(commentsKey)) || [];
+        
+        const newComment = {
+            id: Date.now(),
+            text: text,
+            timestamp: new Date().toISOString(),
+            user: 'Anonymous User'
+        };
+        
+        existingComments.push(newComment);
+        localStorage.setItem(commentsKey, JSON.stringify(existingComments));
+        
+        return newComment;
+    }
+
+    // Load comments from localStorage
+    function loadComments(bookId) {
+        const commentsKey = `bookComments_${bookId}`;
+        return JSON.parse(localStorage.getItem(commentsKey)) || [];
+    }
+
+    // Render comments to the list
+    function renderComments(comments) {
+        if (!commentsList) return;
+        
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<p class="text-gray-500">No comments yet. Be the first to share your thoughts!</p>';
+            return;
+        }
+
+        commentsList.innerHTML = comments.map(comment => {
+            const date = new Date(comment.timestamp);
+            const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            return `
+                <div class="p-3 mb-2 border rounded bg-gray-50 comment-item">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="font-semibold text-sm">${comment.user}</span>
+                        <span class="text-xs text-gray-500">${formattedDate}</span>
+                    </div>
+                    <p class="text-sm">${comment.text}</p>
+                </div>
+            `;
+        }).join('');
+        
+        // Scroll to bottom
+        commentsList.scrollTop = commentsList.scrollHeight;
+    }
+
+    // Initialize comments on page load
+    const currentBookId = getCurrentBookId();
+    if (commentsList) {
+        const initialComments = loadComments(currentBookId);
+        renderComments(initialComments);
+    }
+
     function addComment(text) {
         if (!text) return;
+        
+        // Save to localStorage
+        const savedComment = saveComment(currentBookId, text);
+        
+        // Clear empty state message if present
         if (commentsList.children.length === 1 && commentsList.children[0].classList.contains('text-gray-500')) {
             commentsList.innerHTML = '';
         }
+        
+        // Add comment to display
+        const date = new Date(savedComment.timestamp);
+        const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
         const div = document.createElement('div');
-        div.className = 'p-2 mb-2 border rounded bg-gray-50';
-        div.textContent = text;
+        div.className = 'p-3 mb-2 border rounded bg-gray-50 comment-item';
+        div.innerHTML = `
+            <div class="flex justify-between items-start mb-1">
+                <span class="font-semibold text-sm">${savedComment.user}</span>
+                <span class="text-xs text-gray-500">${formattedDate}</span>
+            </div>
+            <p class="text-sm">${savedComment.text}</p>
+        `;
         commentsList.appendChild(div);
         commentsList.scrollTop = commentsList.scrollHeight;
     }
@@ -180,6 +271,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 commentInput.focus();
             }
         });
+    }
+
+    // Helper function to check if book is new (published within last 7 days)
+    function isNewBook(publishedAt) {
+        if (!publishedAt) return false;
+        const publishedDate = new Date(publishedAt);
+        const now = new Date();
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return publishedDate > sevenDaysAgo;
+    }
+
+    // Helper function to generate star rating based on views
+    function generateRating(views) {
+        const viewCount = typeof views === 'number' ? views : parseInt(views) || 0;
+        // 0-99 views = 1 star, 100-199 = 2 stars, etc., max 5 stars
+        const rating = Math.min(5, Math.ceil(viewCount / 100));
+        
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                starsHtml += '★';
+            } else {
+                starsHtml += '☆';
+            }
+        }
+        
+        // Format views count
+        let formattedViews;
+        if (viewCount >= 1000) {
+            formattedViews = (viewCount / 1000).toFixed(1) + 'k';
+        } else {
+            formattedViews = viewCount.toString();
+        }
+        
+        return { stars: starsHtml, formattedViews: formattedViews };
     }
 
     // simple data loader (would normally be async fetch)
@@ -209,11 +335,28 @@ document.addEventListener('DOMContentLoaded', () => {
             title = book.title || 'Book Title';
             author = book.author || 'Author Name';
             status = book.status || 'Completed';
-            views = book.views || '12.3k';
-            rating = '★★★★★';
-            ratingCount = '(NEW)';
+            views = book.views || 0;
             description = book.description || '';
             chapters = book.pages || 200;
+            const publishedAt = book.pubdate || book.publishedAt;
+            
+            // Generate dynamic rating based on views
+            const ratingData = generateRating(views);
+            rating = ratingData.stars;
+            ratingCount = `(${ratingData.formattedViews} views)`;
+            
+            // Check and display NEW badge
+            const newBadge = document.getElementById('new-badge');
+            if (newBadge && isNewBook(publishedAt)) {
+                newBadge.classList.remove('hidden');
+            }
+            
+            // Set the main Read button href
+            const readBtn = document.getElementById('read-btn');
+            if (readBtn) {
+                readBtn.href = `../reading/index-read-novel.html?book=${book.id || 'default'}&chapter=1`;
+            }
+            
             if (overrideCover && isValidUrl(overrideCover)) {
                 cover = overrideCover;
             } else if (book.image) {
@@ -235,11 +378,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 title = adminBook.title || 'Book Title';
                 author = adminBook.author || 'Author Name';
                 status = adminBook.status || 'Completed';
-                views = adminBook.views || '12.3k';
-                rating = '★★★★★';
-                ratingCount = '(NEW)';
+                views = adminBook.views || 0;
                 description = adminBook.description || '';
                 chapters = adminBook.pages || 200;
+                const publishedAt = adminBook.pubdate || adminBook.publishedAt;
+                
+                // Generate dynamic rating based on views
+                const ratingData = generateRating(views);
+                rating = ratingData.stars;
+                ratingCount = `(${ratingData.formattedViews} views)`;
+                
+                // Check and display NEW badge
+                const newBadge = document.getElementById('new-badge');
+                if (newBadge && isNewBook(publishedAt)) {
+                    newBadge.classList.remove('hidden');
+                }
+                
+                // Set the main Read button href
+                const readBtn = document.getElementById('read-btn');
+                if (readBtn) {
+                    readBtn.href = `../reading/index-read-novel.html?book=${bookId}&chapter=1`;
+                }
+                
                 cover = (adminBook.image && isValidUrl(adminBook.image)) ? adminBook.image : '';
             } else {
                 // Fall back to URL query parameters
@@ -252,6 +412,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 description = params.get('desc') || '';
                 cover = overrideCover || params.get('cover');
                 chapters = parseInt(params.get('chapters')) || 200;
+                
+                // Set the main Read button href
+                const readBtn = document.getElementById('read-btn');
+                if (readBtn) {
+                    readBtn.href = `../reading/index-read-novel.html?book=${bookId || 'default'}&chapter=1`;
+                }
             }
         } else {
             // Fall back to URL query parameters
@@ -266,6 +432,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // if we reach here without localStorage data use query params (including cover override)
             cover = overrideCover || params.get('cover');
             chapters = parseInt(params.get('chapters')) || 200;
+            
+            // Set the main Read button href (default)
+            const readBtn = document.getElementById('read-btn');
+            if (readBtn) {
+                readBtn.href = '../reading/index-read-novel.html?book=default&chapter=1';
+            }
         }
 
         document.getElementById('book-title').textContent = title;
@@ -276,99 +448,152 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('book-rating-count').textContent = ratingCount;
         document.getElementById('book-description').textContent = description ||
             'No summary provided.';
-        // Set book cover image - use book image or fallback to default
+    // Set book cover image - use book image or fallback to default
         const defaultCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
-        document.getElementById('book-cover').src = cover || defaultCover;
+        const bookCoverEl = document.getElementById('book-cover');
+        const bookCoverLink = document.getElementById('book-cover-link');
+        if (bookCoverEl) {
+            if (cover && isValidUrl(cover)) {
+                bookCoverEl.src = cover;
+            } else {
+                bookCoverEl.src = defaultCover;
+            }
+            // Add error handling for image loading
+            bookCoverEl.onerror = function() {
+                this.src = defaultCover;
+            };
+        }
+        // Set the book cover link href (same as read button)
+        if (bookCoverLink) {
+            bookCoverLink.href = readBtn ? readBtn.href : `../reading/index-read-novel.html?book=${bookId || 'default'}&chapter=1`;
+        }
         return chapters;
     }
 
-    // chapters pagination - five rows of six columns per page
-    const totalEditions = loadBook();   // uses the returned number
-    const pageSize = 1; // six columns × five rows
+    // chapters pagination - display actual editions from book data
+    let editions = [];
+    let chaptersCount = 200; // default fallback
+    
+    try {
+        // First load the book data
+        chaptersCount = loadBook();
+        
+        const storedBook = localStorage.getItem('currentBook');
+        if (storedBook) {
+            const book = JSON.parse(storedBook);
+            editions = book.editions || [];
+        }
+        
+        // Try to get from URL parameter as fallback
+        const params = new URLSearchParams(window.location.search);
+        const bookId = params.get('id');
+        if (!editions.length && bookId) {
+            const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+            const adminBook = adminBooks.find(b => b.id == bookId);
+            if (adminBook) {
+                editions = adminBook.editions || [];
+            }
+        }
+    } catch (e) {
+        console.error('Error loading editions:', e);
+    }
+    
+    // If no editions in book data, use page count as fallback
+    const totalEditions = editions.length > 0 ? editions.length : chaptersCount;
+    const pageSize = 6;
     let currentPage = 0;
     const editionList = document.getElementById('chapter-list');
     const btnPrev = document.getElementById('chap-prev');
     const btnNext = document.getElementById('chap-next');
 
+    // Default cover for editions without images
+    const defaultEditionCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?w=80";
+
     function renderChapters() {
         if (!editionList) return [];
         editionList.innerHTML = '';
-        const start = currentPage * pageSize + 1;
-        const end = Math.min(totalEditions, start + pageSize - 1);
-        const links = [];
-        for (let i = start; i <= end; i++) {
-    const li = document.createElement('li');
 
-    li.className =
-    "flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50";
+        const start = currentPage * pageSize;
+        const end = Math.min(editions.length, start + pageSize);
+        
+        // If no editions available at all, show a message
+        if (totalEditions === 0) {
+            editionList.innerHTML = `
+                <li class="text-center py-8 text-gray-500">
+                    <i class='bx bx-book' style="font-size: 3rem;"></i>
+                    <p class="mt-2">No editions available for this book.</p>
+                    <p class="text-sm text-gray-400">Check back later for updates.</p>
+                </li>
+            `;
+            if (btnPrev) btnPrev.disabled = true;
+            if (btnNext) btnNext.disabled = true;
+            return [];
+        }
+        
+        // If we have actual editions, display them
+        if (editions.length > 0) {
+            for (let i = start; i < end; i++) {
+                const edition = editions[i];
+                const li = document.createElement('li');
+                li.className = "edition-item flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50";
+                
+                // Get edition image or use default
+                const editionImage = edition.image || defaultEditionCover;
+                // Get edition title or generate default
+                const editionTitle = edition.title || `Edition ${i + 1}`;
+                // Get edition language or default to English
+                const editionLanguage = edition.language || 'English';
 
-    li.innerHTML = `
-    <div class="flex items-center gap-3">
-
-    <img src="https://images.unsplash.com/photo-1543002588-bfa74090ca80?w=80"
-    class="w-10 h-14 object-cover rounded">
-
-    <div>
-    <p class="font-semibold">Edition ${i}</p>
-    <p class="text-sm text-gray-500">Language: English</p>
-    </div>
-
-    </div>
-
-    <a href="../reading/index-read-img.html?edition=${i}"
-    class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
-    Read
-    </a>
-    `;
-
-    editionList.appendChild(li);
-function renderChapters() {
-    if (!editionList) return [];
-    editionList.innerHTML = '';
-
-    const start = currentPage * pageSize + 1;
-    const end = Math.min(totalEditions, start + pageSize - 1);
-
-    const links = [];
-
-    for (let i = start; i <= end; i++) {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-
-        // Điều hướng theo chapter
-        if (i === 1) {
-            a.href = "../reading/index-read-img.html";
-        } else if (i === 2) {
-            a.href = "../reading/index-read-novel.html";
+                li.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <img src="${editionImage}" alt="${editionTitle}" class="w-10 h-14 object-cover rounded">
+                        <div class="edition-info">
+                            <p class="font-semibold">${editionTitle}</p>
+                            <p class="text-sm text-gray-500">Language: ${editionLanguage}</p>
+                        </div>
+                    </div>
+                    <div class="edition-actions flex gap-2">
+                        <a href="index-${localStorage.getItem('isLoggedIn') ? 'acc' : 'none'}.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-about px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-100">
+                            About
+                        </a>
+                        <a href="../reading/index-read-img.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-read px-3 py-1.5 bg-black text-white text-sm rounded hover:opacity-80">
+                            Read
+                        </a>
+                    </div>
+                `;
+                editionList.appendChild(li);
+            }
         } else {
-            a.href = `../reading/index-read-novel.html?chapter=${i}`;
+            // Fallback: generate placeholder editions based on page count
+            for (let i = start; i < end; i++) {
+                const li = document.createElement('li');
+                li.className = "edition-item flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50";
+                li.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <img src="${defaultEditionCover}" alt="Edition ${i + 1}" class="w-10 h-14 object-cover rounded">
+                        <div class="edition-info">
+                            <p class="font-semibold">Edition ${i + 1}</p>
+                            <p class="text-sm text-gray-500">Language: English</p>
+                        </div>
+                    </div>
+                    <div class="edition-actions flex gap-2">
+                        <a href="index-${localStorage.getItem('isLoggedIn') ? 'acc' : 'none'}.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-about px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-100">
+                            About
+                        </a>
+                        <a href="../reading/index-read-img.html?edition=${i + 1}" class="edition-read px-3 py-1.5 bg-black text-white text-sm rounded hover:opacity-80">
+                            Read
+                        </a>
+                    </div>
+                `;
+                editionList.appendChild(li);
+            }
         }
 
-        a.textContent = `Edition ${i}`;
-        a.className = 'text-blue-600 hover:underline focus:outline-none focus:ring';
-
-        li.appendChild(a);
-        editionList.appendChild(li);
-        links.push(a);
-    }
-
-    if (btnPrev) btnPrev.disabled = currentPage === 0;
-    if (btnNext) btnNext.disabled = end === totalEditions;
-
-    return links;
-}
-
-            a.href = `../reading/index-read-img.html?edition=${i}`;
-            a.textContent = `Edition ${i}`;
-            a.className = 'text-blue-600 hover:underline focus:outline-none focus:ring';
-            a.setAttribute('tabindex', '0');
-            li.appendChild(a);
-            editionList.appendChild(li);
-            links.push(a);
-        }
+        // Update pagination buttons
         if (btnPrev) btnPrev.disabled = currentPage === 0;
-        if (btnNext) btnNext.disabled = end === totalEditions;
-        return links;
+        if (btnNext) btnNext.disabled = end >= totalEditions;
+
+        return editionList.querySelectorAll('a');
     }
 
     if (btnPrev) {

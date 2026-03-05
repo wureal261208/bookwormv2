@@ -60,6 +60,12 @@ function setupCardHandlers(detailPage) {
                 pages: parseInt(card.dataset.pages) || 0,
                 status: 'published'
             };
+            
+            // Update views count when clicking on a book
+            if (book.id) {
+                updateViews(book.id);
+            }
+            
             localStorage.setItem('currentBook', JSON.stringify(book));
             let target = detailPage;
             if (imgSrc && isValidUrl(imgSrc)) {
@@ -75,8 +81,13 @@ function loadPublishedBooks() {
     const storedBooks = localStorage.getItem('adminBooks');
     if (storedBooks) {
         const books = JSON.parse(storedBooks);
-        // Only return published books
-        return books.filter(book => book.status === 'published');
+        // Only return published books, sorted by views (trending) - most views first
+        return books.filter(book => book.status === 'published')
+            .sort((a, b) => {
+                const viewsA = a.views || 0;
+                const viewsB = b.views || 0;
+                return viewsB - viewsA; // Descending order (highest views first)
+            });
     }
     return [];
 }
@@ -174,6 +185,21 @@ function renderBooks(books) {
     
     itemsGrid.innerHTML = books.map(book => {
         const bookType = getBookType(book.tags);
+        
+        // Calculate rating based on views (more views = higher rating)
+        const views = book.views || 0;
+        const rating = Math.min(5, Math.ceil(views / 100)); // 0-99 views = 1 star, 100-199 = 2 stars, etc., max 5 stars
+        
+        // Generate stars HTML
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                starsHtml += '<i class=\'bx bxs-star text-yellow-400\'></i>';
+            } else {
+                starsHtml += '<i class=\'bx bx-star text-gray-300\'></i>';
+            }
+        }
+        
         return `
         <div class="item-card" data-category="${book.genre.toLowerCase()}" data-rating="5" data-year="${new Date().getFullYear()}" onclick="viewBookDetail(${book.id})">
             <div class="card-image">
@@ -187,13 +213,12 @@ function renderBooks(books) {
                 <div class="card-meta">
                     <span><i class='bx bx-book-open'></i> ${book.pages} pages</span>
                     <span><i class='bx bx-calendar'></i> ${new Date().getFullYear()}</span>
-                    <span><i class='bx bx-user'></i> ${book.views || 0}</span>
+                    <span><i class='bx bx-eye'></i> ${book.views || 0} views</span>
                 </div>
                 <div class="card-footer">
                     <span class="category-tag">${book.genre}</span>
                     <div class="rating">
-                        <span class="rating-stars">★★★★★</span>
-                        <span class="rating-count">(NEW)</span>
+                        <span class="rating-stars">${starsHtml}</span>
                     </div>
                 </div>
             </div>
@@ -208,6 +233,9 @@ function viewBookDetail(bookId) {
         const books = JSON.parse(storedBooks);
         const book = books.find(b => b.id === bookId);
         if (book) {
+            // Update views count when clicking on a book
+            updateViews(bookId);
+            
             // Store the book data in localStorage for the detail page
             localStorage.setItem('currentBook', JSON.stringify(book));
             // Navigate to detail page, include cover URL as query param so detail can always use it
@@ -216,6 +244,19 @@ function viewBookDetail(bookId) {
                 target += '?cover=' + encodeURIComponent(book.image);
             }
             window.location.href = target;
+        }
+    }
+}
+
+// Function to update views count for a book
+function updateViews(bookId) {
+    const storedBooks = localStorage.getItem('adminBooks');
+    if (storedBooks) {
+        const books = JSON.parse(storedBooks);
+        const book = books.find(b => b.id === bookId);
+        if (book) {
+            book.views = (book.views || 0) + 1;
+            localStorage.setItem('adminBooks', JSON.stringify(books));
         }
     }
 }
@@ -345,6 +386,9 @@ function viewSearchedBook(bookId) {
         const books = JSON.parse(storedBooks);
         const book = books.find(b => b.id === bookId);
         if (book) {
+            // Update views count when clicking on a book
+            updateViews(bookId);
+            
             // Store book data
             localStorage.setItem('currentBook', JSON.stringify(book));
             // Navigate to detail page (none account version)

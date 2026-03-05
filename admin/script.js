@@ -9,6 +9,81 @@ const API_OPTIONS = {
     headers: { 'Content-Type': 'application/json' }
 };
 
+// ═════════════════════════════════════════════════════════════
+// IMAGE UPLOAD FUNCTIONS
+// ═════════════════════════════════════════════════════════════
+
+// Function to handle image file upload and convert to base64
+function handleImageUpload(input, urlFieldId, previewId) {
+    const file = input.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+        showNotification('Please select a valid image file (JPEG, PNG, GIF, or WebP)', 'error');
+        return;
+    }
+
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+        showNotification('Image file is too large. Maximum size is 5MB', 'error');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64Image = e.target.result;
+        // Set the URL field value to the base64 image
+        const urlField = document.getElementById(urlFieldId);
+        if (urlField) {
+            urlField.value = base64Image;
+        }
+        // Show preview
+        showImagePreview(base64Image, previewId);
+    };
+    reader.onerror = function() {
+        showNotification('Failed to read image file', 'error');
+    };
+    reader.readAsDataURL(file);
+}
+
+// Function to show image preview
+function showImagePreview(imageSrc, previewId) {
+    const preview = document.getElementById(previewId);
+    if (preview) {
+        preview.innerHTML = `<img src="${imageSrc}" alt="Image Preview">`;
+    }
+}
+
+// Function to preview image from URL
+function previewImage(input, previewId) {
+    const url = input.value.trim();
+    if (url && isValidCoverUrl(url)) {
+        showImagePreview(url, previewId);
+    } else if (!url) {
+        clearImageUpload(input.id, previewId);
+    }
+}
+
+// Function to clear image upload
+function clearImageUpload(urlFieldId, previewId) {
+    const urlField = document.getElementById(urlFieldId);
+    const preview = document.getElementById(previewId);
+    const fileInput = document.getElementById(urlFieldId + '-file');
+    
+    if (urlField) {
+        urlField.value = '';
+    }
+    if (preview) {
+        preview.innerHTML = '';
+    }
+    if (fileInput) {
+        fileInput.value = '';
+    }
+}
+
 // Demo data - will be replaced with Firebase data
 // Load books from localStorage if available, otherwise use default data
 let books = JSON.parse(localStorage.getItem('adminBooks')) || [
@@ -47,9 +122,16 @@ function getRandomDefaultCover() {
     return DEFAULT_COVERS[Math.floor(Math.random() * DEFAULT_COVERS.length)];
 }
 
-// Validate if URL is valid
+// Validate if URL is valid (also accepts base64 data URLs)
 function isValidCoverUrl(url) {
     if (!url || typeof url !== 'string') return false;
+    
+    // Check if it's a base64 data URL
+    if (url.startsWith('data:image/')) {
+        return true;
+    }
+    
+    // Check if it's a regular URL
     try {
         new URL(url);
         return url.startsWith('http://') || url.startsWith('https://');
@@ -921,6 +1003,9 @@ function openModal(type) {
         // Clear validation when opening modal
         clearFormValidation('book-modal');
         removeDuplicateWarning();
+        // Clear image fields and preview
+        document.getElementById('book-image').value = '';
+        document.getElementById('book-image-preview').innerHTML = '';
     }
 }
 
@@ -930,11 +1015,15 @@ function closeModal(type) {
         clearEditionsForm(); // Clear editions when modal closes
         clearFormValidation('book-modal'); // Clear validation when modal closes
         removeDuplicateWarning(); // Remove duplicate warning if exists
+        // Clear image preview
+        document.getElementById('book-image-preview').innerHTML = '';
     }
     if (type === 'edit-book') {
         document.getElementById('edit-book-modal').classList.remove('active');
         clearEditEditionsForm(); // Clear editions when edit modal closes
         clearFormValidation('edit-book-modal'); // Clear validation when modal closes
+        // Clear image preview
+        document.getElementById('edit-book-image-preview').innerHTML = '';
     }
 }
 
@@ -1025,6 +1114,13 @@ function openEditModal(bookId) {
     document.getElementById('edit-book-isbn').value = book.isbn || '';
     document.getElementById('edit-book-language').value = book.language || 'English';
     document.getElementById('edit-book-status').value = book.status || 'draft';
+    
+    // Show image preview for existing book image
+    if (book.image) {
+        showImagePreview(book.image, 'edit-book-image-preview');
+    } else {
+        document.getElementById('edit-book-image-preview').innerHTML = '';
+    }
     
     // Populate editions
     populateEditEditions(book.editions || []);

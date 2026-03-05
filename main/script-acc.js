@@ -66,7 +66,7 @@ function populateCarouselWithBooks() {
     let books = [];
     
     if (storedBooks) {
-        books = JSON.parse(storedBooks);
+        books = JSON.parse(storedBooks).filter(book => book.status === 'published');
     }
     
     // If no books, use default images
@@ -217,6 +217,11 @@ function setupCardHandlers(detailPage) {
                 };
             }
             
+            // Update views count when clicking on a book
+            if (book.id) {
+                updateViews(book.id);
+            }
+            
             // Store the complete book data in localStorage for the detail page
             localStorage.setItem('currentBook', JSON.stringify(book));
             
@@ -235,12 +240,12 @@ function loadPublishedBooks() {
     const storedBooks = localStorage.getItem('adminBooks');
     if (storedBooks) {
         const books = JSON.parse(storedBooks);
-        // Only return published books, sorted by newest first
+        // Only return published books, sorted by views (trending) - most views first
         return books.filter(book => book.status === 'published')
             .sort((a, b) => {
-                const dateA = new Date(a.publishedAt || 0);
-                const dateB = new Date(b.publishedAt || 0);
-                return dateB - dateA;
+                const viewsA = a.views || 0;
+                const viewsB = b.views || 0;
+                return viewsB - viewsA; // Descending order (highest views first)
             });
     }
     return [];
@@ -283,8 +288,20 @@ function renderBooks(books) {
     
     itemsGrid.innerHTML = books.map(book => {
         const bookType = getBookType(book.tags);
-        const isNew = isNewBook(book.publishedAt);
-        const newBadge = isNew ? '<span class="new-badge">NEW</span>' : '';
+        
+        // Calculate rating based on views (more views = higher rating)
+        const views = book.views || 0;
+        const rating = Math.min(5, Math.ceil(views / 100)); // 0-99 views = 1 star, 100-199 = 2 stars, etc., max 5 stars
+        
+        // Generate stars HTML
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                starsHtml += '<i class=\'bx bxs-star text-yellow-400\'></i>';
+            } else {
+                starsHtml += '<i class=\'bx bx-star text-gray-300\'></i>';
+            }
+        }
         
         // Store book data as JSON string in data attribute for reliable passing
         const bookData = encodeURIComponent(JSON.stringify(book));
@@ -293,7 +310,6 @@ function renderBooks(books) {
         <div class="item-card" data-category="${book.genre.toLowerCase()}" data-rating="5" data-year="${new Date().getFullYear()}" data-book-id="${book.id}" data-book='${bookData}'>
             <div class="card-image">
                 <img src="${book.image || defaultImage}" alt="${book.title}">
-                ${newBadge}
                 <span class="book-type-tag ${bookType.class}"><i class='bx ${bookType.icon}'></i> ${bookType.label}</span>
             </div>
             <div class="card-content">
@@ -308,8 +324,7 @@ function renderBooks(books) {
                 <div class="card-footer">
                     <span class="category-tag">${book.genre}</span>
                     <div class="rating">
-                        <span class="rating-stars">★★★★★</span>
-                        <span class="rating-count">${isNew ? 'NEW' : ''}</span>
+                        <span class="rating-stars">${starsHtml}</span>
                     </div>
                 </div>
             </div>
@@ -334,6 +349,9 @@ function viewBookDetail(bookId) {
         const books = JSON.parse(storedBooks);
         const book = books.find(b => b.id === bookId);
         if (book) {
+            // Update views count when clicking on a book
+            updateViews(bookId);
+            
             // Store the book data in localStorage for the detail page
             localStorage.setItem('currentBook', JSON.stringify(book));
             // Navigate to detail page, include valid cover URL
@@ -474,6 +492,9 @@ function viewSearchedBook(bookId) {
         const books = JSON.parse(storedBooks);
         const book = books.find(b => b.id === bookId);
         if (book) {
+            // Update views count when clicking on a book
+            updateViews(bookId);
+            
             // Store book data
             localStorage.setItem('currentBook', JSON.stringify(book));
             // Navigate to detail page
