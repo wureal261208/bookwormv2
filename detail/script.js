@@ -329,7 +329,96 @@ document.addEventListener('DOMContentLoaded', () => {
         const overrideCover = params.get('cover');
         const bookId = params.get('id');
 
-        if (storedBook) {
+        // ALWAYS look up the book from adminBooks when ID is provided to get the latest cover
+        if (bookId) {
+            const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+            const adminBook = adminBooks.find(b => b.id == bookId);
+            
+            if (adminBook) {
+                // Use admin book data - this ensures we get the correct cover from admin
+                title = adminBook.title || 'Book Title';
+                author = adminBook.author || 'Author Name';
+                status = adminBook.status || 'Completed';
+                views = adminBook.views || 0;
+                description = adminBook.description || '';
+                chapters = adminBook.pages || 200;
+                const publishedAt = adminBook.pubdate || adminBook.publishedAt;
+                
+                // Generate dynamic rating based on views
+                const ratingData = generateRating(views);
+                rating = ratingData.stars;
+                ratingCount = `(${ratingData.formattedViews} views)`;
+                
+                // Check and display NEW badge
+                const newBadge = document.getElementById('new-badge');
+                if (newBadge && isNewBook(publishedAt)) {
+                    newBadge.classList.remove('hidden');
+                }
+                
+                // Set the main Read button href
+                const readBtn = document.getElementById('read-btn');
+                if (readBtn) {
+                    readBtn.href = `../reading/index-read-novel.html?book=${bookId}&chapter=1`;
+                }
+                
+                // Use overrideCover if provided and valid, otherwise use adminBook's image
+                if (overrideCover && isValidUrl(overrideCover)) {
+                    cover = overrideCover;
+                } else if (adminBook.image) {
+                    cover = adminBook.image;
+                } else {
+                    cover = '';
+                }
+            } else if (storedBook) {
+                // Fallback to storedBook if not found in adminBooks
+                const book = JSON.parse(storedBook);
+                title = book.title || 'Book Title';
+                author = book.author || 'Author Name';
+                status = book.status || 'Completed';
+                views = book.views || 0;
+                description = book.description || '';
+                chapters = book.pages || 200;
+                const publishedAt = book.pubdate || book.publishedAt;
+                
+                const ratingData = generateRating(views);
+                rating = ratingData.stars;
+                ratingCount = `(${ratingData.formattedViews} views)`;
+                
+                const newBadge = document.getElementById('new-badge');
+                if (newBadge && isNewBook(publishedAt)) {
+                    newBadge.classList.remove('hidden');
+                }
+                
+                const readBtn = document.getElementById('read-btn');
+                if (readBtn) {
+                    readBtn.href = `../reading/index-read-novel.html?book=${book.id || 'default'}&chapter=1`;
+                }
+                
+                if (overrideCover && isValidUrl(overrideCover)) {
+                    cover = overrideCover;
+                } else if (book.image) {
+                    cover = book.image;
+                } else {
+                    cover = '';
+                }
+            } else {
+                // Fall back to URL query parameters
+                title = params.get('title') || 'Book Title';
+                author = params.get('author') || 'Author Name';
+                status = params.get('status') || 'Completed';
+                views = params.get('views') || '12.3k';
+                rating = params.get('rating') || '★★★★★';
+                ratingCount = params.get('ratingCount') || '(1234 reviews)';
+                description = params.get('desc') || '';
+                cover = overrideCover || params.get('cover');
+                chapters = parseInt(params.get('chapters')) || 200;
+                
+                const readBtn = document.getElementById('read-btn');
+                if (readBtn) {
+                    readBtn.href = `../reading/index-read-novel.html?book=${bookId || 'default'}&chapter=1`;
+                }
+            }
+        } else if (storedBook) {
             // Use data from localStorage
             const book = JSON.parse(storedBook);
             title = book.title || 'Book Title';
@@ -368,56 +457,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else {
                 cover = '';
-            }
-        } else if (bookId) {
-            // Try to get book from adminBooks in localStorage
-            const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
-            const adminBook = adminBooks.find(b => b.id == bookId);
-            
-            if (adminBook) {
-                title = adminBook.title || 'Book Title';
-                author = adminBook.author || 'Author Name';
-                status = adminBook.status || 'Completed';
-                views = adminBook.views || 0;
-                description = adminBook.description || '';
-                chapters = adminBook.pages || 200;
-                const publishedAt = adminBook.pubdate || adminBook.publishedAt;
-                
-                // Generate dynamic rating based on views
-                const ratingData = generateRating(views);
-                rating = ratingData.stars;
-                ratingCount = `(${ratingData.formattedViews} views)`;
-                
-                // Check and display NEW badge
-                const newBadge = document.getElementById('new-badge');
-                if (newBadge && isNewBook(publishedAt)) {
-                    newBadge.classList.remove('hidden');
-                }
-                
-                // Set the main Read button href
-                const readBtn = document.getElementById('read-btn');
-                if (readBtn) {
-                    readBtn.href = `../reading/index-read-novel.html?book=${bookId}&chapter=1`;
-                }
-                
-                cover = (adminBook.image && isValidUrl(adminBook.image)) ? adminBook.image : '';
-            } else {
-                // Fall back to URL query parameters
-                title = params.get('title') || 'Book Title';
-                author = params.get('author') || 'Author Name';
-                status = params.get('status') || 'Completed';
-                views = params.get('views') || '12.3k';
-                rating = params.get('rating') || '★★★★★';
-                ratingCount = params.get('ratingCount') || '(1234 reviews)';
-                description = params.get('desc') || '';
-                cover = overrideCover || params.get('cover');
-                chapters = parseInt(params.get('chapters')) || 200;
-                
-                // Set the main Read button href
-                const readBtn = document.getElementById('read-btn');
-                if (readBtn) {
-                    readBtn.href = `../reading/index-read-novel.html?book=${bookId || 'default'}&chapter=1`;
-                }
             }
         } else {
             // Fall back to URL query parameters

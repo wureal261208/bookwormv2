@@ -67,10 +67,8 @@ function setupCardHandlers(detailPage) {
             }
             
             localStorage.setItem('currentBook', JSON.stringify(book));
-            let target = detailPage;
-            if (imgSrc && isValidUrl(imgSrc)) {
-                target += '?cover=' + encodeURIComponent(imgSrc);
-            }
+            // Navigate to detail page with book ID for reliable cover lookup
+            const target = detailPage + '?id=' + book.id;
             window.location.href = target;
         });
     });
@@ -238,12 +236,8 @@ function viewBookDetail(bookId) {
             
             // Store the book data in localStorage for the detail page
             localStorage.setItem('currentBook', JSON.stringify(book));
-            // Navigate to detail page, include cover URL as query param so detail can always use it
-            let target = '../detail/index-none.html';
-            if (book.image) {
-                target += '?cover=' + encodeURIComponent(book.image);
-            }
-            window.location.href = target;
+            // Navigate to detail page with book ID for reliable cover lookup
+            window.location.href = '../detail/index-none.html?id=' + bookId;
         }
     }
 }
@@ -391,12 +385,8 @@ function viewSearchedBook(bookId) {
             
             // Store book data
             localStorage.setItem('currentBook', JSON.stringify(book));
-            // Navigate to detail page (none account version)
-            let target = '../detail/index-none.html';
-            if (book.image && isValidUrl(book.image)) {
-                target += '?cover=' + encodeURIComponent(book.image);
-            }
-            window.location.href = target;
+            // Navigate to detail page with book ID for reliable cover lookup
+            window.location.href = '../detail/index-none.html?id=' + bookId;
         }
     }
 }

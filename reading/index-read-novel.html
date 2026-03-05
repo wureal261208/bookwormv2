@@ -11,7 +11,7 @@
 
 <style>
 :root {
-    /* Exact Color Palette - Match main/style.css */
+    /* Exact Color Palette - Black, White, Grey - Synchronized with other pages */
     --primary-color: #333333;
     --secondary-color: #666666;
     --black: #000000;
@@ -19,9 +19,7 @@
     --gray: #e0e0e0;
     --gray-2: #888888;
     --text: #1a1a1a;
-    
-    /* Additional colors - Match main/style.css */
-    --bg: #f5f5f5;
+    --bg: #e0e0e0; /* Synchronized with main/style.css */
     --accent: #333333;
     --muted: #666666;
 }
@@ -43,32 +41,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Navbar Category Dropdown */
-.custom-dropdown {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.custom-dropdown:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-.custom-dropdown:focus {
-    outline: none;
-    background-color: rgba(255, 255, 255, 0.3);
-}
-
-/* Style the options in navbar dropdown */
-.custom-dropdown option {
-    background: var(--secondary-color);
-    color: white;
-    padding: 10px;
-}
-
-/* Navbar - SOLID BACKGROUND */
+/* Navbar */
 .custom-navbar {
     background: var(--black);
     border-bottom: 3px solid var(--accent);
@@ -89,37 +62,20 @@ body {
 .nav-link {
     padding: .5rem .75rem;
     border-radius: .375rem;
-    color: var(--white);                   /* keep text white on dark navbar */
+    color: var(--white);
     background: transparent;
     text-decoration: none;
-    font-weight: 600;                      /* make letters bolder */
+    font-weight: 600;
     transition: color 0.2s, background 0.3s;
 }
 
-/* higher contrast hover states so letters remain visible */
 .nav-link:hover {
     color: var(--secondary-color);
     background: rgba(255, 255, 255, 0.15);
 }
 
-.nav-link:focus {
-    color: var(--secondary-color);
-    /* No background change on focus - only hover */
-    outline: none;
-}
-
 .nav-link.active {
     background: rgba(255, 255, 255, 0.2);
-}
-
-.getStarted {
-    color: var(--white);
-    background: rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
-}
-
-.getStarted:hover {
-    background: rgba(255, 255, 255, 0.3);
 }
 
 .custom-input {
@@ -163,114 +119,175 @@ body {
     to { opacity: 0; transform: translateY(-10px); }
 }
 
-        .dropdown-menu a:hover {
-            background: rgba(112, 137, 147, 0.15) !important;
-        }
+.reader-stage {
+    min-height: 420px;
+}
 
-        @media (max-width: 640px) {
-            .dropdown-menu {
-                right: -1rem !important;
-                left: auto !important;
-                width: calc(100vw - 2rem) !important;
-            }
-        }
+.page-side-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 72px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(17, 24, 39, 0.55);
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all .2s ease;
+    z-index: 10;
+}
 
-        .reader-stage {
-            min-height: 420px;
-        }
+.page-side-btn:hover {
+    background: rgba(17, 24, 39, 0.8);
+}
 
-        .page-side-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 48px;
-            height: 72px;
-            border-radius: 12px;
-            border: none;
-            background: rgba(17, 24, 39, 0.55);
-            color: #fff;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all .2s ease;
-            z-index: 10;
-        }
+.page-side-left {
+    left: 12px;
+}
 
-        .page-side-btn:hover {
-            background: rgba(17, 24, 39, 0.8);
-        }
+.page-side-right {
+    right: 12px;
+}
 
-        .page-side-left {
-            left: 12px;
-        }
+@media (max-width: 640px) {
+    .page-side-btn {
+        width: 42px;
+        height: 64px;
+    }
+}
 
-        .page-side-right {
-            right: 12px;
-        }
+/* Button styles from detail page */
+.btn-action {
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    text-decoration: none;
+}
 
-        @media (max-width: 640px) {
-            .page-side-btn {
-                width: 42px;
-                height: 64px;
-            }
-        }
-    </style>
+.btn-read {
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    color: var(--white);
+}
+
+.btn-read:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(112, 137, 147, 0.4);
+}
+
+.btn-details {
+    background: transparent;
+    border: 2px solid var(--accent) !important;
+    color: var(--text);
+}
+
+.btn-details:hover {
+    background: var(--accent) !important;
+    color: var(--white);
+}
+
+.btn-action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+</style>
 </head>
 <body>
+    <!-- Navbar - Matching main/ style -->
     <header>
         <nav aria-label="Main navigation" class="fixed inset-x-0 top-0 z-50 custom-navbar border-b">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
                     <div class="flex items-center">
-                        <a href="../main/index-acc.html" class="flex items-center gap-2 text-2xl font-bold">
-                            <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm logo">
-                            <span>BookWorm</span>
-                        </a>
-<div class="hidden md:block ml-10">
+                        <div class="flex-shrink-0">
+                            <a href="../main/index-acc.html" class="text-2xl font-bold flex items-center gap-2">
+                                <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm">
+                                <span>BookWorm</span>
+                            </a>
+                        </div>
+                        <div class="hidden md:block ml-10">
                             <div class="flex items-baseline space-x-4 nav-links">
-                                <a href="#" class="nav-link active" aria-current="page"><i class='bx bx-search'></i> Browse</a>
-                                <a href="#" class="nav-link"><i class='bx bx-category'></i> Categories</a>
-                                <a href="#" class="nav-link"><i class='bx bx-library'></i> My Library</a>
+                                <a href="../main/index-acc.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i class='bx bx-search' aria-hidden="true"></i> Browse</a>
+                                <a href="../main/categories.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i class='bx bx-category' aria-hidden="true"></i> Categories</a>
+                                <a href="../main/explore.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i class='bx bx-library' aria-hidden="true"></i> My Library</a>
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <div class="relative hidden sm:block">
-                            <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'></i>
-                            <input type="search" placeholder="Search books..." class="custom-input text-sm pl-10" aria-label="Search books">
+                        <!-- Search Bar with Dropdown -->
+                        <div class="relative hidden sm:block" id="search-wrapper">
+                            <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' aria-hidden="true"></i>
+                            <input type="text" id="main-search-input" placeholder="Search books..." class="custom-input text-sm pl-10 pr-10" autocomplete="off">
+                            <button type="button" id="search-clear-btn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
+                                <i class='bx bx-x'></i>
+                            </button>
+                            <!-- Search Results Dropdown -->
+                            <div id="search-dropdown" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg max-h-96 overflow-y-auto z-50 hidden">
+                                <div id="search-results"></div>
+                            </div>
                         </div>
-                        <!-- notification icon -->
-                        <div class="relative">
+                        <!-- Notification -->
+                        <div class="relative" id="notification-container">
                             <button id="notification-btn" class="p-1.5 rounded-full text-white hover:bg-white/20">
                                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
+                                <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden shadow-lg border-2 border-white"></span>
                             </button>
+                            <!-- Notification Dropdown -->
+                            <div id="notification-dropdown" class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 max-h-96 overflow-y-auto">
+                                <div class="px-4 py-2 border-b border-gray-200">
+                                    <h4 class="font-semibold text-black">Notifications</h4>
+                                </div>
+                                <div id="notification-list" class="max-h-64 overflow-y-auto">
+                                    <p class="px-4 py-3 text-sm text-black text-center">No new notifications</p>
+                                </div>
+                                <div class="px-4 py-2 border-t border-gray-200">
+                                    <button id="mark-all-read" class="text-sm text-blue-600 hover:text-blue-800">Mark all as read</button>
+                                </div>
+                            </div>
                         </div>
-                        <!-- user avatar -->
+                        <!-- Avatar -->
                         <div class="relative group">
                             <button class="flex items-center gap-2">
                                 <img class="h-9 w-9 rounded-full object-cover border-2 border-white/50" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User">
                             </button>
                             <!-- Dropdown Menu -->
                             <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                <p id="user-email-display" class="px-4 py-2 text-sm font-semibold text-gray-800 truncate"></p>
                                 <a style="color: #333333" href="../login/index.html" class="dropdown-item block px-4 py-2 text-sm font-semibold">
                                     <i class='bx bx-log-out'></i> Logout
                                 </a>
                             </div>
                         </div>
-                        <button class="mobile-menu-btn md:hidden p-2 focus:outline-none" aria-expanded="false" aria-controls="mobile-menu">
-                            <span class="sr-only">Open menu</span>
-                            <i class='bx bx-menu text-2xl'></i>
-                        </button>
+                        <div class="md:hidden">
+                            <button class="mobile-menu-btn inline-flex items-center justify-center p-2 rounded-md text-white">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-<div id="mobile-menu" class="mobile-menu hidden md:hidden">
-                <a href="#" class="block nav-link active">Browse</a>
-                <a href="#" class="block nav-link">Categories</a>
-                <a href="#" class="block nav-link">My Library</a>
+            <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 z-40" style="background:linear-gradient(135deg,var(--secondary-color),var(--primary-color))">
+                <div class="px-4 py-4 space-y-2">
+                    <a href="../main/index-acc.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Browse</a>
+                    <a href="../main/categories.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Categories</a>
+                    <a href="../main/explore.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">My Library</a>
+                </div>
             </div>
         </nav>
+    </header>
 
     <main class="pt-20"></main>
 
@@ -278,11 +295,19 @@ body {
         <div class="max-w-3xl mx-auto px-4">
 
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-semibold">The Name of the Wind</h1>
-                <p class="text-lg text-gray-500 mt-2">Chapter 1</p>
-                <button onclick="toggleMode()"
-                    class="mt-4 px-5 py-2 rounded-lg bg-indigo-900 text-white hover:bg-indigo-800 transition">
-                    Đổi chế độ đọc
+                <h1 id="bookTitle" class="text-3xl font-semibold">The Name of the Wind</h1>
+                <p id="bookAuthor" class="text-lg text-gray-500 mt-1">Patrick Rothfuss</p>
+                <div id="bookRating" class="flex items-center justify-center gap-2 mt-2">
+                    <div class="rating flex items-center gap-1">
+                        <span class="rating-stars text-yellow-400 text-sm">★★★★★</span>
+                        <span class="rating-count text-xs text-gray-500">(5.0)</span>
+                    </div>
+                    <span class="text-gray-400">|</span>
+                    <span id="bookViews" class="text-sm text-gray-500"><i class='bx bx-eye'></i> 0 views</span>
+                </div>
+                <p id="chapterInfo" class="text-lg text-gray-500 mt-2">Chapter 1</p>
+                <button onclick="toggleMode()" class="mt-4 px-5 py-2 rounded-lg bg-gradient-to-r from-gray-700 to-gray-900 text-white hover:from-gray-600 hover:to-gray-800 transition shadow-md">
+                    <i class='bx bx-slider'></i> Switch to Scroll Mode
                 </button>
             </div>
 
@@ -290,91 +315,37 @@ body {
             <div id="pageMode">
                 <div class="reader-stage bg-white rounded-2xl shadow-xl p-10 leading-relaxed text-lg">
                     <div id="pageContent"></div>
-                </div>
 
                 <div class="flex justify-between mt-6">
-                    <button onclick="prevPage()" class="px-4 py-2 bg-gray-700 text-white rounded-lg">
-                        ← Trang trước
+                    <button onclick="prevPage()" class="btn-action btn-details">
+                        <i class='bx bx-chevron-left'></i> Previous
                     </button>
                     <p id="pageNumber" class="font-medium self-center"></p>
-                    <button onclick="nextPage()" class="px-4 py-2 bg-indigo-900 text-white rounded-lg">
-                        Trang sau →
+                    <button onclick="nextPage()" class="btn-action btn-read">
+                        Next <i class='bx bx-chevron-right'></i>
                     </button>
                 </div>
-            </div>
 
             <!-- SCROLL MODE -->
             <div id="scrollMode" class="hidden space-y-6 text-lg leading-relaxed bg-white p-10 rounded-2xl shadow-xl">
- <p>Mưa bắt đầu rơi lúc thành phố vừa tắt đèn quảng cáo.</p>
-<p>Ngõ 17 vẫn sáng một bóng đèn vàng cũ, treo nghiêng trên cửa tiệm sửa đồng hồ của ông Tín.</p>
-
-<p>An đứng dưới mái hiên, ôm chặt chiếc hộp gỗ mẹ để lại.</p>
-<p>Trong hộp có một chiếc đồng hồ bỏ túi đã ngừng chạy từ đúng ngày mẹ mất.</p>
-
-<p>Ông Tín đeo kính lúp, nhìn chiếc đồng hồ thật lâu rồi nói:</p>
-<p>“Không phải nó hỏng. Nó đang chờ.”</p>
-
-<p>“Chờ gì ạ?” An hỏi.</p>
-
-<p>“Chờ người lên dây cót bằng tay trái.”</p>
-
-<p>An bật cười. “Cháu thuận tay phải.”</p>
-
-<p>“Vậy nên bao năm nó không chạy.”</p>
-
-<p>An đổi tay. Tiếng cót lên khô khốc.</p>
-<p>Kim giây rung một nhịp, rồi đứng im.</p>
-<p>Ông Tín gõ nhẹ mặt kính. Kim giây chạy tiếp.</p>
-
-<p>Đúng lúc đó, điện trong ngõ phụt tắt.</p>
-<p>Chỉ còn chiếc đồng hồ trong tay An phát ra ánh sáng rất mờ, xanh như đom đóm.</p>
-
-<p>“Đừng sợ,” ông Tín nói. “Cứ đi theo nó.”</p>
-
-<p>An bước ra ngõ tối. Mỗi khi chần chừ, kim giây lại chậm.</p>
-<p>Mỗi khi bước tiếp, kim lại chạy nhanh hơn.</p>
-
-<p>Cuối ngõ có một cánh cổng sắt cũ, phủ đầy dây leo.</p>
-<p>Nơi này từng là nhà của bà ngoại, đã bỏ hoang từ lâu.</p>
-
-<p>Chiếc đồng hồ đột ngột nóng lên.</p>
-<p>An đặt tay lên ổ khóa gỉ. Khóa bật ra, như thể chưa từng khóa bao giờ.</p>
-
-<p>Trong sân, mùi hoa bưởi nhè nhẹ dù không phải mùa.</p>
-<p>Trên bậc cửa có một phong bì: “Gửi An, mở khi con đủ can đảm.”</p>
-
-<p>Tay An run. Nét chữ của mẹ.</p>
-
-<p>Bên trong chỉ có một dòng:</p>
-
-<p>“Con không cần tìm cách quay lại quá khứ.</p>
-<p>Con chỉ cần bước tiếp, và mang ánh đèn này cho người khác.”</p>
-
-<p>An quay lại, ngõ 17 đã sáng điện trở lại.</p>
-<p>Ông Tín không còn ở tiệm. Cửa khóa, biển gỗ mục ghi:</p>
-<p>“Đóng cửa từ năm 2008.”</p>
-
-<p>An đứng rất lâu dưới bóng đèn vàng.</p>
-<p>Chiếc đồng hồ trong tay vẫn chạy đều.</p>
-
-<p>Đêm đó, An thay bóng đèn mới cho đầu ngõ.</p>
-<p>Rồi tối nào cũng vậy, ai đi qua ngõ tối đều thấy một ngọn đèn sáng sớm hơn mọi nơi khác.</p>
-
-<p>Và đôi khi, nếu nghe kỹ, bạn sẽ nghe tiếng kim giây rất nhỏ,</p>
-<p>đang nhắc một ai đó rằng:</p>
-<p>đi tiếp đi.</p>
-
+                <p>The story content would appear here...</p>
             </div>
 
             <div class="mt-8 flex justify-center gap-4">
-                <button class="px-6 py-3 rounded-xl bg-gray-700 text-white hover:bg-gray-600 transition">
-                    ← Chapter trước
-                </button>
-                <button class="px-6 py-3 rounded-xl bg-indigo-900 text-white hover:bg-indigo-800 transition">
-                    Chapter sau →
+                <button id="backBtn" class="btn-action btn-details">
+                    <i class='bx bx-arrow-back'></i> Back
                 </button>
             </div>
-        </div>
+    </section>
+
+    <!-- May You Like Section -->
+    <section id="mayYouLikeSection" class="py-12 bg-gray-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                <i class='bx bxs-hot'></i> May You Like
+            </h2>
+            <div id="mayYouLikeGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            </div>
     </section>
 
 <script>
@@ -385,70 +356,12 @@ let pages = [];
 const pageContent = document.getElementById("pageContent");
 const pageNumber = document.getElementById("pageNumber");
 const scrollMode = document.getElementById("scrollMode");
+const params = new URLSearchParams(window.location.search);
+const bookId = params.get("book");
+let currentChapter = parseInt(params.get("chapter")) || 1;
 
 function splitContent() {
-    const fullText = `
-Mưa bắt đầu rơi lúc thành phố vừa tắt đèn quảng cáo.
-Ngõ 17 vẫn sáng một bóng đèn vàng cũ, treo nghiêng trên cửa tiệm sửa đồng hồ của ông Tín.
-
-An đứng dưới mái hiên, ôm chặt chiếc hộp gỗ mẹ để lại.
-Trong hộp có một chiếc đồng hồ bỏ túi đã ngừng chạy từ đúng ngày mẹ mất.
-
-Ông Tín đeo kính lúp, nhìn chiếc đồng hồ thật lâu rồi nói:
-“Không phải nó hỏng. Nó đang chờ.”
-
-“Chờ gì ạ?” An hỏi.
-
-“Chờ người lên dây cót bằng tay trái.”
-
-An bật cười. “Cháu thuận tay phải.”
-
-“Vậy nên bao năm nó không chạy.”
-
-An đổi tay. Tiếng cót lên khô khốc.
-Kim giây rung một nhịp, rồi đứng im.
-Ông Tín gõ nhẹ mặt kính. Kim giây chạy tiếp.
-
-Đúng lúc đó, điện trong ngõ phụt tắt.
-Chỉ còn chiếc đồng hồ trong tay An phát ra ánh sáng rất mờ, xanh như đom đóm.
-
-“Đừng sợ,” ông Tín nói. “Cứ đi theo nó.”
-
-An bước ra ngõ tối. Mỗi khi chần chừ, kim giây lại chậm.
-Mỗi khi bước tiếp, kim lại chạy nhanh hơn.
-
-Cuối ngõ có một cánh cổng sắt cũ, phủ đầy dây leo.
-Nơi này từng là nhà của bà ngoại, đã bỏ hoang từ lâu.
-
-Chiếc đồng hồ đột ngột nóng lên.
-An đặt tay lên ổ khóa gỉ. Khóa bật ra, như thể chưa từng khóa bao giờ.
-
-Trong sân, mùi hoa bưởi nhè nhẹ dù không phải mùa.
-Trên bậc cửa có một phong bì: “Gửi An, mở khi con đủ can đảm.”
-
-Tay An run. Nét chữ của mẹ.
-
-Bên trong chỉ có một dòng:
-
-“Con không cần tìm cách quay lại quá khứ.
-Con chỉ cần bước tiếp, và mang ánh đèn này cho người khác.”
-
-An quay lại, ngõ 17 đã sáng điện trở lại.
-Ông Tín không còn ở tiệm. Cửa khóa, biển gỗ mục ghi:
-“Đóng cửa từ năm 2008.”
-
-An đứng rất lâu dưới bóng đèn vàng.
-Chiếc đồng hồ trong tay vẫn chạy đều.
-
-Đêm đó, An thay bóng đèn mới cho đầu ngõ.
-Rồi tối nào cũng vậy, ai đi qua ngõ tối đều thấy một ngọn đèn sáng sớm hơn mọi nơi khác.
-
-Và đôi khi, nếu nghe kỹ, bạn sẽ nghe tiếng kim giây rất nhỏ,
-đang nhắc một ai đó rằng:
-đi tiếp đi.
-
-`;
-
+    const fullText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
     const words = fullText.split(" ");
     const wordsPerPage = 40;
 
@@ -462,7 +375,7 @@ Và đôi khi, nếu nghe kỹ, bạn sẽ nghe tiếng kim giây rất nhỏ,
 
 function updatePage() {
     pageContent.innerText = pages[currentPage - 1];
-    pageNumber.innerText = `Trang ${currentPage} / ${totalPages}`;
+    pageNumber.innerText = `Page ${currentPage} / ${totalPages}`;
     localStorage.setItem("lastPage", currentPage);
 }
 
@@ -486,10 +399,12 @@ function toggleMode() {
 
     const isScroll = !scrollMode.classList.contains("hidden");
     localStorage.setItem("readingMode", isScroll ? "scroll" : "page");
+    updateToggleButtonText();
 }
 
 window.onload = function () {
     splitContent();
+    loadBookInfo();
 
     const savedPage = parseInt(localStorage.getItem("lastPage"), 10);
     if (!Number.isNaN(savedPage)) currentPage = savedPage;
@@ -498,6 +413,7 @@ window.onload = function () {
 
     const savedMode = localStorage.getItem("readingMode");
     if (savedMode === "scroll") toggleMode();
+    updateToggleButtonText();
 };
 
 document.addEventListener("keydown", function (e) {
@@ -506,6 +422,192 @@ document.addEventListener("keydown", function (e) {
         if (e.key === "ArrowLeft") prevPage();
     }
 });
+
+// Back button - go to detail page with book ID
+document.getElementById("backBtn").onclick = () => {
+    const bookId = new URLSearchParams(window.location.search).get("book");
+    if (bookId) {
+        window.location.href = `../detail/index-acc.html?id=${bookId}`;
+    } else {
+        window.location.href = "../detail/index-acc.html";
+    }
+};
+
+// May You Like Section
+function loadCurrentBook() {
+    const params = new URLSearchParams(window.location.search);
+    const bookId = params.get("book");
+    
+    let currentBook = JSON.parse(localStorage.getItem("currentBook")) || {};
+    
+    if (!currentBook.id || (bookId && currentBook.id != bookId)) {
+        const allBooks = JSON.parse(localStorage.getItem("adminBooks")) || [];
+        const book = allBooks.find(b => b.id == bookId);
+        if (book) {
+            currentBook = book;
+            localStorage.setItem("currentBook", JSON.stringify(book));
+        }
+    }
+    
+    return currentBook;
+}
+
+// Load book info (title, author, views, rating)
+function loadBookInfo() {
+    const book = loadCurrentBook();
+    if (!book.id) return;
+
+    // Update title
+    const titleEl = document.getElementById("bookTitle");
+    if (titleEl && book.title) {
+        titleEl.textContent = book.title;
+    }
+
+    // Update author
+    const authorEl = document.getElementById("bookAuthor");
+    if (authorEl && book.author) {
+        authorEl.textContent = book.author;
+    }
+
+    // Update chapter info
+    const chapterEl = document.getElementById("chapterInfo");
+    if (chapterEl) {
+        chapterEl.textContent = "Chapter " + currentChapter;
+    }
+
+    // Update views
+    const views = book.views || 0;
+    const viewsEl = document.getElementById("bookViews");
+    if (viewsEl) {
+        let viewsText = views >= 1000 ? (views / 1000).toFixed(1) + 'k' : views.toString();
+        viewsEl.innerHTML = `<i class='bx bx-eye'></i> ${viewsText} views`;
+    }
+
+    // Update rating (calculated from views like main/)
+    const ratingEl = document.getElementById("bookRating");
+    if (ratingEl) {
+        const rating = Math.min(5, Math.ceil(views / 100));
+        const ratingDecimal = (views / 100).toFixed(1);
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                stars += '★';
+            } else {
+                stars += '☆';
+            }
+        }
+        ratingEl.innerHTML = `
+            <div class="rating flex items-center gap-1">
+                <span class="rating-stars text-yellow-400 text-sm">${stars}</span>
+                <span class="rating-count text-xs text-gray-500">(${ratingDecimal})</span>
+            </div>
+        `;
+    }
+}
+
+// Update toggle button text based on current mode
+function updateToggleButtonText() {
+    const btn = document.querySelector('button[onclick="toggleMode()"]');
+    if (btn) {
+        const isScroll = document.getElementById("scrollMode").classList.contains("hidden") === false;
+        if (isScroll) {
+            btn.innerHTML = '<i class=\'bx bx-slider\'></i> Switch to Page Mode';
+        } else {
+            btn.innerHTML = '<i class=\'bx bx-slider\'></i> Switch to Scroll Mode';
+        }
+    }
+}
+
+function loadMayYouLike() {
+    const grid = document.getElementById("mayYouLikeGrid");
+    if (!grid) return;
+
+    const currentBook = loadCurrentBook();
+    const allBooks = JSON.parse(localStorage.getItem("adminBooks")) || [];
+    
+    const currentTags = currentBook.tags || [];
+    const currentGenre = currentBook.genre || '';
+    const currentBookId = currentBook.id;
+
+    const recommended = allBooks.filter(book => {
+        if (book.id === currentBookId) return false;
+        if (book.status !== 'published') return false;
+        
+        const bookTags = book.tags || [];
+        const hasMatchingTag = bookTags.some(tag => currentTags.includes(tag));
+        const hasMatchingGenre = book.genre && book.genre === currentGenre && currentGenre !== '';
+        
+        return hasMatchingTag || hasMatchingGenre;
+    });
+
+    const displayBooks = recommended.slice(0, 6);
+
+    if (displayBooks.length === 0) {
+        grid.innerHTML = '<p class="text-gray-500 col-span-full text-center py-8">No similar books found</p>';
+        return;
+    }
+
+    const defaultCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
+
+    // Format views with k suffix (e.g., 2.4k)
+    function formatViews(views) {
+        const v = views || 0;
+        if (v >= 1000) {
+            return (v / 1000).toFixed(1) + 'k';
+        }
+        return v.toString();
+    }
+
+    // Calculate rating as decimal from views (same as main/)
+    function getRatingDecimal(views) {
+        const v = views || 0;
+        const rating = Math.min(5, v / 100);
+        return rating.toFixed(1);
+    }
+
+    // Generate stars HTML from decimal rating
+    function getRatingStars(rating) {
+        const r = Math.round(rating);
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= r) {
+                stars += '<i class="bx bxs-star text-yellow-400"></i>';
+            } else {
+                stars += '<i class="bx bx-star text-gray-300"></i>';
+            }
+        }
+        return stars;
+    }
+
+    grid.innerHTML = displayBooks.map(book => `
+        <a href="../detail/index-acc.html?id=${book.id}" class="item-card group">
+            <div class="card-image relative">
+                <img src="${book.image || defaultCover}" alt="${book.title}" 
+                    class="w-full h-48 object-cover"
+                    onerror="this.src='${defaultCover}'">
+                <div class="book-type-tag ${book.type === 'img' || (book.tags && book.tags.includes('img')) ? 'type-img' : 'type-text'}">
+                    <i class='bx ${book.type === 'img' || (book.tags && book.tags.includes('img')) ? 'bx-image' : 'bx-text'}'></i>
+                    ${book.type === 'img' || (book.tags && book.tags.includes('img')) ? 'Image' : 'Text'}
+                </div>
+            </div>
+            <div class="card-content">
+                <h3 class="font-semibold text-sm truncate">${book.title}</h3>
+                <p class="text-xs text-gray-500 truncate">${book.author || 'Unknown'}</p>
+                <div class="card-meta">
+                    <span><i class='bx bx-eye'></i> ${formatViews(book.views)}</span>
+                </div>
+                <div class="card-footer" style="border-top: 1px solid rgba(112, 137, 147, 0.2); padding-top: 0.75rem; margin-top: auto;">
+                    <div class="rating flex items-center gap-1">
+                        <span class="rating-stars">${getRatingStars(getRatingDecimal(book.views))}</span>
+                        <span class="rating-count text-xs text-gray-500">${getRatingDecimal(book.views)}</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    `).join('');
+}
+
+loadMayYouLike();
 </script>
 </body>
 </html>

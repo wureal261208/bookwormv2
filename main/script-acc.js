@@ -108,11 +108,8 @@ function navigateToBookFromCarousel(index) {
         
         if (selectedBook) {
             localStorage.setItem('currentBook', JSON.stringify(selectedBook));
-            let target = '../detail/index-acc.html';
-            if (selectedBook.image && isValidUrl(selectedBook.image)) {
-                target += '?cover=' + encodeURIComponent(selectedBook.image);
-            }
-            window.location.href = target;
+            // Navigate with book ID for reliable cover lookup
+            window.location.href = '../detail/index-acc.html?id=' + selectedBook.id;
         }
     }
 }
@@ -225,11 +222,8 @@ function setupCardHandlers(detailPage) {
             // Store the complete book data in localStorage for the detail page
             localStorage.setItem('currentBook', JSON.stringify(book));
             
-            // Navigate to detail page
-            let target = detailPage;
-            if (book.image && isValidUrl(book.image)) {
-                target += '?cover=' + encodeURIComponent(book.image);
-            }
+            // Navigate to detail page with book ID for reliable cover lookup
+            const target = detailPage + '?id=' + book.id;
             window.location.href = target;
         });
     });
@@ -354,11 +348,8 @@ function viewBookDetail(bookId) {
             
             // Store the book data in localStorage for the detail page
             localStorage.setItem('currentBook', JSON.stringify(book));
-            // Navigate to detail page, include valid cover URL
-            let target = '../detail/index-acc.html';
-            if (book.image && isValidUrl(book.image)) {
-                target += '?cover=' + encodeURIComponent(book.image);
-            }
+            // Navigate to detail page with book ID for reliable cover lookup
+            let target = '../detail/index-acc.html?id=' + bookId;
             window.location.href = target;
         }
     }
@@ -497,12 +488,8 @@ function viewSearchedBook(bookId) {
             
             // Store book data
             localStorage.setItem('currentBook', JSON.stringify(book));
-            // Navigate to detail page
-            let target = '../detail/index-acc.html';
-            if (book.image && isValidUrl(book.image)) {
-                target += '?cover=' + encodeURIComponent(book.image);
-            }
-            window.location.href = target;
+            // Navigate to detail page with book ID for reliable cover lookup
+            window.location.href = '../detail/index-acc.html?id=' + bookId;
         }
     }
 }
