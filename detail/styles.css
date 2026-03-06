@@ -1,5 +1,20 @@
 /* detail/styles.css - styles specific to the book detail page */
 
+/* Book cover image - push to top */
+#main-content article figure {
+    align-items: flex-start;
+}
+
+/* Description truncation - snip text if too long */
+#book-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 6em;
+}
+
 /* make the action buttons look nice outside of .item-card context */
 .btn-action {
     padding: 0.6rem 0.75rem;
