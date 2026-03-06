@@ -1395,10 +1395,11 @@ function toggleBookStatus(bookId) {
             book.publishedAt = new Date().toISOString();
             book.isNew = true;
             
-            // Store new book notification for users
+            // Store new book notification for users (include book cover image)
             const newBookNotification = {
                 bookId: book.id,
                 title: book.title,
+                image: book.image || '',
                 publishedAt: book.publishedAt,
                 seen: false
             };

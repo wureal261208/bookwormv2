@@ -573,7 +573,13 @@ function loadAndDisplayNotifications() {
             
             // Find the book to get its cover image
             const book = allBooks.find(b => b.id === notif.bookId);
-            const bookImage = book && book.image ? book.image : defaultImage;
+            // Try to get image from notification first, then from localStorage
+            let bookImage = defaultImage;
+            if (notif.image) {
+                bookImage = notif.image;
+            } else if (book && book.image) {
+                bookImage = book.image;
+            }
             
             return `
             <div class="notification-item px-4 py-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100" onclick="viewNotificationBook(${notif.bookId})">
