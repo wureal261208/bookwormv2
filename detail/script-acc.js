@@ -46,9 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get books from admin to get cover images (reads from admin localStorage)
         const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
         
-        // Get book data for each notification
+        // Get book data for each notification - handle type mismatch (string vs number)
         const notificationsWithCovers = notifications.map(notif => {
-            const book = adminBooks.find(b => b.id === notif.bookId);
+            const book = adminBooks.find(b => String(b.id) === String(notif.bookId));
             return {
                 ...notif,
                 image: book ? book.image : null

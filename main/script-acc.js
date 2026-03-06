@@ -571,8 +571,8 @@ function loadAndDisplayNotifications() {
             const publishedDate = new Date(notif.publishedAt);
             const timeAgo = getTimeAgo(publishedDate);
             
-            // Find the book to get its cover image
-            const book = allBooks.find(b => b.id === notif.bookId);
+            // Find the book to get its cover image - handle type mismatch (string vs number)
+            const book = allBooks.find(b => String(b.id) === String(notif.bookId));
             // Try to get image from notification first, then from localStorage
             let bookImage = defaultImage;
             if (notif.image) {
