@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const titleMatch = book.title && book.title.toLowerCase().includes(queryLower);
             const authorMatch = book.author && book.author.toLowerCase().includes(queryLower);
             return titleMatch || authorMatch;
-        }).slice(0, 8); // Limit to 8 results
+        }).slice(0, 1); // Show only 1 book item
         
         // Display results
         if (filteredBooks.length === 0) {
@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium text-black truncate">${book.title}</p>
                         <p class="text-xs text-gray-500">${book.author || 'Unknown Author'}</p>
-                        <span class="text-xs text-blue-600">${book.genre || ''}</span>
+                        <span class="text-xs text-blue-600">${book.genre ? book.genre.split(',')[0].trim() : ''}</span>
                     </div>
                     <i class='bx bx-chevron-right text-gray-400'></i>
                 </div>
