@@ -4,41 +4,16 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // =====================
-    // NOTIFICATION SYSTEM (Authenticated Users)
+    // NOTIFICATION SYSTEM (Authenticated Users) - Hover Style
     // =====================
     const notificationBtn = document.getElementById('notification-btn');
-    const notificationDropdown = document.getElementById('notification-dropdown');
-    const notificationList = document.getElementById('notification-list');
+    const notificationDropdown = document.getElementById('notification-list');
     const notificationBadge = document.getElementById('notification-badge');
-    const clearNotificationsBtn = document.getElementById('clear-notifications');
+    const notificationContainer = document.getElementById('notification-btn')?.parentElement;
 
-    // Toggle notification dropdown
-    if (notificationBtn && notificationDropdown) {
-        notificationBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isVisible = !notificationDropdown.classList.contains('opacity-0');
-            if (isVisible) {
-                notificationDropdown.classList.add('opacity-0', 'invisible');
-                notificationDropdown.classList.remove('opacity-100', 'visible');
-            } else {
-                notificationDropdown.classList.remove('opacity-0', 'invisible');
-                notificationDropdown.classList.add('opacity-100', 'visible');
-                loadNotifications();
-            }
-        });
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        if (notificationDropdown && !notificationDropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
-            notificationDropdown.classList.add('opacity-0', 'invisible');
-            notificationDropdown.classList.remove('opacity-100', 'visible');
-        }
-    });
-
-    // Load and display notifications
+    // Load and display notifications when hovering
     function loadNotifications() {
-        if (!notificationList) return;
+        if (!notificationDropdown) return;
 
         // Get notifications from localStorage
         const notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
@@ -68,13 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Render notifications
         if (notificationsWithCovers.length === 0) {
-            notificationList.innerHTML = '<p class="px-4 py-4 text-gray-500 text-center text-sm">No new notifications</p>';
+            notificationDropdown.innerHTML = '<p class="px-4 py-3 text-sm text-black text-center">No new notifications</p>';
             return;
         }
 
         const defaultCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
         
-        notificationList.innerHTML = notificationsWithCovers.map((notif) => {
+        notificationDropdown.innerHTML = notificationsWithCovers.map((notif) => {
             const coverImage = notif.image || defaultCover;
             const date = notif.publishedAt ? new Date(notif.publishedAt).toLocaleDateString() : '';
             
@@ -89,6 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }).join('');
+    }
+
+    // Load notifications on hover
+    if (notificationBtn && notificationContainer) {
+        notificationBtn.addEventListener('mouseenter', () => {
+            loadNotifications();
+        });
     }
 
     // Mark notifications as seen and remove the clicked one
@@ -106,15 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Clear all notifications
-    if (clearNotificationsBtn) {
-        clearNotificationsBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            localStorage.removeItem('newBookNotifications');
-            loadNotifications();
-        });
-    }
-
     // Make viewBookDetail available globally
     window.viewBookDetail = function(bookId) {
         const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
@@ -127,6 +100,16 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.reload();
         }
     };
+
+    // Mark all as read button
+    const markAllReadBtn = document.getElementById('mark-all-read');
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            localStorage.removeItem('newBookNotifications');
+            loadNotifications();
+        });
+    }
 
     // Load notifications on page load
     loadNotifications();

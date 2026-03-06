@@ -191,3 +191,41 @@ textarea:focus {
 .getStarted:hover {
     background: rgba(255,255,255,0.3);
 }
+
+/* Notification Dropdown Styles - matches main/ page */
+#notification-container {
+    position: relative;
+}
+
+#notification-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0.5rem;
+    /* ensure dropdown text is readable by default */
+    color: #000;
+}
+
+/* force any nested elements to remain black even if utility classes apply different colors */
+#notification-dropdown *,
+#notification-dropdown .notification-item {
+    color: #000 !important;
+}
+
+#notification-dropdown.opacity-0 {
+    opacity: 0;
+}
+
+#notification-dropdown.invisible {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Notification Item Hover */
+.notification-item {
+    transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+    background-color: #f9fafb;
+}

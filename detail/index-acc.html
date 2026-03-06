@@ -42,29 +42,28 @@
                             <input type="search" placeholder="Search books..." class="custom-input text-sm pl-10"
                                 aria-label="Search books" />
                         </div>
-                        <!-- notification icon -->
-                        <div class="relative">
-                            <button id="notification-btn" class="p-1.5 rounded-full text-black hover:bg-gray-200">
+                        <!-- notification icon with hover dropdown -->
+                        <div class="relative group">
+                            <button id="notification-btn" class="p-1.5 rounded-full text-white hover:bg-white/20">
                                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
                                 <span id="notification-badge"
-                                    class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                                    class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden shadow-lg border-2 border-white">0</span>
                             </button>
-                            <!-- Notification Dropdown -->
+                            <!-- Notification Dropdown - show on hover -->
                             <div id="notification-dropdown"
-                                class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible transition-all duration-200 z-50 max-h-96 overflow-y-auto">
-                                <div class="px-4 py-2 border-b flex justify-between items-center bg-white">
+                                class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 max-h-96 overflow-y-auto">
+                                <div class="px-4 py-2 border-b border-gray-200">
                                     <h4 class="font-semibold text-black">Notifications</h4>
-                                    <button id="clear-notifications" class="text-xs text-red-500 hover:text-red-700">
-                                        Clear All
-                                    </button>
                                 </div>
-                                <div id="notification-list" class="max-h-64 overflow-y-auto bg-white">
-                                    <p class="px-4 py-4 text-gray-500 text-center text-sm">
-                                        No new notifications
-                                    </p>
+                                <div id="notification-list" class="max-h-64 overflow-y-auto">
+                                    <p class="px-4 py-3 text-sm text-black text-center">No new notifications</p>
+                                </div>
+                                <div class="px-4 py-2 border-t border-gray-200">
+                                    <button id="mark-all-read" class="text-sm text-blue-600 hover:text-blue-800">Mark all as
+                                        read</button>
                                 </div>
                             </div>
                         </div>
