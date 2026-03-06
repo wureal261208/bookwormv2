@@ -609,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editionList.innerHTML = `
                 <li class="text-center py-8 text-gray-500">
                     <i class='bx bx-book' style="font-size: 3rem;"></i>
-                    <p class="mt-2">No editions available for this book.</p>
+                    <p class="mt-2">This book isn't having any editions yet.</p>
                     <p class="text-sm text-gray-400">Check back later for updates.</p>
                 </li>
             `;
