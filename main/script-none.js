@@ -153,6 +153,9 @@ function renderBooksWithPagination() {
     
     // Render the current page's books
     renderBooks(currentBooks);
+    
+    // Re-attach click handlers to newly rendered cards
+    setupCardHandlers('../detail/index-none.html');
 }
 
 // Function to render books to the grid

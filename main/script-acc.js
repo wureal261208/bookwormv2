@@ -177,6 +177,9 @@ function renderBooksWithPagination() {
     
     // Render the current page's books
     renderBooks(currentBooks);
+    
+    // Re-attach click handlers to newly rendered cards
+    setupCardHandlers('../detail/index-acc.html');
 }
 
 // generic helper to wire any .item-card elements to navigate to the given detail page
