@@ -325,6 +325,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Validate if URL is valid (also accepts base64 data URLs) - for book covers
+    function isValidCoverUrl(url) {
+        if (!url || typeof url !== 'string') return false;
+        
+        // Check if it's a base64 data URL
+        if (url.startsWith('data:image/')) {
+            return true;
+        }
+        
+        // Check if it's a regular URL
+        try {
+            new URL(url);
+            return url.startsWith('http://') || url.startsWith('https://');
+        } catch {
+            return false;
+        }
+    }
+
     function loadBook() {
         const storedBook = localStorage.getItem('currentBook');
         
@@ -335,9 +353,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const bookId = params.get('id');
 
         // Get book from adminBooks (localStorage from admin panel)
+        // Fixed: Use String() comparison to handle both string and number IDs
         if (bookId) {
             const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
-            const adminBook = adminBooks.find(b => b.id == bookId);
+            const adminBook = adminBooks.find(b => String(b.id) === String(bookId));
             
             if (adminBook) {
                 title = adminBook.title || 'Book Title';
@@ -471,7 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const bookCoverLink = document.getElementById('book-cover-link');
         
         if (bookCoverEl) {
-            bookCoverEl.src = (cover && isValidUrl(cover)) ? cover : defaultCover;
+            bookCoverEl.src = (cover && isValidCoverUrl(cover)) ? cover : defaultCover;
             bookCoverEl.onerror = function() {
                 this.src = defaultCover;
             };

@@ -23,17 +23,32 @@
     max-height: none;
 }
 
-/* Read more button for description */
+/* Read more button for description - minimalist style */
 .read-more-btn {
-    color: #2563eb;
-    font-size: 0.875rem;
+    color: #6b7280;
+    font-size: 0.8rem;
     cursor: pointer;
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
     display: inline-block;
+    font-weight: 500;
+    background: none;
+    border: none;
+    padding: 0;
+    transition: color 0.2s ease;
 }
 
 .read-more-btn:hover {
-    text-decoration: underline;
+    color: #2563eb;
+}
+
+/* Optional: Add a subtle indicator */
+.read-more-btn::after {
+    content: ' ▼';
+    font-size: 0.6rem;
+}
+
+.read-more-btn.expanded::after {
+    content: ' ▲';
 }
 
 /* make the action buttons look nice outside of .item-card context */
