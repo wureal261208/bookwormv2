@@ -91,13 +91,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     }
 
-    // Mark notifications as seen
-    function markNotificationsAsSeen() {
-        const notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
-        notifications.forEach(n => n.seen = true);
+    // Mark notifications as seen and remove the clicked one
+    function markNotificationAsSeen(bookId) {
+        let notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
+        notifications = notifications.filter(n => n.bookId !== bookId);
         localStorage.setItem('newBookNotifications', JSON.stringify(notifications));
         if (notificationBadge) {
-            notificationBadge.classList.add('hidden');
+            const unreadCount = notifications.filter(n => !n.seen).length;
+            if (unreadCount > 0) {
+                notificationBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+            } else {
+                notificationBadge.classList.add('hidden');
+            }
         }
     }
 
@@ -110,21 +115,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Mark as seen when dropdown opens
-    if (notificationDropdown) {
-        const observer = new MutationObserver(() => {
-            if (notificationDropdown.classList.contains('opacity-100')) {
-                markNotificationsAsSeen();
-            }
-        });
-        observer.observe(notificationDropdown, { attributes: true, attributeFilter: ['class'] });
-    }
-
     // Make viewBookDetail available globally
     window.viewBookDetail = function(bookId) {
         const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
         const book = adminBooks.find(b => b.id === bookId);
         if (book) {
+            // Mark notification as seen/remove it
+            markNotificationAsSeen(bookId);
+            
             localStorage.setItem('currentBook', JSON.stringify(book));
             window.location.reload();
         }
@@ -454,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ratingCountEl) ratingCountEl.textContent = ratingCount;
         if (descEl) descEl.textContent = description || 'No summary provided.';
 
-        // Set book cover
+        // Set book cover - get from localStorage of the book
         const defaultCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
         const bookCoverEl = document.getElementById('book-cover');
         const bookCoverLink = document.getElementById('book-cover-link');
@@ -519,11 +517,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const start = currentPage * pageSize;
         const end = Math.min(editions.length, start + pageSize);
         
-        if (totalEditions === 0) {
+        // Show message when no editions
+        if (editions.length === 0) {
             editionList.innerHTML = `
                 <li class="text-center py-8 text-gray-500">
                     <i class='bx bx-book' style="font-size: 3rem;"></i>
-                    <p class="mt-2">This book isn't having any editions yet.</p>
+                    <p class="mt-2 font-medium">This edition doesn't have a description yet.</p>
                     <p class="text-sm text-gray-400">Check back later for updates.</p>
                 </li>
             `;
@@ -551,33 +550,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                     <div class="edition-actions flex gap-2">
-                        <a href="index-acc.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-about px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-100">
+                        <a href="index-acc.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-about px-4 py-2 border-2 border-gray-600 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition">
                             About
                         </a>
-                        <a href="../reading/index-read-img.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-read px-3 py-1.5 bg-black text-white text-sm rounded hover:opacity-80">
-                            Read
-                        </a>
-                    </div>
-                `;
-                editionList.appendChild(li);
-            }
-        } else {
-            for (let i = start; i < end; i++) {
-                const li = document.createElement('li');
-                li.className = "edition-item flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50";
-                li.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <img src="${defaultEditionCover}" alt="Edition ${i + 1}" class="w-10 h-14 object-cover rounded">
-                        <div class="edition-info">
-                            <p class="font-semibold">Edition ${i + 1}</p>
-                            <p class="text-sm text-gray-500">Language: English</p>
-                        </div>
-                    </div>
-                    <div class="edition-actions flex gap-2">
-                        <a href="index-acc.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-about px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-100">
-                            About
-                        </a>
-                        <a href="../reading/index-read-img.html?edition=${i + 1}" class="edition-read px-3 py-1.5 bg-black text-white text-sm rounded hover:opacity-80">
+                        <a href="../reading/index-read-img.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-read px-4 py-2 bg-black text-white font-semibold rounded-lg hover:opacity-80 transition">
                             Read
                         </a>
                     </div>
