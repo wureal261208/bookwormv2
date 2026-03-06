@@ -479,6 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        document.getElementById()
         document.getElementById('book-title').textContent = title;
         document.getElementById('book-author').textContent = `by ${author}`;
         document.getElementById('book-status').innerHTML = `Status: <strong>${status}</strong>`;
@@ -507,6 +508,54 @@ document.addEventListener('DOMContentLoaded', () => {
             bookCoverLink.href = readBtn ? readBtn.href : `../reading/index-read-novel.html?book=${bookId || 'default'}&chapter=1`;
         }
         return chapters;
+    }
+
+    function isValidUrl(url) {
+        try {
+            const urlObj = new URL(url);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function getBookCover(bookId) {
+        const storedBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+        const book = storedBooks.find(b => b.id === bookId);
+        if (book && book.image) {
+            if (isValidCoverUrl(book.image)) {
+                return book.image;
+            }
+        }
+        return getDefaultCover();
+    }
+
+    function saveBookCover(bookId, coverUrl) {
+        const storedBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+        const bookIndex = storedBooks.findIndex(b => b.id === bookId);
+        if (bookIndex !== -1) {
+            // Validate URL or use default
+            const validCover = isValidCoverUrl(coverUrl) ? coverUrl : getDefaultCover();
+            storedBooks[bookIndex].image = validCover;
+            storedBooks[bookIndex].updatedAt = new Date().toISOString();
+            localStorage.setItem('adminBooks', JSON.stringify(storedBooks));
+            
+            // Update in-memory books array
+            const localBookIndex = books.findIndex(b => b.id === bookId);
+            if (localBookIndex !== -1) {
+                books[localBookIndex].image = validCover;
+            }
+            return validCover;
+        }
+        return getDefaultCover();
+    }
+
+    function getAllBookCovers() {
+        const storedBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+        return storedBooks.map(book => ({
+            id: book.id,
+            image: book.image || getDefaultCover()
+        }));
     }
 
     // chapters pagination - display actual editions from book data
