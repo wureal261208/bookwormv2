@@ -1076,6 +1076,27 @@ function addBook(event) {
     
     books.push(newBook);
     saveBooksToStorage();
+    
+    // If book is added as published, create a notification for users
+    if (status === 'published') {
+        newBook.publishedAt = new Date().toISOString();
+        
+        // Store new book notification for users (include book cover image and author)
+        const newBookNotification = {
+            bookId: newBook.id,
+            title: newBook.title,
+            author: newBook.author || '',
+            image: newBook.image || '',
+            publishedAt: newBook.publishedAt,
+            seen: false
+        };
+        
+        // Get existing notifications
+        let notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
+        notifications.push(newBookNotification);
+        localStorage.setItem('newBookNotifications', JSON.stringify(notifications));
+    }
+    
     renderBooks();
     updateStatsCards();
     closeModal('book');
@@ -1316,6 +1337,9 @@ function editBook(event) {
         return;
     }
     
+    // Get current book status before update (to check if changed from draft to published)
+    const wasPublished = books[bookIndex].status === 'published';
+    
     // Get form values
     const title = document.getElementById('edit-book-title').value.trim();
     const author = document.getElementById('edit-book-author').value.trim();
@@ -1367,6 +1391,27 @@ function editBook(event) {
             updatedAt: new Date().toISOString()
         };
         
+        // Check if book was changed from draft to published - create notification
+        if (wasPublished === false && status === 'published') {
+            books[bookIndex].publishedAt = new Date().toISOString();
+            books[bookIndex].isNew = true;
+            
+            // Store new book notification for users (include book cover image and author)
+            const newBookNotification = {
+                bookId: books[bookIndex].id,
+                title: books[bookIndex].title,
+                author: books[bookIndex].author || '',
+                image: books[bookIndex].image || '',
+                publishedAt: books[bookIndex].publishedAt,
+                seen: false
+            };
+            
+            // Get existing notifications
+            let notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
+            notifications.push(newBookNotification);
+            localStorage.setItem('newBookNotifications', JSON.stringify(notifications));
+        }
+        
         saveBooksToStorage();
         renderBooks();
         updateStatsCards();
@@ -1395,10 +1440,11 @@ function toggleBookStatus(bookId) {
             book.publishedAt = new Date().toISOString();
             book.isNew = true;
             
-            // Store new book notification for users (include book cover image)
+            // Store new book notification for users (include book cover image and author)
             const newBookNotification = {
                 bookId: book.id,
                 title: book.title,
+                author: book.author || '',
                 image: book.image || '',
                 publishedAt: book.publishedAt,
                 seen: false

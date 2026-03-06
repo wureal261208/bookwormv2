@@ -581,6 +581,9 @@ function loadAndDisplayNotifications() {
                 bookImage = book.image;
             }
             
+            // Get author from notification or from localStorage book
+            const bookAuthor = notif.author || (book ? book.author : '');
+            
             return `
             <div class="notification-item px-4 py-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100" onclick="viewNotificationBook(${notif.bookId})">
                 <div class="flex items-start gap-3">
@@ -589,7 +592,8 @@ function loadAndDisplayNotifications() {
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-semibold text-black truncate">New book published!</p>
-                        <p class="text-sm text-black truncate">${notif.title}</p>
+                        <p class="text-sm font-medium text-black truncate">${notif.title}</p>
+                        <p class="text-xs text-gray-500 truncate">${bookAuthor}</p>
                         <p class="text-xs text-gray-500 mt-1">${timeAgo}</p>
                     </div>
                     <div class="flex-shrink-0">
