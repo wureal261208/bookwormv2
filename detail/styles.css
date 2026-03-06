@@ -1,11 +1,11 @@
 /* detail/styles.css - styles specific to the book detail page */
 
-/* Book cover image - push to top */
+/* Book cover image - push to top in flex container */
 #main-content article figure {
-    align-items: flex-start;
+    align-self: flex-start;
 }
 
-/* Description truncation - snip text if too long */
+/* Description section styling */
 #book-description {
     display: -webkit-box;
     -webkit-line-clamp: 4;
@@ -13,6 +13,27 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-height: 6em;
+    position: relative;
+}
+
+/* Expanded description - no limit */
+#book-description.expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    max-height: none;
+}
+
+/* Read more button for description */
+.read-more-btn {
+    color: #2563eb;
+    font-size: 0.875rem;
+    cursor: pointer;
+    margin-top: 0.25rem;
+    display: inline-block;
+}
+
+.read-more-btn:hover {
+    text-decoration: underline;
 }
 
 /* make the action buttons look nice outside of .item-card context */

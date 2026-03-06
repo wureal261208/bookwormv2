@@ -255,6 +255,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =====================
+    // READ MORE BUTTON FOR DESCRIPTION
+    // =====================
+    const readMoreBtn = document.getElementById('read-more-btn');
+    const bookDescription = document.getElementById('book-description');
+    
+    if (readMoreBtn && bookDescription) {
+        // Check if description is long enough to need truncation
+        function checkDescriptionLength() {
+            if (bookDescription.scrollHeight > bookDescription.clientHeight) {
+                readMoreBtn.style.display = 'inline-block';
+            } else {
+                readMoreBtn.style.display = 'none';
+            }
+        }
+        
+        // Toggle expand/collapse
+        readMoreBtn.addEventListener('click', () => {
+            bookDescription.classList.toggle('expanded');
+            if (bookDescription.classList.contains('expanded')) {
+                readMoreBtn.textContent = 'Show less';
+            } else {
+                readMoreBtn.textContent = 'Read more';
+            }
+        });
+        
+        // Check on load and after content is set
+        setTimeout(checkDescriptionLength, 100);
+    }
+
+    // =====================
     // BOOK LOADING (from localStorage)
     // =====================
     
