@@ -42,26 +42,6 @@
             border-radius: 0.5rem;
             min-width: 140px;
         }
-        /* recommendation cards */
-        .recommend-card {
-            display: inline-block;
-            width: 160px;
-            margin: 0 0.5rem;
-            text-align: center;
-        }
-        .recommend-card img {
-            width: 100%;
-            border-radius: 0.5rem;
-        }
-        .recommend-card h3 {
-            font-size: 0.9rem;
-            margin: 0.4rem 0 0.2rem;
-        }
-        .recommend-card .rating,
-        .recommend-card .views {
-            font-size: 0.8rem;
-            color: var(--gray-dark);
-        }
         #prev-page, #next-page {
             border: 2px solid var(--primary-color);
             background: var(--secondary-color);
@@ -107,6 +87,26 @@
         /* Adjust container to accommodate centered buttons */
         .nav-controls {
             position: relative;
+        }
+        /* recommendation cards */
+        .recommend-card {
+            display: inline-block;
+            width: 160px;
+            margin: 0 0.5rem;
+            text-align: center;
+        }
+        .recommend-card img {
+            width: 100%;
+            border-radius: 0.5rem;
+        }
+        .recommend-card h3 {
+            font-size: 0.9rem;
+            margin: 0.4rem 0 0.2rem;
+        }
+        .recommend-card .rating,
+        .recommend-card .views {
+            font-size: 0.8rem;
+            color: var(--gray-dark);
         }
     </style>
 </head>
@@ -236,24 +236,6 @@
             const slides = slider.querySelectorAll('.reader-slide');
             let continuous = false;
             const recContainer = document.getElementById('recommend-list');
-            // populate book info from localStorage
-            const infoContainer = document.getElementById('book-info');
-            const stored = localStorage.getItem('currentBook');
-            if (stored && infoContainer) {
-                try {
-                    const book = JSON.parse(stored);
-                    infoContainer.innerHTML = `
-                        <img src="${book.cover||'/img/default.jpg'}" alt="${book.title} cover" class="w-24 h-32 object-cover rounded" />
-                        <div>
-                            <h2 class="text-xl font-semibold">${book.title||''}</h2>
-                            <div class="flex items-center gap-1">
-                                <i class="bx bx-star text-yellow-400"></i>
-                                <span>${book.rating||0}</span>
-                            </div>
-                            <div class="text-sm text-gray-600">${book.views||0} views</div>
-                        </div>`;
-                } catch {}            
-            }
             const recommendations = [
                 {cover:'https://via.placeholder.com/120x180?text=Book+1',title:'The Lost Pages',rating:4.2,views:1320,tags:['adventure','mystery']},
                 {cover:'https://via.placeholder.com/120x180?text=Book+2',title:'Mystery of the Isle',rating:4.7,views:980,tags:['mystery','thriller']},
