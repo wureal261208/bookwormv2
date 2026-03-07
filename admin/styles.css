@@ -485,6 +485,78 @@ body {
     background: #c0392b;
 }
 
+/* Duplicate Book Warning Modal Styles */
+.confirm-modal-warning {
+    max-width: 450px;
+}
+
+.confirm-modal-icon-warning {
+    background: rgba(243, 156, 18, 0.15) !important;
+}
+
+.confirm-modal-icon-warning i {
+    color: #f39c12 !important;
+    font-size: 2.2rem !important;
+}
+
+.confirm-modal-warning h3 {
+    color: #e67e22;
+}
+
+.confirm-modal-warning #duplicate-message {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+}
+
+.duplicate-book-info {
+    background: rgba(243, 156, 18, 0.1);
+    border: 1px solid rgba(243, 156, 18, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.duplicate-book-info .info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.duplicate-book-info .info-row:last-child {
+    margin-bottom: 0;
+}
+
+.duplicate-book-info .info-label {
+    font-weight: 500;
+    color: var(--color-1);
+    min-width: 60px;
+}
+
+.duplicate-book-info .info-value {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.duplicate-book-info .book-cover-mini {
+    width: 40px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-confirm-add-anyway {
+    background: #f39c12 !important;
+    color: var(--white) !important;
+}
+
+.btn-confirm-add-anyway:hover {
+    background: #e67e22 !important;
+}
+
 .book-item .book-status {
     padding: 4px 10px;
     border-radius: 12px;

@@ -519,9 +519,10 @@ function clearFormValidation(formId) {
 }
 
 // Function to check for duplicate book title
-function checkDuplicateTitle(title) {
+function checkDuplicateTitle(title, excludeBookId = null) {
     const existingBook = books.find(b => 
-        b.title.toLowerCase().trim() === title.toLowerCase().trim()
+        b.title.toLowerCase().trim() === title.toLowerCase().trim() &&
+        (excludeBookId === null || b.id !== excludeBookId)
     );
     
     return existingBook;
@@ -555,6 +556,95 @@ function removeDuplicateWarning() {
     if (warning) {
         warning.remove();
     }
+}
+
+// ═════════════════════════════════════════════════════════════
+// DUPLICATE BOOK MODAL FUNCTIONS
+// ═════════════════════════════════════════════════════════════
+
+let pendingDuplicateBook = null;
+
+// Function to show duplicate book modal
+function showDuplicateModal(existingBook, newBookData) {
+    // Store pending book data for confirmation
+    pendingDuplicateBook = newBookData;
+    
+    // Update modal content
+    document.getElementById('duplicate-title').textContent = 'Book Already Exists';
+    document.getElementById('duplicate-message').textContent = `A book with the title "${newBookData.title}" already exists in the system. Do you want to add it anyway as a different entry?`;
+    
+    // Show existing book info
+    const infoContainer = document.getElementById('duplicate-book-info');
+    const coverUrl = existingBook.image && isValidCoverUrl(existingBook.image) ? existingBook.image : getDefaultCover();
+    
+    infoContainer.innerHTML = `
+        <div class="info-row">
+            <img src="${coverUrl}" alt="${existingBook.title}" class="book-cover-mini">
+            <div>
+                <div class="info-value" style="font-weight: 600; color: var(--color-1);">${existingBook.title}</div>
+                <div class="info-value">by ${existingBook.author}</div>
+                <div class="info-value">Status: ${existingBook.status === 'published' ? 'Published' : 'Draft'}</div>
+            </div>
+        </div>
+    `;
+    
+    // Show the modal
+    document.getElementById('duplicate-modal').classList.add('active');
+    
+    // Show error notification
+    showNotification(`Book "${newBookData.title}" already exists!`, 'error');
+}
+
+// Function to close duplicate modal
+function closeDuplicateModal() {
+    document.getElementById('duplicate-modal').classList.remove('active');
+    pendingDuplicateBook = null;
+}
+
+// Function to confirm adding duplicate book
+function confirmAddDuplicateBook() {
+    if (!pendingDuplicateBook) {
+        closeDuplicateModal();
+        return;
+    }
+    
+    // Add loading state to button
+    const addBtn = document.getElementById('btn-add-anyway');
+    if (addBtn) {
+        addBtn.classList.add('loading');
+        addBtn.disabled = true;
+    }
+    
+    // Simulate delay for UX
+    setTimeout(() => {
+        // Add the book anyway
+        const newBook = {
+            id: Date.now(),
+            ...pendingDuplicateBook
+        };
+        
+        books.push(newBook);
+        saveBooksToStorage();
+        renderBooks();
+        updateStatsCards();
+        
+        // Close both modals
+        closeDuplicateModal();
+        closeModal('book');
+        
+        // Reset form
+        document.querySelector('#book-modal form').reset();
+        clearEditionsForm();
+        clearFormValidation('book-modal');
+        
+        // Remove loading state
+        if (addBtn) {
+            addBtn.classList.remove('loading');
+            addBtn.disabled = false;
+        }
+        
+        showNotification(`Book "${newBook.title}" added successfully!`, 'success');
+    }, 500);
 }
 
 // Add CSS for shake animation
@@ -698,11 +788,12 @@ function addBook(event) {
         return;
     }
     
-    // Check for duplicate title
+    // Check for duplicate title - block if duplicate exists
     const duplicateBook = checkDuplicateTitle(title);
     if (duplicateBook) {
-        showDuplicateWarning(duplicateBook);
-        showNotification('A book with similar title already exists!', 'warning');
+        // Show error on title field instead of allowing duplicate
+        showFieldError('book-title', `A book with title "${duplicateBook.title}" already exists. Please use a different title.`);
+        showNotification('A book with this title already exists!', 'error');
         document.getElementById('book-title').focus();
         return;
     }
@@ -1380,6 +1471,15 @@ function editBook(event) {
     const language = document.getElementById('edit-book-language').value;
     const status = document.getElementById('edit-book-status').value;
     
+    // Check for duplicate title (excluding current book being edited)
+    const duplicateBook = checkDuplicateTitle(title, bookId);
+    if (duplicateBook) {
+        showFieldError('edit-book-title', `A book with title "${duplicateBook.title}" already exists. Please use a different title.`);
+        showNotification('A book with this title already exists!', 'error');
+        document.getElementById('edit-book-title').focus();
+        return;
+    }
+    
     // Collect editions
     const editions = collectEditEditions();
     
@@ -1870,7 +1970,7 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Close modals when clicking outside
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
+document.querySelectorAll('.modal-overlay, .confirm-modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
             overlay.classList.remove('active');
@@ -1881,7 +1981,7 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+        document.querySelectorAll('.modal-overlay.active, .confirm-modal-overlay.active').forEach(modal => {
             modal.classList.remove('active');
         });
     }

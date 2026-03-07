@@ -410,6 +410,24 @@
             </div>
         </div>
     </div>
+
+    <!-- Duplicate Book Warning Modal -->
+    <div class="confirm-modal-overlay" id="duplicate-modal">
+        <div class="confirm-modal confirm-modal-warning">
+            <div class="confirm-modal-icon confirm-modal-icon-warning">
+                <i class='bx bx-error'></i>
+            </div>
+            <h3 id="duplicate-title">Book Already Exists</h3>
+            <p id="duplicate-message">A book with this title already exists in the system.</p>
+            <div class="duplicate-book-info" id="duplicate-book-info">
+                <!-- Existing book info will be populated here -->
+            </div>
+            <div class="confirm-modal-buttons">
+                <button class="btn-confirm-cancel" onclick="closeDuplicateModal()">Cancel</button>
+                <button class="btn-confirm-add-anyway" id="btn-add-anyway" onclick="confirmAddDuplicateBook()">Add Anyway</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
