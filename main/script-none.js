@@ -253,7 +253,7 @@ function isValidUrl(url) {
 }
 
 // ═════════════════════════════════════════════════════════════
-// SEARCH FUNCTIONALITY
+// SEARCH FUNCTIONALITY - Enhanced Version
 // ═════════════════════════════════════════════════════════════
 
 // Search functionality with instant dropdown
@@ -263,10 +263,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchResults = document.getElementById('search-results');
     const searchClearBtn = document.getElementById('search-clear-btn');
     const searchWrapper = document.getElementById('search-wrapper');
+    const searchViewAll = document.getElementById('search-view-all');
     
     if (!searchInput) return;
     
     let searchTimeout;
+    let selectedIndex = -1;
+    let currentResults = [];
     
     // Search on input with debounce
     searchInput.addEventListener('input', function() {
@@ -278,14 +281,18 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             searchClearBtn.classList.add('hidden');
             searchDropdown.classList.add('hidden');
+            searchViewAll.classList.add('hidden');
             return;
         }
+        
+        // Reset selection
+        selectedIndex = -1;
         
         // Debounce search
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
             performSearch(query);
-        }, 300);
+        }, 250);
     });
     
     // Clear search
@@ -294,7 +301,10 @@ document.addEventListener('DOMContentLoaded', function() {
             searchInput.value = '';
             searchClearBtn.classList.add('hidden');
             searchDropdown.classList.add('hidden');
+            searchViewAll.classList.add('hidden');
             searchInput.focus();
+            selectedIndex = -1;
+            currentResults = [];
         });
     }
     
@@ -302,17 +312,54 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(e) {
         if (searchWrapper && !searchWrapper.contains(e.target)) {
             searchDropdown.classList.add('hidden');
+            searchViewAll.classList.add('hidden');
         }
     });
     
     // Show dropdown when input is focused and has value
     searchInput.addEventListener('focus', function() {
-        if (this.value.trim().length > 0) {
+        if (this.value.trim().length > 0 && currentResults.length > 0) {
             searchDropdown.classList.remove('hidden');
         }
     });
     
-    // Perform search
+    // Keyboard navigation
+    searchInput.addEventListener('keydown', function(e) {
+        const items = document.querySelectorAll('.search-result-item');
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+            updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedIndex = Math.max(selectedIndex - 1, -1);
+            updateSelection(items);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (selectedIndex >= 0 && currentResults[selectedIndex]) {
+                viewSearchedBook(currentResults[selectedIndex].id);
+            }
+        } else if (e.key === 'Escape') {
+            searchDropdown.classList.add('hidden');
+            searchViewAll.classList.add('hidden');
+            selectedIndex = -1;
+        }
+    });
+    
+    function updateSelection(items) {
+        items.forEach((item, index) => {
+            if (index === selectedIndex) {
+                item.classList.add('bg-blue-50');
+                item.classList.remove('hover:bg-gray-50');
+            } else {
+                item.classList.remove('bg-blue-50');
+                item.classList.add('hover:bg-gray-50');
+            }
+        });
+    }
+    
+    // Perform search - Enhanced with more fields
     function performSearch(query) {
         // Get all books from localStorage
         const storedBooks = localStorage.getItem('adminBooks');
@@ -325,35 +372,61 @@ document.addEventListener('DOMContentLoaded', function() {
         // Only search published books (exclude drafts)
         books = books.filter(book => book.status === 'published');
         
-        // Filter books by title and author (case-insensitive)
+        // Filter books by title, author, genre, and description (case-insensitive)
         const queryLower = query.toLowerCase();
         const filteredBooks = books.filter(book => {
             const titleMatch = book.title && book.title.toLowerCase().includes(queryLower);
             const authorMatch = book.author && book.author.toLowerCase().includes(queryLower);
-            return titleMatch || authorMatch;
-        }).slice(0, 1); // Show only 1 book item
+            const genreMatch = book.genre && book.genre.toLowerCase().includes(queryLower);
+            const descMatch = book.description && book.description.toLowerCase().includes(queryLower);
+            return titleMatch || authorMatch || genreMatch || descMatch;
+        }).slice(0, 8); // Show up to 8 results
+        
+        currentResults = filteredBooks;
         
         // Display results
         if (filteredBooks.length === 0) {
             searchResults.innerHTML = `
-                <div class="px-4 py-3 text-sm text-black text-center">
-                    <i class='bx bx-search'></i> No books found for "${query}"
+                <div class="px-4 py-6 text-sm text-gray-500 text-center">
+                    <i class='bx bx-search text-3xl mb-2'></i>
+                    <p>No books found for "<span class="font-medium text-gray-700">${query}</span>"</p>
+                    <p class="text-xs mt-1">Try searching for title, author, or genre</p>
                 </div>
             `;
+            searchViewAll.classList.add('hidden');
         } else {
             const defaultImage = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
             
-            searchResults.innerHTML = filteredBooks.map(book => `
-                <div class="search-result-item px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center gap-3 border-b border-gray-100" onclick="viewSearchedBook(${book.id})">
-                    <img src="${book.image || defaultImage}" alt="${book.title}" class="w-12 h-16 object-cover rounded">
+            // Highlight matching text function
+            const highlightMatch = (text, query) => {
+                if (!text) return '';
+                const regex = new RegExp(`(${query})`, 'gi');
+                return text.replace(regex, '<mark class="bg-yellow-200 text-gray-900 rounded px-0.5">$1</mark>');
+            };
+            
+            searchResults.innerHTML = filteredBooks.map((book, index) => `
+                <div class="search-result-item px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center gap-3 border-b border-gray-50 transition-colors" data-index="${index}" onclick="viewSearchedBook(${book.id})">
+                    <img src="${book.image || defaultImage}" alt="${book.title}" class="w-12 h-16 object-cover rounded shadow-sm">
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-black truncate">${book.title}</p>
-                        <p class="text-xs text-gray-500">${book.author || 'Unknown Author'}</p>
-                        <span class="text-xs text-blue-600">${book.genre ? book.genre.split(',')[0].trim() : ''}</span>
+                        <p class="text-sm font-semibold text-gray-800 truncate">${highlightMatch(book.title, query)}</p>
+                        <p class="text-xs text-gray-500 truncate">${book.author ? highlightMatch(book.author, query) : 'Unknown Author'}</p>
+                        <span class="text-xs text-blue-600 font-medium">${book.genre ? book.genre.split(',')[0].trim() : ''}</span>
                     </div>
                     <i class='bx bx-chevron-right text-gray-400'></i>
                 </div>
             `).join('');
+            
+            // Show "View all" if there are more results
+            if (filteredBooks.length >= 8) {
+                searchViewAll.classList.remove('hidden');
+                searchViewAll.onclick = () => {
+                    // Store search query and navigate to browse page with filter
+                    localStorage.setItem('searchQuery', query);
+                    window.location.href = 'index-none.html';
+                };
+            } else {
+                searchViewAll.classList.add('hidden');
+            }
         }
         
         searchDropdown.classList.remove('hidden');

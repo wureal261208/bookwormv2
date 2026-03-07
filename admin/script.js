@@ -574,6 +574,18 @@ function initValidationListeners() {
         { id: 'book-isbn', validator: ValidationUtils.isbn }
     ];
     
+    const editFields = [
+        { id: 'edit-book-title', validator: ValidationUtils.title },
+        { id: 'edit-book-author', validator: ValidationUtils.author },
+        { id: 'edit-book-image', validator: ValidationUtils.url },
+        { id: 'edit-book-genre', validator: ValidationUtils.genre },
+        { id: 'edit-book-pages', validator: ValidationUtils.pages },
+        { id: 'edit-book-description', validator: ValidationUtils.description },
+        { id: 'edit-book-type', validator: ValidationUtils.bookType },
+        { id: 'edit-book-isbn', validator: ValidationUtils.isbn }
+    ];
+    
+    // Add validation for add book form
     fields.forEach(field => {
         const element = document.getElementById(field.id);
         if (!element) return;
@@ -596,6 +608,31 @@ function initValidationListeners() {
         element.addEventListener('focus', () => {
             removeFieldError(field.id);
             removeDuplicateWarning();
+        });
+    });
+    
+    // Add validation for edit book form
+    editFields.forEach(field => {
+        const element = document.getElementById(field.id);
+        if (!element) return;
+        
+        // Validate on blur
+        element.addEventListener('blur', () => {
+            validateField(field.id, field.validator);
+        });
+        
+        // Validate on input (with debounce)
+        let debounceTimer;
+        element.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                validateField(field.id, field.validator);
+            }, 500);
+        });
+        
+        // Clear error on focus
+        element.addEventListener('focus', () => {
+            removeFieldError(field.id);
         });
     });
 }
@@ -1345,6 +1382,35 @@ function editBook(event) {
     
     if (bookIndex === -1) {
         showNotification('Book not found!', 'error');
+        return;
+    }
+    
+    // Validate all required fields first
+    const validations = [
+        { id: 'edit-book-title', validator: ValidationUtils.title },
+        { id: 'edit-book-author', validator: ValidationUtils.author },
+        { id: 'edit-book-genre', validator: ValidationUtils.genre },
+        { id: 'edit-book-pages', validator: ValidationUtils.pages },
+        { id: 'edit-book-image', validator: ValidationUtils.url },
+        { id: 'edit-book-description', validator: ValidationUtils.description },
+        { id: 'edit-book-type', validator: ValidationUtils.bookType },
+        { id: 'edit-book-isbn', validator: ValidationUtils.isbn }
+    ];
+    
+    let hasErrors = false;
+    
+    // Validate all fields
+    validations.forEach(({ id, validator }) => {
+        if (!validateField(id, validator)) {
+            hasErrors = true;
+        }
+    });
+    
+    // If there are validation errors, stop
+    if (hasErrors) {
+        showNotification('Please fix the validation errors before submitting', 'error');
+        const firstError = document.querySelector('#edit-book-modal input.error');
+        if (firstError) firstError.focus();
         return;
     }
     

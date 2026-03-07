@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore - BookWorm</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@400..700&display=swap" rel="stylesheet">
+    <style>
+        .coming-soon-container {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .coming-soon-icon {
+            font-size: 5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .coming-soon-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+        .coming-soon-subtitle {
+            font-size: 1.25rem;
+            color: var(--muted);
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        .back-btn {
+            margin-top: 2rem;
+            padding: 0.75rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+        <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 custom-navbar border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="#" class="text-2xl font-bold flex items-center gap-2">
+                            <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm">
+                            <span>BookWorm</span>
+                        </a>
+                    </div>
+                    <div class="hidden md:block ml-10">
+                        <div class="flex items-baseline space-x-4 nav-links">
+                            <a href="index-acc.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link active"><i
+                                    class='bx bx-search' aria-hidden="true"></i> Browse</a>
+                            <a href="categories2.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
+                                    class='bx bx-category' aria-hidden="true"></i> Categories</a>
+                            <a href="#" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
+                                    class='bx bx-compass' aria-hidden="true"></i> Explore</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Search Bar with Dropdown -->
+                    <div class="relative hidden sm:block" id="search-wrapper">
+                        <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'
+                            aria-hidden="true"></i>
+                        <input type="text" id="main-search-input" placeholder="Search books..."
+                            class="custom-input text-sm pl-10 pr-10" autocomplete="off" aria-label="Search books">
+                        <button type="button" id="search-clear-btn"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
+                            <i class='bx bx-x'></i>
+                        </button>
+                        <!-- Search Results Dropdown -->
+                        <div id="search-dropdown"
+                            class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg max-h-[28rem] overflow-y-auto z-50 hidden search-dropdown-animated">
+                            <div id="search-results"></div>
+                            <div id="search-view-all" class="hidden px-4 py-3 border-t border-gray-100 text-center hover:bg-gray-50 cursor-pointer">
+                                <span class="text-sm text-blue-600 font-medium">View all results <i class='bx bx-right-arrow-alt'></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Notification -->
+                    <div class="relative" id="notification-container">
+                        <button id="notification-btn" class="p-1.5 rounded-full text-white hover:bg-white/20 relative">
+                            <i class='bx bx-bell text-xl'></i>
+                            <span id="notification-badge"
+                                class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden shadow-lg border-2 border-white animate-pulse"></span>
+                        </button>
+                        <!-- Notification Dropdown -->
+                        <div id="notification-dropdown"
+                            class="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-xl py-2 z-50 max-h-[28rem] overflow-hidden transform opacity-0 scale-95 invisible transition-all duration-200 notif-dropdown-animated">
+                            <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+                                <h4 class="font-bold text-gray-800"><i class='bx bx-bell'></i> Notifications</h4>
+                                <button id="mark-all-read" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Mark all read</button>
+                            </div>
+                            <div id="notification-list" class="max-h-72 overflow-y-auto">
+                                <div class="px-4 py-8 text-center">
+                                    <i class='bx bx-bell-slash text-4xl text-gray-300 mb-2'></i>
+                                    <p class="text-sm text-gray-500">No new notifications</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Avatar -->
+                    <div class="relative group">
+                        <button class="flex items-center gap-2">
+                            <img class="h-9 w-9 rounded-full object-cover border-2 border-white/50"
+                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                alt="User">
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <p id="user-email-display" class="px-4 py-2 text-sm font-semibold text-gray-800 truncate">
+                            </p>
+                            <a style="color: #333333" href="../login/index.html"
+                                class="dropdown-item block px-4 py-2 text-sm font-semibold">
+                                <i class='bx bx-log-out'></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                    <div class="md:hidden">
+                        <button
+                            class="mobile-menu-btn inline-flex items-center justify-center p-2 rounded-md text-white">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 z-40"
+            style="background:linear-gradient(135deg,var(--secondary-color),var(--primary-color))">
+            <div class="px-4 py-4 space-y-2">
+                <a href="#" class="block px-3 py-2 rounded-md text-sm font-medium nav-link active">Browse</a>
+                <a href="categories.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Categories</a>
+                <a href="explore.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">My Library</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Coming Soon Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="coming-soon-container">
+            <div class="coming-soon-icon">
+                <i class='bx bx-compass'></i>
+            </div>
+            <h1 class="coming-soon-title">Coming Soon!</h1>
+            <p class="coming-soon-subtitle">
+                Get ready to discover amazing new reads! Our Explore feature will help you 
+                find hidden gems and personalized recommendations based on your reading preferences.
+                Coming your way very soon!
+            </p>
+            <a href="index-none.html" class="back-btn">
+                <i class='bx bx-arrow-back'></i> Back to Browse
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img class="h-10 w-auto" src="/img/logo.jpg" alt="BookWorm">
+                        <span class="logo-text">BookWorm</span>
+                    </div>
+                    <p class="tagline">Your gateway to infinite stories</p>
+                    <p class="brand-desc">Discover millions of books, comics, and manga from around the world. Join our
+                        community of book lovers today.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Explore</h3>
+                    <ul>
+                        <li><a href="#">Trending</a></li>
+                        <li><a href="#">New Releases</a></li>
+                        <li><a href="categories.html">Categories</a></li>
+                        <li><a href="#">Collections</a></li>
+                        <li><a href="#">Recommendations</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Accessibility</a></li>
+                    </ul>
+                </div>
+                <div class="footer-connect">
+                    <h3>Connect</h3>
+                    <p>Join our community of book lovers.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook" class="social-icon"><i class='bx bxl-facebook'></i></a>
+                        <a href="#" aria-label="Instagram" class="social-icon"><i class='bx bxl-instagram-alt'></i></a>
+                        <a href="#" aria-label="Twitter" class="social-icon"><i class='bx bxl-twitter'></i></a>
+                        <a href="#" aria-label="TikTok" class="social-icon"><i class='bx bxl-tiktok'></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="contact-info">
+                    <p><strong>BookWorm</strong> • hello@bookworm.vn</p>
+                    <p><a href="tel:+842839301234">+84 28 3930 1234</a> • Ho Chi Minh City, Vietnam</p>
+                </div>
+            </div>
+            <div class="footer-legal">
+                <p>© 2025 BookWorm. All rights reserved. • <a href="/privacy">Privacy Policy</a> • <a
+                        href="/terms">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

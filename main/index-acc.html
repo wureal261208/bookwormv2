@@ -30,9 +30,9 @@
                         <div class="flex items-baseline space-x-4 nav-links">
                             <a href="#" class="px-3 py-2 rounded-md text-sm font-medium nav-link active"><i
                                     class='bx bx-search' aria-hidden="true"></i> Browse</a>
-                            <a href="categories.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
+                            <a href="categories2.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
                                     class='bx bx-category' aria-hidden="true"></i> Categories</a>
-                            <a href="explore.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
+                            <a href="explore2.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
                                     class='bx bx-compass' aria-hidden="true"></i> Explore</a>
                         </div>
                     </div>
@@ -43,64 +43,41 @@
                         <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'
                             aria-hidden="true"></i>
                         <input type="text" id="main-search-input" placeholder="Search books..."
-                            class="custom-input text-sm pl-10 pr-10" autocomplete="off">
+                            class="custom-input text-sm pl-10 pr-10" autocomplete="off" aria-label="Search books">
                         <button type="button" id="search-clear-btn"
                             class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
                             <i class='bx bx-x'></i>
                         </button>
                         <!-- Search Results Dropdown -->
                         <div id="search-dropdown"
-                            class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg max-h-96 overflow-y-auto z-50 hidden">
+                            class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg max-h-[28rem] overflow-y-auto z-50 hidden search-dropdown-animated">
                             <div id="search-results"></div>
+                            <div id="search-view-all" class="hidden px-4 py-3 border-t border-gray-100 text-center hover:bg-gray-50 cursor-pointer">
+                                <span class="text-sm text-blue-600 font-medium">View all results <i class='bx bx-right-arrow-alt'></i></span>
+                            </div>
                         </div>
                     </div>
                     <!-- Notification -->
                     <div class="relative" id="notification-container">
-                        <button id="notification-btn" class="p-1.5 rounded-full text-white hover:bg-white/20">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
+                        <button id="notification-btn" class="p-1.5 rounded-full text-white hover:bg-white/20 relative">
+                            <i class='bx bx-bell text-xl'></i>
                             <span id="notification-badge"
-                                class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden shadow-lg border-2 border-white"></span>
+                                class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden shadow-lg border-2 border-white animate-pulse"></span>
                         </button>
                         <!-- Notification Dropdown -->
                         <div id="notification-dropdown"
-                            class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 max-h-96 overflow-y-auto">
-                            <div class="px-4 py-2 border-b border-gray-200">
-                                <h4 class="font-semibold text-black">Notifications</h4>
+                            class="absolute right-0 mt-3 w-80 bg-white rounded-xl shadow-xl py-2 z-50 max-h-[28rem] overflow-hidden transform opacity-0 scale-95 invisible transition-all duration-200 notif-dropdown-animated">
+                            <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+                                <h4 class="font-bold text-gray-800"><i class='bx bx-bell'></i> Notifications</h4>
+                                <button id="mark-all-read" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Mark all read</button>
                             </div>
-                            <div id="notification-list" class="max-h-64 overflow-y-auto">
-                                <p class="px-4 py-3 text-sm text-black text-center">No new notifications</p>
-                            </div>
-                            <div class="px-4 py-2 border-t border-gray-200">
-                                <button id="mark-all-read" class="text-sm text-blue-600 hover:text-blue-800">Mark all as
-                                    read</button>
+                            <div id="notification-list" class="max-h-72 overflow-y-auto">
+                                <div class="px-4 py-8 text-center">
+                                    <i class='bx bx-bell-slash text-4xl text-gray-300 mb-2'></i>
+                                    <p class="text-sm text-gray-500">No new notifications</p>
+                                </div>
                             </div>
                         </div>
-                        <!-- Show dropdown on click for notification button -->
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                const notifBtn = document.getElementById('notification-btn');
-                                const notifDropdown = document.getElementById('notification-dropdown');
-                                const container = document.getElementById('notification-container');
-
-                                if (notifBtn && notifDropdown && container) {
-                                    notifBtn.addEventListener('click', function (e) {
-                                        e.stopPropagation();
-                                        notifDropdown.classList.toggle('opacity-0');
-                                        notifDropdown.classList.toggle('invisible');
-                                    });
-
-                                    document.addEventListener('click', function (e) {
-                                        if (!container.contains(e.target)) {
-                                            notifDropdown.classList.add('opacity-0');
-                                            notifDropdown.classList.add('invisible');
-                                        }
-                                    });
-                                }
-                            });
-                        </script>
                     </div>
                     <!-- Avatar -->
                     <div class="relative group">
