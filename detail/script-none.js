@@ -349,15 +349,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // =====================
 
     let editions = [];
-    let editionsCount = 200;
+    let editionsCount = 200;          // fallback page count
 
     try {
-        editionsCount = loadBook();
+        editionsCount = loadBook();   // loadBook() already returns fallback count
 
         const params = new URLSearchParams(window.location.search);
         const bookId = params.get('id');
-        
-        // First try to get from currentBook (set when clicking on a book in main page)
+
+        // first try the transient currentBook object
         const storedBook = localStorage.getItem('currentBook');
         if (storedBook) {
             const book = JSON.parse(storedBook);
@@ -365,8 +365,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 editions = book.editions;
             }
         }
-        
-        // If no editions from currentBook, try to get from adminBooks using bookId
+
+        // if nothing found, look up adminBooks by id
         if (!editions.length && bookId) {
             const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
             const adminBook = adminBooks.find(b => String(b.id) === String(bookId));
@@ -374,8 +374,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 editions = adminBook.editions;
             }
         }
-        
-        // Debug log for editions (can be removed in production)
         console.log('Loaded editions:', editions);
     } catch (e) {
         console.error('Error loading editions:', e);
@@ -398,71 +396,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (editions.length === 0) {
             chapterList.innerHTML = `
-                <li class="edition-item text-center py-8 text-gray-500 border rounded-lg">
-                    <i class='bx bx-book' style="font-size: 3rem;"></i>
-                    <p class="mt-2 font-medium">This book doesn't have editions</p>
-                    <p class="text-sm text-gray-400">Check back later for updates.</p>
-                </li>
-            `;
-            if (btnPrev) btnPrev.disabled = true;
-            if (btnNext) btnNext.disabled = true;
+            <li class="edition-item text-center py-8 text-gray-500 border rounded-lg">
+                <i class='bx bx-book' style="font-size: 3rem;"></i>
+                <p class="mt-2 font-medium">This book doesn't have editions</p>
+                <p class="text-sm text-gray-400">Check back later for updates.</p>
+            </li>
+        `;
+            btnPrev?.setAttribute('disabled', true);
+            btnNext?.setAttribute('disabled', true);
             return [];
         }
 
-        if (editions.length > 0) {
-            for (let i = start; i < end; i++) {
-                const edition = editions[i];
-                const li = document.createElement('li');
-                li.className = "edition-item flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50";
+        for (let i = start; i < end; i++) {
+            const ed = editions[i];
+            const li = document.createElement('li');
+            li.className = "edition-item flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50";
 
-                const editionImage = edition.image || defaultEditionCover;
-                const editionTitle = edition.title || `Edition ${i + 1}`;
-                const editionLanguage = edition.language || 'English';
+            const imgSrc = ed.image || defaultEditionCover;
+            const title = ed.title || `Edition ${i + 1}`;
 
-                li.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <img src="${editionImage}" alt="${editionTitle}" class="w-10 h-14 object-cover rounded">
-                        <div class="edition-info">
-                            <p class="font-semibold">${editionTitle}</p>
-                            <p class="text-sm text-gray-500">Language: ${editionLanguage}</p>
-                        </div>
-                    <div class="edition-actions flex gap-2">
-                        <a href="index-none.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-about px-4 py-2 border-2 border-gray-600 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition">
-                            About
-                        </a>
-                        <a href="../reading/none-img.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-read px-4 py-2 bg-black text-white font-semibold rounded-lg hover:opacity-80 transition">
-                            Read
-                        </a>
-                    </div>
-                `;
-                chapterList.appendChild(li);
-            }
+            li.innerHTML = `
+            <div class="flex items-center gap-3">
+                <img src="${imgSrc}" alt="${title}" class="w-10 h-14 object-cover rounded">
+                <div class="edition-info">
+                    <p class="font-semibold">${title}</p>
+                </div>
+            </div>
+            <div class="edition-actions flex gap-2">
+                <a href="index-none.html?edition=${i + 1}&bookId=${bookId || ''}"
+                   class="edition-about px-4 py-2 border-2 border-gray-600 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition">
+                    About
+                </a>
+                <a href="../reading/none-img.html?edition=${i + 1}&bookId=${bookId || ''}"
+                   class="edition-read px-4 py-2 bg-black text-white font-semibold rounded-lg hover:opacity-80 transition">
+                    Read
+                </a>
+            </div>
+        `;
+            chapterList.appendChild(li);
         }
 
-        if (btnPrev) btnPrev.disabled = currentPage === 0;
-        if (btnNext) btnNext.disabled = end >= totalEditions;
+        btnPrev.disabled = currentPage === 0;
+        btnNext.disabled = end >= totalEditions;
 
         return chapterList.querySelectorAll('a');
     }
 
-    if (btnPrev) {
-        btnPrev.addEventListener('click', () => {
-            if (currentPage > 0) {
-                currentPage--;
-                focusFirstEdition();
-            }
-        });
-    }
-
-    if (btnNext) {
-        btnNext.addEventListener('click', () => {
-            const maxPage = Math.floor((totalEditions - 1) / pageSize);
-            if (currentPage < maxPage) {
-                currentPage++;
-                focusFirstEdition();
-            }
-        });
-    }
+    btnPrev?.addEventListener('click', () => {
+        if (currentPage > 0) {
+            currentPage--;
+            focusFirstEdition();
+        }
+    });
+    btnNext?.addEventListener('click', () => {
+        const maxPage = Math.floor((totalEditions - 1) / pageSize);
+        if (currentPage < maxPage) {
+            currentPage++;
+            focusFirstEdition();
+        }
+    });
 
     function focusFirstEdition() {
         const links = renderEditions();
@@ -479,7 +471,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
         }
     });
-
     renderEditions();
     focusFirstEdition();
 });
@@ -487,6 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // =====================
 // LOAD BOOK METADATA (genre, publisher, pubdate, isbn, language)
 // =====================
+
 function loadBookMetadata(bookId, storedBook) {
     let genre = '', publisher = '', pubdate = '', isbn = '', language = '';
 

@@ -1,98 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>BookWorm · Read (Text)</title>
-    <!-- global theme & utilities -->
     <link rel="stylesheet" href="../main/style.css">
-    <!-- Tailwind for rapid layout tweaks (kept for other pages consistency) -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com" defer></script>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <style>
-        /* use global font from main site */
-        .reader-slide {
-            display: none;
-        }
-
-        .reader-slide.active {
-            display: block;
-        }
+        .reader-slide { display: none; }
+        .reader-slide.active { display: block; }
         #reader-container { position: relative; padding-top: 3rem; }
         #toggle-mode { background: rgba(255,255,255,0.9); }
-        /* make switch icon black */
         #toggle-mode i { color: #000 !important; }
-        /* ensure prev/next icons are white and slightly larger */
         #prev-page i, #next-page i { color: var(--white) !important; font-size:1.25rem; }
-        /* navigation button details */
-        #prev-page, #next-page {
-            border: 2px solid var(--primary-color);
-            background: var(--secondary-color);
-            color: var(--white);
-            transition: background 0.3s, transform 0.2s;
-            border-radius: 0.5rem;
-            min-width: 120px;
-        }
-        #prev-page:hover, #next-page:hover {
-            background: var(--primary-color);
-            transform: translateY(-2px) scale(1.02);
-        }
-        #toggle-mode {
-            border: 2px solid var(--secondary-color);
-            border-radius: 0.5rem;
-            min-width: 140px;
-        }
-        #toggle-mode:hover {
-            background: var(--secondary-color);
-            color: var(--white);
-        }
-        /* icons inside buttons should always be white, except toggle icon */
-        #prev-page i, #next-page i {
-            color: var(--white) !important;
-        }
-        /* toggle icon black for clarity */
-        #toggle-mode i {
-            color: var(--black) !important;
-        }
-        /* Center prev/next buttons in the middle of the content */
-        #reader-slider {
-            position: relative;
-            min-height: 300px;
-        }
-        #prev-page, #next-page {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10;
-        }
-        #prev-page {
-            left: 10px;
-        }
-        #next-page {
-            right: 10px;
-        }
-        #toggle-mode {
-            border: 2px solid var(--secondary-color);
-        }
-        #toggle-mode:hover {
-            background: var(--secondary-color);
-            color: var(--white);
-        }
-        /* icons inside buttons should always be white, except toggle icon */
-        #prev-page i, #next-page i {
-            color: var(--white) !important;
-        }
-        /* toggle icon black for clarity */
-        #toggle-mode i {
-            color: var(--black) !important;
-        }
+        #prev-page, #next-page { border: 2px solid var(--primary-color); background: var(--secondary-color); color: var(--white); transition: background 0.3s, transform 0.2s; border-radius: 0.5rem; min-width: 120px; }
+        #prev-page:hover, #next-page:hover { background: var(--primary-color); transform: translateY(-2px) scale(1.02); }
+        #toggle-mode { border: 2px solid var(--secondary-color); border-radius: 0.5rem; min-width: 140px; }
+        #toggle-mode:hover { background: var(--secondary-color); color: var(--white); }
+        #prev-page i, #next-page i { color: var(--white) !important; }
+        #toggle-mode i { color: var(--black) !important; }
+        #reader-slider { position: relative; min-height: 300px; }
+        #prev-page, #next-page { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        #prev-page { left: 10px; }
+        #next-page { right: 10px; }
+        .recommend-card { display: inline-block; width: 160px; margin: 0 0.5rem; text-align: center; }
+        .recommend-card img { width: 100%; border-radius: 0.5rem; }
+        .recommend-card h3 { font-size: 0.9rem; margin: 0.4rem 0 0.2rem; }
+        .recommend-card .rating, .recommend-card .views { font-size: 0.8rem; color: var(--gray-dark); }
     </style>
 </head>
-
 <body>
-    <!-- Navbar component (identical to other pages) -->
     <header>
         <nav aria-label="Main navigation" class="fixed inset-x-0 top-0 z-50 custom-navbar border-b">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -104,32 +43,20 @@
                         </a>
                         <div class="hidden md:block ml-10">
                             <div class="flex items-baseline space-x-4 nav-links">
-                                <a href="../main/index-none.html" class="nav-link active" aria-current="page"><i
-                                        class='bx bx-search'></i> Browse</a>
-                                <a href="../main/categories.html" class="nav-link"><i class='bx bx-category'></i>
-                                    Categories</a>
-                                <a href="../main/explore.html" class="nav-link"><i class='bx bx-compass'></i>
-                                    Explore</a>
+                                <a href="../main/index-none.html" class="nav-link active" aria-current="page"><i class='bx bx-search'></i> Browse</a>
+                                <a href="../main/categories.html" class="nav-link"><i class='bx bx-category'></i> Categories</a>
+                                <a href="../main/explore.html" class="nav-link"><i class='bx bx-compass'></i> Explore</a>
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
                         <div class="relative hidden sm:block">
-                            <i
-                                class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'></i>
-                            <input type="search" placeholder="Search books..." class="custom-input text-sm pl-10"
-                                aria-label="Search books">
+                            <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'></i>
+                            <input type="search" placeholder="Search books..." class="custom-input text-sm pl-10" aria-label="Search books">
                         </div>
-                        <a href="../login/index.html" class="getStarted flex items-center gap-1">
-                            <i class='bx bx-log-in'></i><span>Get&nbsp;Started</span>
-                        </a>
-                        <button class="mobile-menu-btn md:hidden p-2 focus:outline-none" aria-expanded="false"
-                            aria-controls="mobile-menu">
-                            <span class="sr-only">Open menu</span>
-                            <i class='bx bx-menu text-2xl'></i>
-                        </button>
+                        <a href="../login/index.html" class="getStarted flex items-center gap-1"><i class='bx bx-log-in'></i><span>Get Started</span></a>
+                        <button class="mobile-menu-btn md:hidden p-2 focus:outline-none" aria-expanded="false" aria-controls="mobile-menu"><span class="sr-only">Open menu</span><i class='bx bx-menu text-2xl'></i></button>
                     </div>
-                </div>
             </div>
             <div id="mobile-menu" class="mobile-menu hidden md:hidden">
                 <a href="../main/index-none.html" class="block nav-link active">Browse</a>
@@ -138,128 +65,118 @@
             </div>
         </nav>
     </header>
-
     <div class="h-16"></div>
-
-        <div class="max-w-4xl mx-auto px-4 pt-6">
-            <a href="../detail/index-none.html" class="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors">
-                <i class='bx bx-arrow-back text-xl'></i>
-                <span>Back to Book Details</span>
-            </a>
+    <div class="max-w-4xl mx-auto px-4 pt-6">
+        <a href="../detail/index-none.html" class="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors"><i class='bx bx-arrow-back text-xl'></i><span>Back to Book Details</span></a>
     </div>
-
-    <!-- Reader area -->
     <main class="max-w-4xl mx-auto px-4 py-12" id="reader-main">
-        <div id="reader-container" class="relative">            <!-- book info pulled from localStorage -->
+        <div id="reader-container" class="relative">
             <div id="book-info" class="mb-6 flex items-center gap-4"></div>
-            <button id="toggle-mode" title="Switch read mode"
-                class="btn-action btn-details text-xl px-4 py-2 absolute top-0 left-1/2 transform -translate-x-1/2 z-10">
-                <i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>
-            </button>
+            <button id="toggle-mode" title="Switch read mode" class="btn-action btn-details text-xl px-4 py-2 absolute top-0 left-1/2 transform -translate-x-1/2 z-10"><i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span></button>
             <div id="reader-slider">
                 <button id="prev-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Previous page"><i class="bx bx-chevron-left"></i></button>
                 <button id="next-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Next page"><i class="bx bx-chevron-right"></i></button>
             </div>
         </div>
 
-        <!-- "You may like" recommendations -->
+        <!-- "You may like" recommendations - below content -->
         <section class="mt-12">
             <h2 class="text-2xl font-bold mb-4">You may like</h2>
-            <div class="carousel">
-                <div class="slider"></div>
-            </div>
+            <div class="carousel"><div class="slider" id="recommend-slider"></div></div>
         </section>
     </main>
-
-    <!-- Footer copied from detail page -->
-    <footer class="site-footer mt-12" aria-labelledby="feedback-heading">
+    <footer class="site-footer mt-12">
         <div class="footer-container">
             <div class="footer-top">
-                <div class="mt-8 bg-white p-4 rounded-lg shadow">
-                    <h3 class="text-lg font-bold mb-2">Community Chat</h3>
-                    <p class="text-gray-500">Coming soon...</p>
-                </div>
-            </div>
+                <div class="mt-8 bg-white p-4 rounded-lg shadow"><h3 class="text-lg font-bold mb-2">Community Chat</h3><p class="text-gray-500">Coming soon...</p></div>
             <div class="footer-bottom">
-                <div class="contact-info">
-                    <p><strong>BookWorm</strong> • hello@bookworm.vn</p>
-                    <p><a href="tel:+842839301234">+84 28 3930 1234</a> • Ho Chi Minh City, Vietnam</p>
-                </div>
-            </div>
+                <div class="contact-info"><p><strong>BookWorm</strong> • hello@bookworm.vn</p><p><a href="tel:+842839301234">+84 28 3930 1234</a> • Ho Chi Minh City, Vietnam</p></div>
         </div>
     </footer>
-
     <script src="../main/script-none.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const params = new URLSearchParams(window.location.search);
-            let current = parseInt(params.get('chapter') || params.get('edition') || '1') - 1;
-
-            const sampleTexts = [
-                "Once upon a time, in a land far away, beyond the misty mountains and endless forests, there lived people who believed that magic had long vanished from the world. Yet hidden beneath the silence of ancient ruins and forgotten temples, traces of that magic still quietly waited to be discovered.",
-                "One quiet evening, the hero slowly opened the ancient book he had found buried deep within a ruined library. Dust rose into the air as the fragile pages turned, revealing symbols and stories that no one had read for centuries. With every word he read, it felt as if the past itself was awakening.",
-                "Suddenly, a powerful storm swept across the plains outside, dark clouds swirling like restless spirits. Thunder echoed across the sky, and the wind carried whispers that seemed almost alive. It was as though the world itself was responding to the secrets hidden within the book.",
-                "Standing near the window, she whispered words that hadn’t been spoken in centuries. The language was old, older than the kingdoms that once ruled the land. As the final syllable left her lips, the air shimmered faintly with a strange and forgotten power.",
-                "At last, after trials, danger, and revelations that changed everything they believed, the journey was over. But as the sun rose over the horizon, illuminating a new path ahead, they realized something important — the story they had lived was only the beginning of something far greater.",
-                "Beyond the hills, far past the villages they once called home, new lands waited to be explored. Rumors spoke of cities hidden beneath the sea, forests where time itself moved differently, and ancient guardians that still watched over the world from the shadows.",
-                "The hero closed the book slowly, realizing that its final pages were still blank. It was not a story meant only to be read — it was a story meant to be continued. With determination in his eyes and the quiet promise of adventure in the air, he took his first step toward the unknown future."
+            var params = new URLSearchParams(window.location.search);
+            var current = parseInt(params.get('chapter') || params.get('edition') || '1') - 1;
+            var sampleTexts = [
+                "Once upon a time, in a land far away, beyond the misty mountains and endless forests, there lived people who believed that magic had long vanished from the world.",
+                "One quiet evening, the hero slowly opened the ancient book he had found buried deep within a ruined library.",
+                "Suddenly, a powerful storm swept across the plains outside, dark clouds swirling like restless spirits.",
+                "Standing near the window, she whispered words that hadn't been spoken in centuries.",
+                "At last, after trials, danger, and revelations that changed everything they believed, the journey was over.",
+                "Beyond the hills, far past the villages they once called home, new lands waited to be explored.",
+                "The hero closed the book slowly, realizing that its final pages were still blank."
             ];
-
-            const slider = document.getElementById('reader-slider');        
-            sampleTexts.forEach(text => {
-                const div = document.createElement('div');
+            var slider = document.getElementById('reader-slider');
+            sampleTexts.forEach(function(text) {
+                var div = document.createElement('div');
                 div.className = 'reader-slide';
-                div.innerHTML = `<p class="text-lg leading-relaxed">${text}</p>`;
+                div.innerHTML = '<p class="text-lg leading-relaxed">' + text + '</p>';
                 slider.appendChild(div);
             });
-
-            const slides = slider.querySelectorAll('.reader-slide');
-            let continuous = false;
-
-            function showSlide(index) {
-                if (continuous) return;
-                if (index < 0 || index >= slides.length) return;
-                slides.forEach((s, i) => s.style.display = i === index ? 'block' : 'none');
-                current = index;
+            var slides = slider.querySelectorAll('.reader-slide');
+            var continuous = false;
+            var currentTags = [];
+            var currentBookId = null;
+            var currentBookData = localStorage.getItem('currentBook');
+            if (currentBookData) {
+                var currentBook = JSON.parse(currentBookData);
+                currentBookId = currentBook.id;
+                if (currentBook.tags && Array.isArray(currentBook.tags)) { currentTags = currentBook.tags; }
+                else if (currentBook.genre) { currentTags = [currentBook.genre.toLowerCase()]; }
             }
-
+            if (currentTags.length === 0) { currentTags = ['adventure', 'fantasy']; }
+            var recContainer = document.getElementById('recommend-list');
+            var storedBooks = localStorage.getItem('adminBooks');
+            var allBooks = [];
+            if (storedBooks) { allBooks = JSON.parse(storedBooks).filter(function(book) { return book.status === 'published'; }); }
+            var recommendations = [];
+            if (allBooks.length > 0) {
+                recommendations = allBooks.filter(function(book) { return String(book.id) !== String(currentBookId); }).map(function(book) {
+                    var bookTags = [];
+                    if (book.tags && Array.isArray(book.tags)) { bookTags = book.tags; }
+                    else if (book.genre) { bookTags = [book.genre.toLowerCase()]; }
+                    return { cover: book.image || '', title: book.title || 'Unknown Title', rating: (book.views || 0) >= 400 ? 5 : 4, views: book.views || 0, tags: bookTags, id: book.id };
+                });
+                recommendations.sort(function(a, b) {
+                    var aMatches = a.tags.some(function(t) { return currentTags.includes(t); });
+                    var bMatches = b.tags.some(function(t) { return currentTags.includes(t); });
+                    if (aMatches && !bMatches) return -1;
+                    if (!aMatches && bMatches) return 1;
+                    return b.views - a.views;
+                });
+                recommendations = recommendations.slice(0, 4);
+            }
+            if (recommendations.length === 0) {
+                recommendations = [
+                    {cover:'https://via.placeholder.com/120x180?text=Book+1',title:'The Lost Pages',rating:4.2,views:1320},
+                    {cover:'https://via.placeholder.com/120x180?text=Book+2',title:'Mystery of the Isle',rating:4.7,views:980},
+                    {cover:'https://via.placeholder.com/120x180?text=Book+3',title:'Journey Through Time',rating:4.5,views:1500},
+                    {cover:'https://via.placeholder.com/120x180?text=Book+4',title:'Secrets of the Forest',rating:4.0,views:760}
+                ];
+            }
+            function generateStars(rating) { var starsHtml = ''; for (var i = 1; i <= 5; i++) { starsHtml += (i <= rating) ? '★' : '☆'; } return starsHtml; }
+            recommendations.forEach(function(b) {
+                var card = document.createElement('div');
+                card.className = 'recommend-card';
+                card.style.cursor = 'pointer';
+                card.onclick = function() { if (b.id) { window.location.href = '../detail/index-none.html?id=' + b.id; } };
+                card.innerHTML = '<img src="' + b.cover + '" alt="' + b.title + ' cover"><h3>' + b.title + '</h3><div class="rating">' + generateStars(b.rating) + ' ' + b.rating + '</div><div class="views">' + b.views + ' views</div>';
+                recContainer.appendChild(card);
+            });
+            function showSlide(index) { if (continuous) return; if (index < 0 || index >= slides.length) return; slides.forEach(function(s, i) { s.style.display = i === index ? 'block' : 'none'; }); current = index; }
             function updateMode() {
-                const toggle = document.getElementById('toggle-mode');
-                const prevBtn = document.getElementById('prev-page');
-                const nextBtn = document.getElementById('next-page');
-                if (continuous) {
-                    slides.forEach(s => s.style.display = 'block');
-                    prevBtn.style.display = 'none';
-                    nextBtn.style.display = 'none';
-                    toggle.innerHTML = '<i class="bx bx-pause-circle"></i><span class="mode-label"> Continuous</span>';
-                    toggle.innerHTML = '<i class="bx bx-pause-circle"> Change read mode</i>';
-                    toggle.innerHTML = '<i class="bx bx-pause-circle"></i><span class="mode-label"> Continuous</span>';
-                } else {
-                    slides.forEach((s,i) => s.style.display = i === current ? 'block' : 'none');
-                    prevBtn.style.display = '';
-                    nextBtn.style.display = '';
-                    toggle.innerHTML = '<i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>';
-                    toggle.innerHTML = '<i class="bx bx-sort-alt-2"> Change read mode</i>';
-                    toggle.innerHTML = '<i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>';
-                }
+                var toggle = document.getElementById('toggle-mode');
+                var prevBtn = document.getElementById('prev-page');
+                var nextBtn = document.getElementById('next-page');
+                if (continuous) { slides.forEach(function(s) { s.style.display = 'block'; }); prevBtn.style.display = 'none'; nextBtn.style.display = 'none'; toggle.innerHTML = '<i class="bx bx-pause-circle"></i><span class="mode-label"> Continuous</span>'; }
+                else { slides.forEach(function(s,i) { s.style.display = i === current ? 'block' : 'none'; }); prevBtn.style.display = ''; nextBtn.style.display = ''; toggle.innerHTML = '<i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>'; }
             }
-
-            document.getElementById('toggle-mode').addEventListener('click', () => {
-                continuous = !continuous;
-                updateMode();
-            });
-
-            document.getElementById('prev-page').addEventListener('click', () => {
-                showSlide(current - 1);
-            });
-            document.getElementById('next-page').addEventListener('click', () => {
-                showSlide(current + 1);
-            });
-
+            document.getElementById('toggle-mode').addEventListener('click', function() { continuous = !continuous; updateMode(); });
+            document.getElementById('prev-page').addEventListener('click', function() { showSlide(current - 1); });
+            document.getElementById('next-page').addEventListener('click', function() { showSlide(current + 1); });
             updateMode();
         });
     </script>
 </body>
-
 </html>
-

@@ -748,6 +748,7 @@
                             <p class="font-semibold">${editionTitle}</p>
                             <p class="text-sm text-gray-500">Language: ${editionLanguage}</p>
                         </div>
+                    </div>
                     <div class="edition-actions flex gap-2">
                         <a href="index-acc.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-about px-4 py-2 border-2 border-gray-600 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition">
                             About

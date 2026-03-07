@@ -1,147 +1,35 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>BookWorm · Read (Images) – Accessible</title>
-    <!-- global theme & utilities -->
-    <link rel="stylesheet" href="../main/style.css" />
-    <!-- Tailwind for rapid layout tweaks (kept for other pages consistency) -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../main/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com" defer></script>
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-    <!-- font handled by ../main/style.css (Story Script) -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <style>
-        /* use global font from main site */
-        .reader-slide {
-            display: none;
-            text-align: center;
-        }
-
-        .reader-slide.active {
-            display: block;
-        }
-
-        .reader-slide img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 0.5rem;
-        }
-
-        /* container for positioning the toggle */
-        #reader-container { 
-            position: relative;
-            padding-top: 3rem; 
-        }
-
-        /* toggle button */
-        #toggle-mode {
-            background: rgba(255,255,255,0.9);
-            border-radius: 0.5rem;
-            min-width: 140px;
-            border: 2px solid var(--secondary-color);
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20;
-        }
-
-        #toggle-mode:hover {
-            background: var(--secondary-color);
-            color: var(--white);
-        }
-
-        /* toggle icon */
-        #toggle-mode i {
-            color: var(--black) !important;
-        }
-
-        /* reader area */
-        #reader-slider {
-            position: relative;
-            min-height: 420px;
-        }
-
-        /* navigation buttons */
-        #prev-page,
-        #next-page {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 48px;
-            height: 72px;
-            border-radius: 12px;
-            border: none;
-            background: rgba(17, 24, 39, 0.55);
-            color: var(--white);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            z-index: 10;
-        }
-
-        /* button hover */
-        #prev-page:hover,
-        #next-page:hover {
-            background: rgba(17, 24, 39, 0.8);
-        }
-
-        /* button positions */
-        #prev-page {
-            left: 12px;
-        }
-
-        #next-page {
-            right: 12px;
-        }
-
-        /* icons inside buttons */
-        #prev-page i,
-        #next-page i {
-            color: var(--white) !important;
-        }
-
-        /* Adjust container */
-        .nav-controls {
-            position: relative;
-        }
-
-        /* mobile responsive */
-        @media (max-width: 640px) {
-            #prev-page,
-            #next-page {
-                width: 42px;
-                height: 64px;
-                font-size: 1.3rem;
-            }
-        }
-        /* recommendation cards */
-        .recommend-card {
-            display: inline-block;
-            width: 160px;
-            margin: 0 0.5rem;
-            text-align: center;
-        }
-        .recommend-card img {
-            width: 100%;
-            border-radius: 0.5rem;
-        }
-        .recommend-card h3 {
-            font-size: 0.9rem;
-            margin: 0.4rem 0 0.2rem;
-        }
-        .recommend-card .rating,
-        .recommend-card .views {
-            font-size: 0.8rem;
-            color: var(--gray-dark);
-        }
+        .reader-slide { display: none; text-align: center; }
+        .reader-slide.active { display: block; }
+        .reader-slide img { max-width: 100%; height: auto; border-radius: 0.5rem; }
+        #reader-container { position: relative; padding-top: 3rem; }
+        #toggle-mode { background: rgba(255,255,255,0.9); border-radius: 0.5rem; min-width: 140px; border: 2px solid var(--secondary-color); position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 20; }
+        #toggle-mode:hover { background: var(--secondary-color); color: var(--white); }
+        #toggle-mode i { color: var(--black) !important; }
+        #reader-slider { position: relative; min-height: 420px; }
+        #prev-page, #next-page { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 72px; border-radius: 12px; border: none; background: rgba(17, 24, 39, 0.55); color: var(--white); font-size: 1.5rem; cursor: pointer; transition: all 0.2s ease; z-index: 10; }
+        #prev-page:hover, #next-page:hover { background: rgba(17, 24, 39, 0.8); }
+        #prev-page { left: 12px; }
+        #next-page { right: 12px; }
+        #prev-page i, #next-page i { color: var(--white) !important; }
+        @media (max-width: 640px) { #prev-page, #next-page { width: 42px; height: 64px; font-size: 1.3rem; } }
+        .recommend-card { display: inline-block; width: 160px; margin: 0 0.5rem; text-align: center; }
+        .recommend-card img { width: 100%; border-radius: 0.5rem; }
+        .recommend-card h3 { font-size: 0.9rem; margin: 0.4rem 0 0.2rem; }
+        .recommend-card .rating, .recommend-card .views { font-size: 0.8rem; color: var(--gray-dark); }
     </style>
 </head>
-
 <body>
-    <!-- Navbar for authenticated / accessible users -->
     <header>
     <nav class="fixed top-0 left-0 right-0 z-50 custom-navbar border-b">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -155,112 +43,41 @@
                     </div>
                     <div class="hidden md:block ml-10">
                         <div class="flex items-baseline space-x-4 nav-links">
-                            <a href="#" class="px-3 py-2 rounded-md text-sm font-medium nav-link active"><i
-                                    class='bx bx-search' aria-hidden="true"></i> Browse</a>
-                            <a href="categories.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
-                                    class='bx bx-category' aria-hidden="true"></i> Categories</a>
-                            <a href="explore.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
-                                    class='bx bx-compass' aria-hidden="true"></i> Explore</a>
+                            <a href="#" class="px-3 py-2 rounded-md text-sm font-medium nav-link active"><i class='bx bx-search' aria-hidden="true"></i> Browse</a>
+                            <a href="categories.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i class='bx bx-category' aria-hidden="true"></i> Categories</a>
+                            <a href="explore.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i class='bx bx-compass' aria-hidden="true"></i> Explore</a>
                         </div>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <!-- Search Bar with Dropdown -->
                     <div class="relative hidden sm:block" id="search-wrapper">
-                        <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'
-                            aria-hidden="true"></i>
-                        <input type="text" id="main-search-input" placeholder="Search books..."
-                            class="custom-input text-sm pl-10 pr-10" autocomplete="off">
-                        <button type="button" id="search-clear-btn"
-                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
-                            <i class='bx bx-x'></i>
-                        </button>
-                        <!-- Search Results Dropdown -->
-                        <div id="search-dropdown"
-                            class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg max-h-96 overflow-y-auto z-50 hidden">
-                            <div id="search-results"></div>
-                        </div>
+                        <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' aria-hidden="true"></i>
+                        <input type="text" id="main-search-input" placeholder="Search books..." class="custom-input text-sm pl-10 pr-10" autocomplete="off">
+                        <button type="button" id="search-clear-btn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden"><i class='bx bx-x'></i></button>
+                        <div id="search-dropdown" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg max-h-96 overflow-y-auto z-50 hidden"><div id="search-results"></div></div>
                     </div>
-                    <!-- Notification -->
                     <div class="relative" id="notification-container">
-                        <button id="notification-btn" class="p-1.5 rounded-full text-white hover:bg-white/20">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                            </svg>
-                            <span id="notification-badge"
-                                class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden shadow-lg border-2 border-white"></span>
+                        <button id="notification-btn" class="p-1.5 rounded-full text-white hover:bg-white/20"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                            <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden shadow-lg border-2 border-white"></span>
                         </button>
-                        <!-- Notification Dropdown -->
-                        <div id="notification-dropdown"
-                            class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 max-h-96 overflow-y-auto">
-                            <div class="px-4 py-2 border-b border-gray-200">
-                                <h4 class="font-semibold text-black">Notifications</h4>
-                            </div>
-                            <div id="notification-list" class="max-h-64 overflow-y-auto">
-                                <p class="px-4 py-3 text-sm text-black text-center">No new notifications</p>
-                            </div>
-                            <div class="px-4 py-2 border-t border-gray-200">
-                                <button id="mark-all-read" class="text-sm text-blue-600 hover:text-blue-800">Mark all as
-                                    read</button>
-                            </div>
+                        <div id="notification-dropdown" class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 max-h-96 overflow-y-auto">
+                            <div class="px-4 py-2 border-b border-gray-200"><h4 class="font-semibold text-black">Notifications</h4></div>
+                            <div id="notification-list" class="max-h-64 overflow-y-auto"><p class="px-4 py-3 text-sm text-black text-center">No new notifications</p></div>
+                            <div class="px-4 py-2 border-t border-gray-200"><button id="mark-all-read" class="text-sm text-blue-600 hover:text-blue-800">Mark all as read</button></div>
                         </div>
-                        <!-- Show dropdown on click for notification button -->
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                const notifBtn = document.getElementById('notification-btn');
-                                const notifDropdown = document.getElementById('notification-dropdown');
-                                const container = document.getElementById('notification-container');
-
-                                if (notifBtn && notifDropdown && container) {
-                                    notifBtn.addEventListener('click', function (e) {
-                                        e.stopPropagation();
-                                        notifDropdown.classList.toggle('opacity-0');
-                                        notifDropdown.classList.toggle('invisible');
-                                    });
-
-                                    document.addEventListener('click', function (e) {
-                                        if (!container.contains(e.target)) {
-                                            notifDropdown.classList.add('opacity-0');
-                                            notifDropdown.classList.add('invisible');
-                                        }
-                                    });
-                                }
-                            });
-                        </script>
                     </div>
-                    <!-- Avatar -->
                     <div class="relative group">
-                        <button class="flex items-center gap-2">
-                            <img class="h-9 w-9 rounded-full object-cover border-2 border-white/50"
-                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                alt="User">
-                        </button>
-                        <!-- Dropdown Menu -->
-                        <div
-                            class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                            <p id="user-email-display" class="px-4 py-2 text-sm font-semibold text-gray-800 truncate">
-                            </p>
-                            <a style="color: #333333" href="../login/index.html"
-                                class="dropdown-item block px-4 py-2 text-sm font-semibold">
-                                <i class='bx bx-log-out'></i> Logout
-                            </a>
+                        <button class="flex items-center gap-2"><img class="h-9 w-9 rounded-full object-cover border-2 border-white/50" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="User"></button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <p id="user-email-display" class="px-4 py-2 text-sm font-semibold text-gray-800 truncate"></p>
+                            <a style="color: #333333" href="../login/index.html" class="dropdown-item block px-4 py-2 text-sm font-semibold"><i class='bx bx-log-out'></i> Logout</a>
                         </div>
                     </div>
-                    <div class="md:hidden">
-                        <button
-                            class="mobile-menu-btn inline-flex items-center justify-center p-2 rounded-md text-white">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </button>
-                    </div>
+                    <div class="md:hidden"><button class="mobile-menu-btn inline-flex items-center justify-center p-2 rounded-md text-white"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg></button></div>
                 </div>
             </div>
         </div>
-        <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 z-40"
-            style="background:linear-gradient(135deg,var(--secondary-color),var(--primary-color))">
+        <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 z-40" style="background:linear-gradient(135deg,var(--secondary-color),var(--primary-color))">
             <div class="px-4 py-4 space-y-2">
                 <a href="#" class="block px-3 py-2 rounded-md text-sm font-medium nav-link active">Browse</a>
                 <a href="categories.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Categories</a>
@@ -269,147 +86,114 @@
         </div>
     </nav>
     </header>
-
     <div class="h-16"></div>
-
     <div class="max-w-4xl mx-auto px-4 pt-6">
-        <a href="../detail/index-acc.html" class="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors">
-            <i class='bx bx-arrow-back text-xl'></i>
-            <span>Back to Book Details</span>
-        </a>
+        <a href="../detail/index-acc.html" class="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors"><i class='bx bx-arrow-back text-xl'></i><span>Back to Book Details</span></a>
     </div>
-
-    <!-- Reader area -->
     <main class="max-w-4xl mx-auto px-4 py-12" id="reader-main">
         <div id="reader-container" class="flex items-center justify-center mx-auto relative">
-            <!-- book info pulled from localStorage -->
-            <div id="book-info" class="mb-6 flex items-center gap-4">
-                <!-- cover + metadata filled by script -->
-            </div>
-            <button id="toggle-mode" title="Switch read mode"
-                class="btn-action btn-details text-xl px-4 py-2 absolute top-0 left-1/2 transform -translate-x-1/2 z-10">
-                <i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>
-            </button>
+            <div id="book-info" class="mb-6 flex items-center gap-4"></div>
+            <button id="toggle-mode" title="Switch read mode" class="btn-action btn-details text-xl px-4 py-2 absolute top-0 left-1/2 transform -translate-x-1/2 z-10"><i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span></button>
             <div id="reader-slider">
                 <button id="prev-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Previous page"><i class="bx bx-chevron-left"></i></button>
                 <button id="next-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Next page"><i class="bx bx-chevron-right"></i></button>
             </div>
         </div>
 
-        <!-- "You may like" recommendations -->
+        <!-- "You may like" recommendations - below content -->
         <section class="mt-12">
             <h2 class="text-2xl font-bold mb-4">You may like</h2>
             <div id="recommend-list" class="flex flex-wrap"></div>
         </section>
     </main>
-
-    <footer class="site-footer mt-12" aria-labelledby="feedback-heading">
+    <footer class="site-footer mt-12">
         <div class="footer-container">
             <div class="footer-top">
-                <div class="mt-8 bg-white p-4 rounded-lg shadow">
-                    <h3 class="text-lg font-bold mb-2">Community Chat</h3>
-                    <p class="text-gray-500">Coming soon...</p>
-                </div>
-            </div>
+                <div class="mt-8 bg-white p-4 rounded-lg shadow"><h3 class="text-lg font-bold mb-2">Community Chat</h3><p class="text-gray-500">Coming soon...</p></div>
             <div class="footer-bottom">
-                <div class="contact-info">
-                    <p><strong>BookWorm</strong> • hello@bookworm.vn</p>
-                    <p><a href="tel:+842839301234">+84 28 3930 1234</a> • Ho Chi Minh City, Vietnam</p>
-                </div>
+                <div class="contact-info"><p><strong>BookWorm</strong> • hello@bookworm.vn</p><p><a href="tel:+842839301234">+84 28 3930 1234</a> • Ho Chi Minh City, Vietnam</p></div>
             </div>
         </div>
     </footer>
-
     <script src="../main/script-acc.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const params = new URLSearchParams(window.location.search);
-            let current = parseInt(params.get('edition') || params.get('chapter') || '1') - 1;
-
-            const sampleImages = [
-                'https://picsum.photos/800/1200?1',
-                'https://picsum.photos/800/1200?2',
-                'https://picsum.photos/800/1200?3',
-                'https://picsum.photos/800/1200?4',
-                'https://picsum.photos/800/1200?5',
-                'https://picsum.photos/800/1200?6',
-                'https://picsum.photos/800/1200?7',
-                'https://picsum.photos/800/1200?8',
-                'https://picsum.photos/800/1200?9',
-                'https://picsum.photos/800/1200?10'
+            var params = new URLSearchParams(window.location.search);
+            var current = parseInt(params.get('edition') || params.get('chapter') || '1') - 1;
+            var sampleImages = [
+                'https://picsum.photos/800/1200?1','https://picsum.photos/800/1200?2','https://picsum.photos/800/1200?3','https://picsum.photos/800/1200?4','https://picsum.photos/800/1200?5',
+                'https://picsum.photos/800/1200?6','https://picsum.photos/800/1200?7','https://picsum.photos/800/1200?8','https://picsum.photos/800/1200?9','https://picsum.photos/800/1200?10'
             ];
-            // pretend current book tags retrieved from query/localStorage
-            const currentTags = ['adventure','fantasy'];
-
-            const slider = document.getElementById('reader-slider');
-            sampleImages.forEach(src => {
-                const div = document.createElement('div');
+            var slider = document.getElementById('reader-slider');
+            sampleImages.forEach(function(src) {
+                var div = document.createElement('div');
                 div.className = 'reader-slide';
-                div.innerHTML = `<img src="${src}" alt="Book page image">`;
+                div.innerHTML = '<img src="' + src + '" alt="Book page image">';
                 slider.appendChild(div);
             });
-
-            const slides = slider.querySelectorAll('.reader-slide');
-            let continuous = false;
-            const recContainer = document.getElementById('recommend-list');
-            const recommendations = [
-                {cover:'https://via.placeholder.com/120x180?text=Book+1',title:'The Lost Pages',rating:4.2,views:1320,tags:['adventure','mystery']},
-                {cover:'https://via.placeholder.com/120x180?text=Book+2',title:'Mystery of the Isle',rating:4.7,views:980,tags:['mystery','thriller']},
-                {cover:'https://via.placeholder.com/120x180?text=Book+3',title:'Journey Through Time',rating:4.5,views:1500,tags:['science fiction','adventure']},
-                {cover:'https://via.placeholder.com/120x180?text=Book+4',title:'Secrets of the Forest',rating:4.0,views:760,tags:['fantasy','adventure']}
-            ];
-            // filter by shared tags with current book
-            const filtered = recommendations.filter(b => b.tags.some(t => currentTags.includes(t)));
-            filtered.forEach(b=>{
-                const card=document.createElement('div');
-                card.className='recommend-card';
-                card.innerHTML = `<img src="${b.cover}" alt="${b.title} cover"><h3>${b.title}</h3><div class="rating">${b.rating} ★</div><div class="views">${b.views} views</div>`;
+            var slides = slider.querySelectorAll('.reader-slide');
+            var continuous = false;
+            var currentTags = [];
+            var currentBookId = null;
+            var currentBookData = localStorage.getItem('currentBook');
+            if (currentBookData) {
+                var currentBook = JSON.parse(currentBookData);
+                currentBookId = currentBook.id;
+                if (currentBook.tags && Array.isArray(currentBook.tags)) { currentTags = currentBook.tags; }
+                else if (currentBook.genre) { currentTags = [currentBook.genre.toLowerCase()]; }
+            }
+            if (currentTags.length === 0) { currentTags = ['adventure', 'fantasy']; }
+            var recContainer = document.getElementById('recommend-list');
+            var storedBooks = localStorage.getItem('adminBooks');
+            var allBooks = [];
+            if (storedBooks) { allBooks = JSON.parse(storedBooks).filter(function(book) { return book.status === 'published'; }); }
+            var recommendations = [];
+            if (allBooks.length > 0) {
+                recommendations = allBooks.filter(function(book) { return String(book.id) !== String(currentBookId); }).map(function(book) {
+                    var bookTags = [];
+                    if (book.tags && Array.isArray(book.tags)) { bookTags = book.tags; }
+                    else if (book.genre) { bookTags = [book.genre.toLowerCase()]; }
+                    return { cover: book.image || '', title: book.title || 'Unknown Title', rating: (book.views || 0) >= 400 ? 5 : 4, views: book.views || 0, tags: bookTags, id: book.id };
+                });
+                recommendations.sort(function(a, b) {
+                    var aMatches = a.tags.some(function(t) { return currentTags.includes(t); });
+                    var bMatches = b.tags.some(function(t) { return currentTags.includes(t); });
+                    if (aMatches && !bMatches) return -1;
+                    if (!aMatches && bMatches) return 1;
+                    return b.views - a.views;
+                });
+                recommendations = recommendations.slice(0, 4);
+            }
+            if (recommendations.length === 0) {
+                recommendations = [
+                    {cover:'https://via.placeholder.com/120x180?text=Book+1',title:'The Lost Pages',rating:4.2,views:1320},
+                    {cover:'https://via.placeholder.com/120x180?text=Book+2',title:'Mystery of the Isle',rating:4.7,views:980},
+                    {cover:'https://via.placeholder.com/120x180?text=Book+3',title:'Journey Through Time',rating:4.5,views:1500},
+                    {cover:'https://via.placeholder.com/120x180?text=Book+4',title:'Secrets of the Forest',rating:4.0,views:760}
+                ];
+            }
+            function generateStars(rating) { var starsHtml = ''; for (var i = 1; i <= 5; i++) { starsHtml += (i <= rating) ? '★' : '☆'; } return starsHtml; }
+            recommendations.forEach(function(b) {
+                var card = document.createElement('div');
+                card.className = 'recommend-card';
+                card.style.cursor = 'pointer';
+                card.onclick = function() { if (b.id) { window.location.href = '../detail/index-acc.html?id=' + b.id; } };
+                card.innerHTML = '<img src="' + b.cover + '" alt="' + b.title + ' cover"><h3>' + b.title + '</h3><div class="rating">' + generateStars(b.rating) + ' ' + b.rating + '</div><div class="views">' + b.views + ' views</div>';
                 recContainer.appendChild(card);
             });
-
-            function showSlide(index) {
-                if (continuous) return;
-                if (index < 0 || index >= slides.length) return;
-                slides.forEach((s, i) => s.style.display = i === index ? 'block' : 'none');
-                current = index;
-            }
-
+            function showSlide(index) { if (continuous) return; if (index < 0 || index >= slides.length) return; slides.forEach(function(s, i) { s.style.display = i === index ? 'block' : 'none'; }); current = index; }
             function updateMode() {
-                const toggle = document.getElementById('toggle-mode');
-                const prevBtn = document.getElementById('prev-page');
-                const nextBtn = document.getElementById('next-page');
-                if (continuous) {
-                    slides.forEach(s => s.style.display = 'block');
-                    prevBtn.style.display = 'none';
-                    nextBtn.style.display = 'none';
-                    toggle.innerHTML = '<i class="bx bx-pause-circle"></i><span class="mode-label"> Continuous</span>';
-                    toggle.innerHTML = '<i class="bx bx-pause-circle"> Change read mode</i>';
-                    if (label) label.textContent = 'Continuous';
-                } else {
-                    slides.forEach((s,i) => s.style.display = i === current ? 'block' : 'none');
-                    prevBtn.style.display = '';
-                    nextBtn.style.display = '';
-                    toggle.innerHTML = '<i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>';
-                    toggle.innerHTML = '<i class="bx bx-sort-alt-2"> Change read mode</i>';
-                    if (label) label.textContent = 'Switching box';
-                }
+                var toggle = document.getElementById('toggle-mode');
+                var prevBtn = document.getElementById('prev-page');
+                var nextBtn = document.getElementById('next-page');
+                if (continuous) { slides.forEach(function(s) { s.style.display = 'block'; }); prevBtn.style.display = 'none'; nextBtn.style.display = 'none'; toggle.innerHTML = '<i class="bx bx-pause-circle"></i><span class="mode-label"> Continuous</span>'; }
+                else { slides.forEach(function(s,i) { s.style.display = i === current ? 'block' : 'none'; }); prevBtn.style.display = ''; nextBtn.style.display = ''; toggle.innerHTML = '<i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>'; }
             }
-
-            document.getElementById('toggle-mode').addEventListener('click', () => {
-                continuous = !continuous;
-                updateMode();
-            });
-
-            document.getElementById('prev-page').addEventListener('click', () => {
-                showSlide(current - 1);
-            });
-            document.getElementById('next-page').addEventListener('click', () => {
-                showSlide(current + 1);
-            });
-
+            document.getElementById('toggle-mode').addEventListener('click', function() { continuous = !continuous; updateMode(); });
+            document.getElementById('prev-page').addEventListener('click', function() { showSlide(current - 1); });
+            document.getElementById('next-page').addEventListener('click', function() { showSlide(current + 1); });
             updateMode();
         });
     </script>
 </body>
-
 </html>

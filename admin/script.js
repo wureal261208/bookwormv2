@@ -232,17 +232,17 @@ function removeEditionRow(button) {
 }
 
 // Function to collect editions from input fields
+// helper used by both Add and Edit forms
 function collectEditions() {
     const checkbox = document.getElementById('has-editions');
     const editionInputs = document.querySelectorAll('.edition-title');
     const editionImages = document.querySelectorAll('.edition-image');
     const editions = [];
-    
-    // If checkbox is not checked, return empty array (no editions)
+
     if (!checkbox || !checkbox.checked) {
-        return editions;
+        return editions; // no editions
     }
-    
+
     editionInputs.forEach((input, index) => {
         if (input.value.trim()) {
             const imageInput = editionImages[index];
@@ -255,6 +255,23 @@ function collectEditions() {
     });
     return editions;
 }
+
+// …later, when the book is submitted…
+const editions = collectEditions();
+// …
+const newBook = {
+    id: Date.now(),
+    title,
+    author,
+    image: finalImage,
+    genre,
+    pages: parseInt(pages),
+    status,
+    editions,                // ← stored here
+    // …other fields…
+};
+books.push(newBook);
+saveBooksToStorage();   
 
 // Clear editions form when modal closes
 function clearEditionsForm() {
@@ -958,14 +975,29 @@ function renderBooks() {
         return;
     }
     
-    container.innerHTML = booksToRender.map(book => `
+    container.innerHTML = booksToRender.map(book => {
+        // build editions HTML: show thumbnails and titles if available
+        let editionsHtml = '';
+        if (book.editions && book.editions.length > 0) {
+            editionsHtml = '<div class="book-editions">';
+            book.editions.forEach(ed => {
+                const imgUrl = ed.image && isValidCoverUrl(ed.image) ? ed.image : getDefaultCover();
+                const edTitle = ed.title || `Edition ${ed.number || ''}`;
+                editionsHtml += `
+                    <div class="edition-mini" title="${edTitle}">
+                        <img src="${imgUrl}" alt="${edTitle}">
+                    </div>`;
+            });
+            editionsHtml += '</div>';
+        }
+        return `
         <div class="book-item">
             <!-- cover URL comes from localStorage using getBookCover helper -->
             <img src="${getBookCover(book.id)}" alt="${book.title}">
             <div class="book-info">
                 <div class="book-title">${highlightMatch(book.title, currentSearchQuery)}</div>
                 <div class="book-author">${highlightMatch(book.author, currentSearchQuery)}</div>
-                ${book.editions && book.editions.length > 0 ? `<div class="book-editions"><i class='bx bx-copy'></i> ${book.editions.length} edition${book.editions.length > 1 ? 's' : ''}</div>` : ''}
+                ${editionsHtml}
             </div>
             <span class="book-status ${book.status}">${book.status === 'published' ? 'Published' : 'Draft'}</span>
             <div class="book-actions">
@@ -986,7 +1018,8 @@ function renderBooks() {
                 `}
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 // Function to highlight matching text
