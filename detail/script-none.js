@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editionList.innerHTML = `
                 <li class="text-center py-8 text-gray-500">
                     <i class='bx bx-book' style="font-size: 3rem;"></i>
-                    <p class="mt-2 font-medium">This edition doesn't have a description yet.</p>
+                    <p class="mt-2 font-medium">This book doesn't have any editions</p>
                     <p class="text-sm text-gray-400">Check back later for updates.</p>
                 </li>
             `;

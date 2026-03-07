@@ -1836,16 +1836,12 @@ body {
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
-    background: var(--color-2);
     color: var(--white);
+    border: 2px solid var(--color-3);
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.9rem;
     transition: all 0.3s ease;
-}
-
-.file-upload-label:hover {
-    background: var(--color-1);
 }
 
 .file-upload-label i {

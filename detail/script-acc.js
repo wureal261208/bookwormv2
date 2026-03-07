@@ -4,19 +4,105 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // =====================
-    // NOTIFICATION SYSTEM (Authenticated Users) - Hover Style
+    // NOTIFICATION SYSTEM (Authenticated Users)
     // =====================
     const notificationBtn = document.getElementById('notification-btn');
     const notificationDropdown = document.getElementById('notification-list');
     const notificationBadge = document.getElementById('notification-badge');
     const notificationContainer = document.getElementById('notification-btn')?.parentElement;
 
+    // Get current book ID from URL
+    const params = new URLSearchParams(window.location.search);
+    const currentBookId = params.get('id');
+
+    // Check if user arrived from a notification click (stored in sessionStorage)
+    const fromNotificationClick = sessionStorage.getItem('fromNotificationClick') === 'true';
+    
+    // Clear the sessionStorage flag after reading
+    if (fromNotificationClick) {
+        sessionStorage.removeItem('fromNotificationClick');
+    }
+
+    // Check if current book is newly published (within 7 days)
+    function isNewlyPublishedBook(bookId) {
+        const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+        const book = adminBooks.find(b => String(b.id) === String(bookId));
+        
+        if (!book || !book.pubdate) return false;
+        
+        const publishedDate = new Date(book.pubdate);
+        const now = new Date();
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        
+        return publishedDate > sevenDaysAgo;
+    }
+
+    // Show notification for newly published book if not from notification click
+    function showNewBookNotification() {
+        if (!currentBookId || fromNotificationClick) return;
+        
+        if (isNewlyPublishedBook(currentBookId)) {
+            const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+            const book = adminBooks.find(b => String(b.id) === String(currentBookId));
+            
+            if (book) {
+                // Add to notifications if not already there
+                let notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
+                const exists = notifications.some(n => String(n.bookId) === String(currentBookId));
+                
+                if (!exists) {
+                    notifications.unshift({
+                        bookId: currentBookId,
+                        title: book.title,
+                        author: book.author,
+                        image: book.image,
+                        publishedAt: book.pubdate,
+                        seen: false
+                    });
+                    localStorage.setItem('newBookNotifications', JSON.stringify(notifications));
+                }
+                
+                // Show a toast notification to inform user
+                showToastNotification(book.title);
+            }
+        }
+    }
+
+    // Show toast notification for new book
+    function showToastNotification(bookTitle) {
+        // Remove any existing toast
+        const existingToast = document.getElementById('new-book-toast');
+        if (existingToast) existingToast.remove();
+
+        const toast = document.createElement('div');
+        toast.id = 'new-book-toast';
+        toast.className = 'fixed top-20 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full opacity-0';
+        toast.innerHTML = `
+            <div class="flex items-center gap-3">
+                <i class='bx bx-bell-ring text-xl'></i>
+                <span>New book published: <strong>${bookTitle}</strong></span>
+            </div>
+        `;
+        document.body.appendChild(toast);
+
+        // Show toast with animation
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full', 'opacity-0');
+        }, 100);
+
+        // Auto hide after 4 seconds
+        setTimeout(() => {
+            toast.classList.add('translate-x-full', 'opacity-0');
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
     // Load and display notifications when hovering
     function loadNotifications() {
         if (!notificationDropdown) return;
 
         // Get notifications from localStorage
-        const notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
+        let notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
         
         // Get books from admin to get cover images (reads from admin localStorage)
         const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
@@ -54,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const date = notif.publishedAt ? new Date(notif.publishedAt).toLocaleDateString() : '';
             
             return `
-                <div class="notification-item flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b" onclick="viewBookDetail(${notif.bookId})">
+                <div class="notification-item flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b" onclick="handleNotificationClick(${notif.bookId})">
                     <img src="${coverImage}" alt="${notif.title}" class="w-12 h-16 object-cover rounded">
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium text-black truncate">${notif.title}</p>
@@ -72,6 +158,12 @@ document.addEventListener('DOMContentLoaded', () => {
             loadNotifications();
         });
     }
+
+    // Handle notification click - set flag before navigating
+    window.handleNotificationClick = function(bookId) {
+        sessionStorage.setItem('fromNotificationClick', 'true');
+        viewBookDetail(bookId);
+    };
 
     // Mark notifications as seen and remove the clicked one
     function markNotificationAsSeen(bookId) {
@@ -97,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
             markNotificationAsSeen(bookId);
             
             localStorage.setItem('currentBook', JSON.stringify(book));
-            window.location.reload();
+            window.location.href = '../detail/index-acc.html?id=' + bookId;
         }
     };
 
@@ -113,6 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load notifications on page load
     loadNotifications();
+
+    // Show notification for new book (only if not from notification click)
+    showNewBookNotification();
 
     // =====================
     // DISPLAY USER EMAIL IN DROPDOWN
@@ -233,16 +328,17 @@ document.addEventListener('DOMContentLoaded', () => {
         commentsList.scrollTop = commentsList.scrollHeight;
     }
 
-    const currentBookId = getCurrentBookId();
+    // Get book ID for comments
+    const commentBookId = getCurrentBookId();
     if (commentsList) {
-        const initialComments = loadComments(currentBookId);
+        const initialComments = loadComments(commentBookId);
         renderComments(initialComments);
     }
 
     function addComment(text) {
         if (!text) return;
         
-        const savedComment = saveComment(currentBookId, text);
+        const savedComment = saveComment(commentBookId, text);
         
         if (commentsList.children.length === 1 && commentsList.children[0].classList.contains('text-gray-500')) {
             commentsList.innerHTML = '';
@@ -583,7 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
             editionList.innerHTML = `
                 <li class="text-center py-8 text-gray-500">
                     <i class='bx bx-book' style="font-size: 3rem;"></i>
-                    <p class="mt-2 font-medium">This edition doesn't have a description yet.</p>
+                    <p class="mt-2 font-medium">This book doesn't have any editions</p>
                     <p class="text-sm text-gray-400">Check back later for updates.</p>
                 </li>
             `;
