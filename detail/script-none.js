@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =====================
     const readMoreBtn = document.getElementById('read-more-btn');
     const bookDescription = document.getElementById('book-description');
-    
+
     if (readMoreBtn && bookDescription) {
         function checkDescriptionLength() {
             if (bookDescription.scrollHeight > bookDescription.clientHeight) {
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 readMoreBtn.style.display = 'none';
             }
         }
-        
+
         readMoreBtn.addEventListener('click', () => {
             bookDescription.classList.toggle('expanded');
             if (bookDescription.classList.contains('expanded')) {
@@ -37,14 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 readMoreBtn.textContent = 'Read more';
             }
         });
-        
+
         setTimeout(checkDescriptionLength, 100);
     }
 
     // =====================
     // BOOK LOADING (from localStorage)
     // =====================
-    
+
     // Helper functions
     function isNewBook(publishedAt) {
         if (!publishedAt) return false;
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateRating(views) {
         const viewCount = Number(views) || 0;
-const ratingNum = viewCount >= 400 ? 5 : 4;
+        const ratingNum = viewCount >= 400 ? 5 : 4;
         let starsHtml = '';
         for (let i = 1; i <= 5; i++) {
             if (i <= ratingNum) {
@@ -78,11 +78,11 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
 
     function isValidCoverUrl(url) {
         if (!url || typeof url !== 'string') return false;
-        
+
         if (url.startsWith('data:image/')) {
             return true;
         }
-        
+
         try {
             new URL(url);
             return url.startsWith('http://') || url.startsWith('https://');
@@ -93,20 +93,20 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
 
     function loadBook() {
         const storedBook = localStorage.getItem('currentBook');
-        
+
         let title, author, status, views, rating, ratingCount, description, cover, editions, bookType, bookTags, genre;
-        
+
         const params = new URLSearchParams(window.location.search);
         const overrideCover = params.get('cover');
         const bookId = params.get('id');
 
         const defaultCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
-        
+
         // Get book from adminBooks (localStorage from admin panel)
         if (bookId) {
             const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
             const adminBook = adminBooks.find(b => String(b.id) === String(bookId));
-            
+
             if (adminBook) {
                 title = adminBook.title || 'Book Title';
                 author = adminBook.author || 'Author Name';
@@ -120,13 +120,13 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
                 if (genre && !bookTags.includes(genre)) {
                     bookTags.unshift(genre);
                 }
-                
+
                 // Use getBookType function like main/ pages
                 const bookTypeObj = getBookType(bookTags);
                 bookType = bookTypeObj.type;
-                
+
                 rating = generateRating(views);
-                
+
                 // Set Read Now button href based on book type
                 const readBtn = document.getElementById('read-btn');
                 if (readBtn) {
@@ -136,7 +136,7 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
                         readBtn.href = `../reading/none-text.html?book=${bookId}&edition=1`;
                     }
                 }
-                
+
                 if (overrideCover && isValidCoverUrl(overrideCover)) {
                     cover = overrideCover;
                 } else if (adminBook.image) {
@@ -157,12 +157,12 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
                 if (genre && !bookTags.includes(genre)) {
                     bookTags.unshift(genre);
                 }
-                
+
                 const bookTypeObj = getBookType(bookTags);
                 bookType = bookTypeObj.type;
-                
+
                 rating = generateRating(views);
-                
+
                 const readBtn = document.getElementById('read-btn');
                 if (readBtn) {
                     if (bookType === 'img') {
@@ -171,7 +171,7 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
                         readBtn.href = `../reading/none-text.html?book=${book.id || 'default'}&edition=1`;
                     }
                 }
-                
+
                 cover = overrideCover && isValidCoverUrl(overrideCover) ? overrideCover : (book.image || defaultCover);
             } else {
                 title = params.get('title') || 'Book Title';
@@ -185,7 +185,7 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
                 editions = parseInt(params.get('editions')) || 200;
                 bookType = 'text';
                 bookTags = [];
-                
+
                 const readBtn = document.getElementById('read-btn');
                 if (readBtn) {
                     readBtn.href = `../reading/none-text.html?book=${bookId || 'default'}&edition=1`;
@@ -200,12 +200,12 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
             description = book.description || '';
             editions = book.pages || 200;
             bookTags = book.tags || [];
-            
+
             const bookTypeObj = getBookType(bookTags);
             bookType = bookTypeObj.type;
-            
+
             rating = generateRating(views);
-            
+
             const readBtn = document.getElementById('read-btn');
             if (readBtn) {
                 if (bookType === 'img') {
@@ -214,7 +214,7 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
                     readBtn.href = `../reading/none-text.html?book=${book.id || 'default'}&edition=1`;
                 }
             }
-            
+
             cover = overrideCover && isValidCoverUrl(overrideCover) ? overrideCover : (book.image || defaultCover);
         } else {
             title = params.get('title') || 'Book Title';
@@ -228,7 +228,7 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
             editions = parseInt(params.get('editions')) || 200;
             bookType = 'text';
             bookTags = [];
-            
+
             const readBtn = document.getElementById('read-btn');
             if (readBtn) {
                 readBtn.href = '../reading/none-text.html?book=default&edition=1';
@@ -242,13 +242,13 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
         const viewsEl = document.getElementById('book-views');
         const ratingEl = document.getElementById('book-rating');
         const descEl = document.getElementById('book-description');
-        
+
         if (titleEl) titleEl.textContent = title;
         if (authorEl) authorEl.textContent = `by ${author}`;
         if (statusEl) statusEl.innerHTML = `Status: <strong>${status}</strong>`;
         if (viewsEl) viewsEl.innerHTML = `<i class='bx bx-eye'></i> ${views || 0} views`;
         if (ratingEl) ratingEl.innerHTML = rating;
-        
+
         if (descEl) {
             if (description && description.trim() !== '') {
                 descEl.textContent = description;
@@ -275,20 +275,20 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
         // Set book cover
         const bookCoverEl = document.getElementById('book-cover');
         const bookCoverLink = document.getElementById('book-cover-link');
-        
+
         if (bookCoverEl) {
             bookCoverEl.classList.add('no-lazy');
             bookCoverEl.src = (cover && isValidCoverUrl(cover)) ? cover : defaultCover;
-            bookCoverEl.onerror = function() {
+            bookCoverEl.onerror = function () {
                 this.src = defaultCover;
             };
         }
-        
+
         if (bookCoverLink) {
             const readBtn = document.getElementById('read-btn');
             bookCoverLink.href = readBtn ? readBtn.href : `../reading/none-text.html?book=${bookId || 'default'}&edition=1`;
         }
-        
+
         // RATING STARS DISPLAY
         const ratingRow = document.getElementById('book-rating-row');
         if (ratingRow && ratingRow.innerHTML.trim() === '') {
@@ -297,18 +297,18 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
                 <dd id="book-rating" class="text-yellow-400">${rating || ''}</dd>
             `;
         }
-        
+
         // ADDITIONAL BOOK METADATA - Load from localStorage (adminBooks)
         loadBookMetadata(bookId, storedBook);
-        
+
         // BOOK TYPE TAG DISPLAY (txt/img) - using getBookType like main/ pages
         const bookTypeTag = document.getElementById('book-type-tag');
         const bookTypeLabel = document.getElementById('book-type-label');
-        
+
         if (bookTypeTag && bookTypeLabel) {
             let finalBookType = 'text';
             let finalBookTags = bookTags || [];
-            
+
             if (bookId) {
                 const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
                 const adminBook = adminBooks.find(b => String(b.id) === String(bookId));
@@ -316,16 +316,16 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
                     finalBookTags = adminBook.tags;
                 }
             }
-            
+
             if (!finalBookTags.length && storedBook) {
                 const book = JSON.parse(storedBook);
                 finalBookTags = book.tags || [];
             }
-            
+
             // Use getBookType function like main/ pages
             const bookTypeObj = getBookType(finalBookTags);
             finalBookType = bookTypeObj.type;
-            
+
             if (finalBookType === 'img') {
                 bookTypeTag.classList.remove('type-text', 'hidden');
                 bookTypeTag.classList.add('type-img');
@@ -338,26 +338,26 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
                 bookTypeLabel.textContent = "Text";
             }
         }
-        
+
         return editions;
     }
 
     // =====================
     // EDITIONS (from localStorage)
     // =====================
-    
+
     let editions = [];
     let editionsCount = 200;
-    
+
     try {
         editionsCount = loadBook();
-        
+
         const storedBook = localStorage.getItem('currentBook');
         if (storedBook) {
             const book = JSON.parse(storedBook);
             editions = book.editions || [];
         }
-        
+
         const params = new URLSearchParams(window.location.search);
         const bookId = params.get('id');
         if (!editions.length && bookId) {
@@ -370,14 +370,13 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
     } catch (e) {
         console.error('Error loading editions:', e);
     }
-    
+
     const totalEditions = editions.length > 0 ? editions.length : editionsCount;
     const pageSize = 6;
     let currentPage = 0;
-    const chapterList = document.getElementById('chapter-list');
-    const btnPrev = document.getElementById('chap-prev');
-    const btnNext = document.getElementById('chap-next');
-
+    const chapterList = document.getElementById('detail-edition-list');
+    const btnPrev = document.getElementById('detail-prev');
+    const btnNext = document.getElementById('detail-next');
     const defaultEditionCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?w=80";
 
     function renderEditions() {
@@ -386,7 +385,7 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
 
         const start = currentPage * pageSize;
         const end = Math.min(editions.length, start + pageSize);
-        
+
         if (editions.length === 0) {
             chapterList.innerHTML = `
                 <li class="edition-item text-center py-8 text-gray-500 border rounded-lg">
@@ -399,13 +398,13 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
             if (btnNext) btnNext.disabled = true;
             return [];
         }
-        
+
         if (editions.length > 0) {
             for (let i = start; i < end; i++) {
                 const edition = editions[i];
                 const li = document.createElement('li');
                 li.className = "edition-item flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50";
-                
+
                 const editionImage = edition.image || defaultEditionCover;
                 const editionTitle = edition.title || `Edition ${i + 1}`;
                 const editionLanguage = edition.language || 'English';
@@ -444,7 +443,7 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
             }
         });
     }
-    
+
     if (btnNext) {
         btnNext.addEventListener('click', () => {
             const maxPage = Math.floor((totalEditions - 1) / pageSize);
@@ -480,12 +479,12 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
 // =====================
 function loadBookMetadata(bookId, storedBook) {
     let genre = '', publisher = '', pubdate = '', isbn = '', language = '';
-    
+
     // Try to get book data from adminBooks first
     if (bookId) {
         const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
         const adminBook = adminBooks.find(b => String(b.id) === String(bookId));
-        
+
         if (adminBook) {
             genre = adminBook.genre || '';
             publisher = adminBook.publisher || '';
@@ -494,7 +493,7 @@ function loadBookMetadata(bookId, storedBook) {
             language = adminBook.language || '';
         }
     }
-    
+
     // Fallback to currentBook from localStorage
     if (!genre && !publisher && !pubdate && storedBook) {
         const book = JSON.parse(storedBook);
@@ -504,22 +503,22 @@ function loadBookMetadata(bookId, storedBook) {
         isbn = book.isbn || '';
         language = book.language || '';
     }
-    
+
     // Format publication date
     let formattedPubdate = '';
     if (pubdate) {
         try {
             const date = new Date(pubdate);
-            formattedPubdate = date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+            formattedPubdate = date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
             });
         } catch (e) {
             formattedPubdate = pubdate;
         }
     }
-    
+
     // Update Genre
     const genreEl = document.getElementById('book-genre');
     if (genreEl) {
@@ -530,7 +529,7 @@ function loadBookMetadata(bookId, storedBook) {
             genreEl.classList.add('hidden');
         }
     }
-    
+
     // Update Publisher
     const publisherEl = document.getElementById('book-publisher');
     if (publisherEl) {
@@ -541,7 +540,7 @@ function loadBookMetadata(bookId, storedBook) {
             publisherEl.classList.add('hidden');
         }
     }
-    
+
     // Update Publication Date
     const pubdateEl = document.getElementById('book-pubdate');
     if (pubdateEl) {
@@ -552,7 +551,7 @@ function loadBookMetadata(bookId, storedBook) {
             pubdateEl.classList.add('hidden');
         }
     }
-    
+
     // Update ISBN
     const isbnEl = document.getElementById('book-isbn');
     if (isbnEl) {
@@ -563,7 +562,7 @@ function loadBookMetadata(bookId, storedBook) {
             isbnEl.classList.add('hidden');
         }
     }
-    
+
     // Update Language
     const languageEl = document.getElementById('book-language');
     if (languageEl) {
