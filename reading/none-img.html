@@ -12,6 +12,7 @@
     <script src="https://cdn.tailwindcss.com" defer></script>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <style>
+        /* use global font from main site */
         .reader-slide {
             display: none;
             text-align: center;
@@ -24,40 +25,26 @@
         .reader-slide img {
             max-width: 100%;
             height: auto;
-            border-radius: .5rem;
+            border-radius: 0.5rem;
         }
 
-        #reader-container {
+        /* container for positioning the toggle */
+        #reader-container { 
             position: relative;
-            padding-top: 3rem;
+            padding-top: 3rem; 
         }
 
+        /* toggle button */
         #toggle-mode {
-            background: rgba(255, 255, 255, 0.9);
-        }
-
-        /* make switch icon black */
-        #toggle-mode i {
-            color: #000 !important;
-        }
-
-        /* navigation button details */
-        #prev-page,
-        #next-page {
-            border: 2px solid var(--primary-color);
-            background: var(--secondary-color);
-            color: var(--white);
-            transition: background 0.3s, transform 0.2s;
-        }
-
-        #prev-page:hover,
-        #next-page:hover {
-            background: var(--primary-color);
-            transform: translateY(-2px);
-        }
-
-        #toggle-mode {
+            background: rgba(255,255,255,0.9);
+            border-radius: 0.5rem;
+            min-width: 140px;
             border: 2px solid var(--secondary-color);
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
         }
 
         #toggle-mode:hover {
@@ -65,15 +52,89 @@
             color: var(--white);
         }
 
-        /* icons inside buttons should always be white, except toggle icon */
+        /* toggle icon */
+        #toggle-mode i {
+            color: var(--black) !important;
+        }
+
+        /* reader area */
+        #reader-slider {
+            position: relative;
+            min-height: 420px;
+        }
+
+        /* navigation buttons */
+        #prev-page,
+        #next-page {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 72px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(17, 24, 39, 0.55);
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        /* button hover */
+        #prev-page:hover,
+        #next-page:hover {
+            background: rgba(17, 24, 39, 0.8);
+        }
+
+        /* button positions */
+        #prev-page {
+            left: 12px;
+        }
+
+        #next-page {
+            right: 12px;
+        }
+
+        /* icons inside buttons */
         #prev-page i,
         #next-page i {
             color: var(--white) !important;
         }
 
-        /* toggle icon black for clarity */
-        #toggle-mode i {
-            color: var(--black) !important;
+        /* Adjust container */
+        .nav-controls {
+            position: relative;
+        }
+
+        /* mobile responsive */
+        @media (max-width: 640px) {
+            #prev-page,
+            #next-page {
+                width: 42px;
+                height: 64px;
+                font-size: 1.3rem;
+            }
+        }
+        /* recommendation cards */
+        .recommend-card {
+            display: inline-block;
+            width: 160px;
+            margin: 0 0.5rem;
+            text-align: center;
+        }
+        .recommend-card img {
+            width: 100%;
+            border-radius: 0.5rem;
+        }
+        .recommend-card h3 {
+            font-size: 0.9rem;
+            margin: 0.4rem 0 0.2rem;
+        }
+        .recommend-card .rating,
+        .recommend-card .views {
+            font-size: 0.8rem;
+            color: var(--gray-dark);
         }
     </style>
 </head>
@@ -204,20 +265,26 @@
         </div>
     </footer>
 
-    <script src="../script/navbar-loader.js" defer></script>
-    <script src="../main/script-none.js" defer></script>
+    <script src="../main/script-acc.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const params = new URLSearchParams(window.location.search);
             let current = parseInt(params.get('edition') || params.get('chapter') || '1') - 1;
 
             const sampleImages = [
-                'https://via.placeholder.com/800x1200?text=Page+1',
-                'https://via.placeholder.com/800x1200?text=Page+2',
-                'https://via.placeholder.com/800x1200?text=Page+3',
-                'https://via.placeholder.com/800x1200?text=Page+4',
-                'https://via.placeholder.com/800x1200?text=Page+5'
+                'https://picsum.photos/800/1200?1',
+                'https://picsum.photos/800/1200?2',
+                'https://picsum.photos/800/1200?3',
+                'https://picsum.photos/800/1200?4',
+                'https://picsum.photos/800/1200?5',
+                'https://picsum.photos/800/1200?6',
+                'https://picsum.photos/800/1200?7',
+                'https://picsum.photos/800/1200?8',
+                'https://picsum.photos/800/1200?9',
+                'https://picsum.photos/800/1200?10'
             ];
+            // pretend current book tags retrieved from query/localStorage
+            const currentTags = ['adventure','fantasy'];
 
             const slider = document.getElementById('reader-slider');
             sampleImages.forEach(src => {
@@ -229,6 +296,21 @@
 
             const slides = slider.querySelectorAll('.reader-slide');
             let continuous = false;
+            const recContainer = document.getElementById('recommend-list');
+            const recommendations = [
+                {cover:'https://via.placeholder.com/120x180?text=Book+1',title:'The Lost Pages',rating:4.2,views:1320,tags:['adventure','mystery']},
+                {cover:'https://via.placeholder.com/120x180?text=Book+2',title:'Mystery of the Isle',rating:4.7,views:980,tags:['mystery','thriller']},
+                {cover:'https://via.placeholder.com/120x180?text=Book+3',title:'Journey Through Time',rating:4.5,views:1500,tags:['science fiction','adventure']},
+                {cover:'https://via.placeholder.com/120x180?text=Book+4',title:'Secrets of the Forest',rating:4.0,views:760,tags:['fantasy','adventure']}
+            ];
+            // filter by shared tags with current book
+            const filtered = recommendations.filter(b => b.tags.some(t => currentTags.includes(t)));
+            filtered.forEach(b=>{
+                const card=document.createElement('div');
+                card.className='recommend-card';
+                card.innerHTML = `<img src="${b.cover}" alt="${b.title} cover"><h3>${b.title}</h3><div class="rating">${b.rating} ★</div><div class="views">${b.views} views</div>`;
+                recContainer.appendChild(card);
+            });
 
             function showSlide(index) {
                 if (continuous) return;
@@ -247,14 +329,14 @@
                     nextBtn.style.display = 'none';
                     toggle.innerHTML = '<i class="bx bx-pause-circle"></i><span class="mode-label"> Continuous</span>';
                     toggle.innerHTML = '<i class="bx bx-pause-circle"> Change read mode</i>';
-                    toggle.innerHTML = '<i class="bx bx-pause-circle"></i><span class="mode-label"> Continuous</span>';
+                    if (label) label.textContent = 'Continuous';
                 } else {
-                    slides.forEach((s, i) => s.style.display = i === current ? 'block' : 'none');
+                    slides.forEach((s,i) => s.style.display = i === current ? 'block' : 'none');
                     prevBtn.style.display = '';
                     nextBtn.style.display = '';
                     toggle.innerHTML = '<i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>';
                     toggle.innerHTML = '<i class="bx bx-sort-alt-2"> Change read mode</i>';
-                    toggle.innerHTML = '<i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>';
+                    if (label) label.textContent = 'Switching box';
                 }
             }
 
@@ -273,6 +355,4 @@
             updateMode();
         });
     </script>
-</body>
-
 </html>

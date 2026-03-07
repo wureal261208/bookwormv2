@@ -440,7 +440,8 @@
                     status = adminBook.status || 'Completed';
                     views = adminBook.views || 0;
                     description = adminBook.description || '';
-                    editions = adminBook.editions || []; // Get editions array from adminBooks
+                // Check for editions array first, then fall back to pages count
+                editions = (adminBook.editions && Array.isArray(adminBook.editions) && adminBook.editions.length > 0) ? adminBook.editions : (adminBook.pages || 200);
                     genre = adminBook.genre || '';
                     bookTags = adminBook.tags || []; // Get tags array from adminBooks
                     if (genre && !bookTags.includes(genre)) {
@@ -480,7 +481,8 @@
                     status = book.status || 'Completed';
                     views = book.views || 0;
                     description = book.description || '';
-                    editions = book.pages || 200;
+                    // Check for editions array first, then fall back to pages count
+                    editions = (book.editions && Array.isArray(book.editions) && book.editions.length > 0) ? book.editions : (book.pages || 200);
                     genre = book.genre || '';
                     bookTags = book.tags || [];
                     if (genre && !bookTags.includes(genre)) {
@@ -527,7 +529,8 @@
                 status = book.status || 'Completed';
                 views = book.views || 0;
                 description = book.description || '';
-                editions = book.pages || 200;
+                // Check for editions array first, then fall back to pages count
+                editions = (book.editions && Array.isArray(book.editions) && book.editions.length > 0) ? book.editions : (book.pages || 200);
                 bookTags = book.tags || [];
 
                 const bookTypeObj = getBookType(bookTags);
