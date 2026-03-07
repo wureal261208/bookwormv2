@@ -78,6 +78,9 @@ function populateCarouselWithBooks() {
         const shuffledBooks = [...books].sort(() => 0.5 - Math.random());
         carouselImages = shuffledBooks.slice(0, 6).map(book => book.image || defaultImages[0]);
         
+        // Store the shuffled books globally for navigation - this ensures the clicked slide goes to the correct book
+        window.carouselBooks = shuffledBooks.slice(0, 6);
+        
         // Ensure we have at least 6 images by adding defaults if needed
         while (carouselImages.length < 6) {
             const randomDefault = defaultImages[Math.floor(Math.random() * defaultImages.length)];
@@ -90,7 +93,7 @@ function populateCarouselWithBooks() {
     // Duplicate images for seamless loop (12 slides for continuous effect)
     const allSlides = [...carouselImages, ...carouselImages];
     
-    // Generate HTML for slides
+    // Generate HTML for slides - use modulo to get correct book index from the shuffled array
     slider.innerHTML = allSlides.map((imgSrc, index) => `
         <div class="slide" onclick="navigateToBookFromCarousel(${index % carouselImages.length})">
             <img src="${imgSrc}" class="w-full h-full object-cover rounded-xl" alt="slide${index + 1}">
@@ -100,16 +103,29 @@ function populateCarouselWithBooks() {
 
 // Function to navigate to book from carousel
 function navigateToBookFromCarousel(index) {
-    const storedBooks = localStorage.getItem('adminBooks');
-    if (storedBooks) {
-        const books = JSON.parse(storedBooks);
-        const shuffledBooks = [...books].sort(() => 0.5 - Math.random());
-        const selectedBook = shuffledBooks[index % shuffledBooks.length];
+    // Use the globally stored carousel books (already shuffled) instead of re-shuffling
+    const books = window.carouselBooks;
+    if (books && books.length > 0) {
+        const selectedBook = books[index % books.length];
         
         if (selectedBook) {
             localStorage.setItem('currentBook', JSON.stringify(selectedBook));
             // Navigate with book ID for reliable cover lookup
             window.location.href = '../detail/index-acc.html?id=' + selectedBook.id;
+        }
+    } else {
+        // Fallback: if no carousel books, try localStorage
+        const storedBooks = localStorage.getItem('adminBooks');
+        if (storedBooks) {
+            const allBooks = JSON.parse(storedBooks);
+            const publishedBooks = allBooks.filter(book => book.status === 'published');
+            if (publishedBooks.length > 0) {
+                const selectedBook = publishedBooks[index % publishedBooks.length];
+                if (selectedBook) {
+                    localStorage.setItem('currentBook', JSON.stringify(selectedBook));
+                    window.location.href = '../detail/index-acc.html?id=' + selectedBook.id;
+                }
+            }
         }
     }
 }
