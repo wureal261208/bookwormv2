@@ -256,23 +256,6 @@ function collectEditions() {
     return editions;
 }
 
-// …later, when the book is submitted…
-const editions = collectEditions();
-// …
-const newBook = {
-    id: Date.now(),
-    title,
-    author,
-    image: finalImage,
-    genre,
-    pages: parseInt(pages),
-    status,
-    editions,                // ← stored here
-    // …other fields…
-};
-books.push(newBook);
-saveBooksToStorage();   
-
 // Clear editions form when modal closes
 function clearEditionsForm() {
     const container = document.getElementById('edition-container');
@@ -590,7 +573,8 @@ function initValidationListeners() {
     const fields = [
         { id: 'book-title', validator: ValidationUtils.title },
         { id: 'book-author', validator: ValidationUtils.author },
-        { id: 'book-image', validator: ValidationUtils.url },
+        // Note: book-image is optional - not validated in real-time
+        // { id: 'book-image', validator: ValidationUtils.url },
         { id: 'book-genre', validator: ValidationUtils.genre },
         { id: 'book-pages', validator: ValidationUtils.pages },
         { id: 'book-description', validator: ValidationUtils.description },
@@ -601,7 +585,8 @@ function initValidationListeners() {
     const editFields = [
         { id: 'edit-book-title', validator: ValidationUtils.title },
         { id: 'edit-book-author', validator: ValidationUtils.author },
-        { id: 'edit-book-image', validator: ValidationUtils.url },
+        // Note: edit-book-image is optional - not validated in real-time
+        // { id: 'edit-book-image', validator: ValidationUtils.url },
         { id: 'edit-book-genre', validator: ValidationUtils.genre },
         { id: 'edit-book-pages', validator: ValidationUtils.pages },
         { id: 'edit-book-description', validator: ValidationUtils.description },
@@ -685,7 +670,8 @@ function addBook(event) {
         { id: 'book-author', validator: ValidationUtils.author },
         { id: 'book-genre', validator: ValidationUtils.genre },
         { id: 'book-pages', validator: ValidationUtils.pages },
-        { id: 'book-image', validator: ValidationUtils.url },
+        // Note: book-image is optional - not validated here
+        // { id: 'book-image', validator: ValidationUtils.url },
         { id: 'book-description', validator: ValidationUtils.description },
         { id: 'book-type', validator: ValidationUtils.bookType },
         { id: 'book-isbn', validator: ValidationUtils.isbn }
@@ -1353,7 +1339,8 @@ function editBook(event) {
         { id: 'edit-book-author', validator: ValidationUtils.author },
         { id: 'edit-book-genre', validator: ValidationUtils.genre },
         { id: 'edit-book-pages', validator: ValidationUtils.pages },
-        { id: 'edit-book-image', validator: ValidationUtils.url },
+        // Note: edit-book-image is optional - not validated here
+        // { id: 'edit-book-image', validator: ValidationUtils.url },
         { id: 'edit-book-description', validator: ValidationUtils.description },
         { id: 'edit-book-type', validator: ValidationUtils.bookType },
         { id: 'edit-book-isbn', validator: ValidationUtils.isbn }

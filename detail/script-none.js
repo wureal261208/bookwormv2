@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 views = adminBook.views || 0;
                 description = adminBook.description || '';
                 // Check for editions array first, then fall back to pages count
-                editions = (adminBook.editions && Array.isArray(adminBook.editions) && adminBook.editions.length > 0) ? adminBook.editions : (adminBook.pages || 200);
+                let bookEditionsCount = (adminBook.editions && Array.isArray(adminBook.editions) && adminBook.editions.length > 0) ? adminBook.editions.length : (adminBook.pages || 200);
                 genre = adminBook.genre || '';
                 bookTags = adminBook.tags || []; // Get tags array from adminBooks
                 // include genre as a tag as well (if not already present)
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 views = book.views || 0;
                 description = book.description || '';
                 // Check for editions array first, then fall back to pages count
-                editions = (book.editions && Array.isArray(book.editions) && book.editions.length > 0) ? book.editions : (book.pages || 200);
+                bookEditionsCount = (book.editions && Array.isArray(book.editions) && book.editions.length > 0) ? book.editions.length : (book.pages || 200);
                 genre = book.genre || '';
                 bookTags = book.tags || [];
                 if (genre && !bookTags.includes(genre)) {
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ratingCount = params.get('ratingCount') || '(1234 reviews)';
                 description = params.get('desc') || '';
                 cover = overrideCover || params.get('cover') || defaultCover;
-                editions = parseInt(params.get('editions')) || 200;
+                bookEditionsCount = parseInt(params.get('editions')) || 200;
                 bookType = 'text';
                 bookTags = [];
 
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        return editions;
+        return bookEditionsCount;
     }
 
     // =====================

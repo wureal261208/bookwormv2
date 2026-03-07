@@ -421,7 +421,7 @@
         function loadBook() {
             const storedBook = localStorage.getItem('currentBook');
 
-            let title, author, status, views, rating, ratingCount, description, cover, editions, bookType, bookTags, genre;
+            let title, author, status, views, rating, ratingCount, description, cover, editions, bookType, bookTags, genre, bookEditionsCount;
 
             const params = new URLSearchParams(window.location.search);
             const overrideCover = params.get('cover');
@@ -441,7 +441,7 @@
                     views = adminBook.views || 0;
                     description = adminBook.description || '';
                 // Check for editions array first, then fall back to pages count
-                editions = (adminBook.editions && Array.isArray(adminBook.editions) && adminBook.editions.length > 0) ? adminBook.editions : (adminBook.pages || 200);
+                let bookEditionsCount = (adminBook.editions && Array.isArray(adminBook.editions) && adminBook.editions.length > 0) ? adminBook.editions.length : (adminBook.pages || 200);
                     genre = adminBook.genre || '';
                     bookTags = adminBook.tags || []; // Get tags array from adminBooks
                     if (genre && !bookTags.includes(genre)) {
@@ -482,7 +482,7 @@
                     views = book.views || 0;
                     description = book.description || '';
                     // Check for editions array first, then fall back to pages count
-                    editions = (book.editions && Array.isArray(book.editions) && book.editions.length > 0) ? book.editions : (book.pages || 200);
+                    bookEditionsCount = (book.editions && Array.isArray(book.editions) && book.editions.length > 0) ? book.editions.length : (book.pages || 200);
                     genre = book.genre || '';
                     bookTags = book.tags || [];
                     if (genre && !bookTags.includes(genre)) {
@@ -513,7 +513,7 @@
                     ratingCount = params.get('ratingCount') || '(1234 reviews)';
                     description = params.get('desc') || '';
                     cover = overrideCover || params.get('cover') || defaultCover;
-                    editions = parseInt(params.get('editions')) || 200;
+                    bookEditionsCount = parseInt(params.get('editions')) || 200;
                     bookType = 'text';
                     bookTags = [];
 
@@ -530,7 +530,7 @@
                 views = book.views || 0;
                 description = book.description || '';
                 // Check for editions array first, then fall back to pages count
-                editions = (book.editions && Array.isArray(book.editions) && book.editions.length > 0) ? book.editions : (book.pages || 200);
+                bookEditionsCount = (book.editions && Array.isArray(book.editions) && book.editions.length > 0) ? book.editions.length : (book.pages || 200);
                 bookTags = book.tags || [];
 
                 const bookTypeObj = getBookType(bookTags);
@@ -557,7 +557,7 @@
                 ratingCount = params.get('ratingCount') || '(1234 reviews)';
                 description = params.get('desc') || '';
                 cover = overrideCover || params.get('cover') || defaultCover;
-                editions = parseInt(params.get('editions')) || 200;
+                bookEditionsCount = parseInt(params.get('editions')) || 200;
                 bookType = 'text';
                 bookTags = [];
 
@@ -662,7 +662,7 @@
             // ADDITIONAL BOOK METADATA - Load from localStorage (adminBooks)
             loadBookMetadata(bookId, storedBook);
 
-            return editions;
+            return bookEditionsCount;
         }
 
         // =====================
@@ -677,7 +677,7 @@
 
             const params = new URLSearchParams(window.location.search);
             const bookId = params.get('id');
-            
+
             // First try to get from currentBook (set when clicking on a book in main page)
             const storedBook = localStorage.getItem('currentBook');
             if (storedBook) {
@@ -688,6 +688,7 @@
             }
             
             // If no editions from currentBook, try to get from adminBooks using bookId
+            // Use loose equality (==) to handle both string and number ID comparisons
             if (!editions.length && bookId) {
                 const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
                 const adminBook = adminBooks.find(b => String(b.id) === String(bookId));
@@ -698,6 +699,14 @@
             
             // Debug log for editions (can be removed in production)
             console.log('Loaded editions:', editions);
+            console.log('Book ID from URL:', bookId);
+            console.log('currentBook from localStorage:', storedBook ? JSON.parse(storedBook) : null);
+            
+            // Debug: Also check adminBooks directly
+            const adminBooksDebug = JSON.parse(localStorage.getItem('adminBooks')) || [];
+            const adminBookDebug = bookId ? adminBooksDebug.find(b => String(b.id) === String(bookId)) : null;
+            console.log('Book from adminBooks:', adminBookDebug);
+            console.log('Editions in adminBooks:', adminBookDebug ? adminBookDebug.editions : 'N/A');
         } catch (e) {
             console.error('Error loading editions:', e);
         }
