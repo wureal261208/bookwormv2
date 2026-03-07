@@ -361,6 +361,19 @@ body {
     text-overflow: ellipsis;
 }
 
+.book-item .book-editions {
+    color: #9b59b6;
+    font-size: 0.75rem;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.book-item .book-editions i {
+    font-size: 0.85rem;
+}
+
 .book-item .book-status {
     padding: 4px 10px;
     border-radius: 12px;

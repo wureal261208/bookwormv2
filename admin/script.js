@@ -915,6 +915,7 @@ function renderBooks() {
             <div class="book-info">
                 <div class="book-title">${highlightMatch(book.title, currentSearchQuery)}</div>
                 <div class="book-author">${highlightMatch(book.author, currentSearchQuery)}</div>
+                ${book.editions && book.editions.length > 0 ? `<div class="book-editions"><i class='bx bx-copy'></i> ${book.editions.length} edition${book.editions.length > 1 ? 's' : ''}</div>` : ''}
             </div>
             <span class="book-status ${book.status}">${book.status === 'published' ? 'Published' : 'Draft'}</span>
             <div class="book-actions">
