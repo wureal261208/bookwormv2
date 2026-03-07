@@ -182,18 +182,18 @@
             </div>
         </article>
 
-        <nav id="book-chapters" class="mb-6" aria-labelledby="chapters-heading">
-            <h2 id="chapters-heading" class="text-xl font-semibold mb-2">
+        <nav id="book-editions" class="mb-6" aria-labelledby="editions-heading">
+            <h2 id="editions-heading" class="text-xl font-semibold mb-2">
                 Editions
             </h2>
-            <div id="chapter-container" class="max-h-64 overflow-y-auto border rounded p-2">
-                <ul id="chapter-list" class="space-y-3"></ul>
+            <div id="edition-container" class="max-h-64 overflow-y-auto border rounded p-2">
+                <ul id="edition-list" class="space-y-3"></ul>
             </div>
             <div class="flex justify-between mt-2">
-                <button id="chap-prev" class="btn-action btn-details" disabled>
+                <button id="prev" class="btn-action btn-details" disabled>
                     Previous
                 </button>
-                <button id="chap-next" class="btn-action btn-read">Next</button>
+                <button id="next" class="btn-action btn-read">Next</button>
             </div>
         </nav>
     </main>
@@ -219,6 +219,7 @@
     <script src="../script/lazyLoad.js" defer></script>
     <!-- page logic for authenticated users -->
     <script src="script-acc.js" defer></script>
+    <script src="../admin/script.js"></script>
 </body>
 
 </html>

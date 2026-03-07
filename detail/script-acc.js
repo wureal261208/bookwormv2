@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadBook() {
         const storedBook = localStorage.getItem('currentBook');
         
-        let title, author, status, views, rating, ratingCount, description, cover, chapters, bookType;
+        let title, author, status, views, rating, ratingCount, description, cover, editions, bookType;
         
         const params = new URLSearchParams(window.location.search);
         const overrideCover = params.get('cover');
@@ -485,7 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 status = adminBook.status || 'Completed';
                 views = adminBook.views || 0;
                 description = adminBook.description || '';
-                chapters = adminBook.pages || 200;
+                editions = adminBook.pages || 200;
                 bookType = adminBook.type || 'text'; // Default to text
                 const publishedAt = adminBook.pubdate || adminBook.publishedAt;
                 
@@ -502,9 +502,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const readBtn = document.getElementById('read-btn');
                 if (readBtn) {
                     if (bookType === 'img') {
-                        readBtn.href = `../reading/acc-img.html?book=${bookId}&chapter=1`;
+                        readBtn.href = `../reading/acc-img.html?book=${bookId}&edition=1`;
                     } else {
-                        readBtn.href = `../reading/acc-text.html?book=${bookId}&chapter=1`;
+                        readBtn.href = `../reading/acc-text.html?book=${bookId}&edition=1`;
                     }
                 }
                 
@@ -525,7 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 status = book.status || 'Completed';
                 views = book.views || 0;
                 description = book.description || '';
-                chapters = book.pages || 200;
+                editions = book.pages || 200;
                 bookType = book.type || 'text';
                 const publishedAt = book.pubdate || book.publishedAt;
                 
@@ -536,9 +536,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const readBtn = document.getElementById('read-btn');
                 if (readBtn) {
                     if (bookType === 'img') {
-                        readBtn.href = `../reading/acc-img.html?book=${book.id || 'default'}&chapter=1`;
+                        readBtn.href = `../reading/acc-img.html?book=${book.id || 'default'}&edition=1`;
                     } else {
-                        readBtn.href = `../reading/acc-text.html?book=${book.id || 'default'}&chapter=1`;
+                        readBtn.href = `../reading/acc-text.html?book=${book.id || 'default'}&edition=1`;
                     }
                 }
                 
@@ -552,12 +552,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 ratingCount = params.get('ratingCount') || '(1234 reviews)';
                 description = params.get('desc') || '';
                 cover = overrideCover || params.get('cover') || defaultCover;
-                chapters = parseInt(params.get('chapters')) || 200;
+                editions = parseInt(params.get('editions')) || 200;
                 bookType = 'text';
                 
                 const readBtn = document.getElementById('read-btn');
                 if (readBtn) {
-                    readBtn.href = `../reading/acc-text.html?book=${bookId || 'default'}&chapter=1`;
+                    readBtn.href = `../reading/acc-text.html?book=${bookId || 'default'}&edition=1`;
                 }
             }
         } else if (storedBook) {
@@ -567,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
             status = book.status || 'Completed';
             views = book.views || 0;
             description = book.description || '';
-            chapters = book.pages || 200;
+            editions = book.pages || 200;
             bookType = book.type || 'text';
             const publishedAt = book.pubdate || book.publishedAt;
             
@@ -583,9 +583,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const readBtn = document.getElementById('read-btn');
             if (readBtn) {
                 if (bookType === 'img') {
-                    readBtn.href = `../reading/acc-img.html?book=${book.id || 'default'}&chapter=1`;
+                    readBtn.href = `../reading/acc-img.html?book=${book.id || 'default'}&edition=1`;
                 } else {
-                    readBtn.href = `../reading/acc-text.html?book=${book.id || 'default'}&chapter=1`;
+                    readBtn.href = `../reading/acc-text.html?book=${book.id || 'default'}&edition=1`;
                 }
             }
             
@@ -600,12 +600,12 @@ document.addEventListener('DOMContentLoaded', () => {
             ratingCount = params.get('ratingCount') || '(1234 reviews)';
             description = params.get('desc') || '';
             cover = overrideCover || params.get('cover') || defaultCover;
-            chapters = parseInt(params.get('chapters')) || 200;
+            editions = parseInt(params.get('editions')) || 200;
             bookType = 'text';
             
             const readBtn = document.getElementById('read-btn');
             if (readBtn) {
-                readBtn.href = '../reading/acc-text.html?book=default&chapter=1';
+                readBtn.href = '../reading/acc-text.html?book=default&edition=1';
             }
         }
 
@@ -649,21 +649,21 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (bookCoverLink) {
             const readBtn = document.getElementById('read-btn');
-            bookCoverLink.href = readBtn ? readBtn.href : `../reading/acc-text.html?book=${bookId || 'default'}&chapter=1`;
+            bookCoverLink.href = readBtn ? readBtn.href : `../reading/acc-text.html?book=${bookId || 'default'}&edition=1`;
         }
         
-        return chapters;
+        return editions;
     }
 
     // =====================
-    // CHAPTERS/EDITIONS (from localStorage)
+    // editionS/EDITIONS (from localStorage)
     // =====================
     
     let editions = [];
-    let chaptersCount = 200;
+    let editionsCount = 200;
     
     try {
-        chaptersCount = loadBook();
+        editionsCount = loadBook();
         
         const storedBook = localStorage.getItem('currentBook');
         if (storedBook) {
@@ -684,16 +684,16 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error loading editions:', e);
     }
     
-    const totalEditions = editions.length > 0 ? editions.length : chaptersCount;
+    const totalEditions = editions.length > 0 ? editions.length : editionsCount;
     const pageSize = 6;
     let currentPage = 0;
-    const editionList = document.getElementById('chapter-list');
+    const editionList = document.getElementById('edition-list');
     const btnPrev = document.getElementById('chap-prev');
     const btnNext = document.getElementById('chap-next');
 
     const defaultEditionCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?w=80";
 
-    function renderChapters() {
+    function rendereditions() {
         if (!editionList) return [];
         editionList.innerHTML = '';
 
@@ -755,7 +755,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPrev.addEventListener('click', () => {
             if (currentPage > 0) {
                 currentPage--;
-                focusFirstChapter();
+                focusFirstedition();
             }
         });
     }
@@ -765,13 +765,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const maxPage = Math.floor((totalEditions - 1) / pageSize);
             if (currentPage < maxPage) {
                 currentPage++;
-                focusFirstChapter();
+                focusFirstedition();
             }
         });
     }
 
-    function focusFirstChapter() {
-        const links = renderChapters();
+    function focusFirstedition() {
+        const links = rendereditions();
         if (links.length) links[0].focus();
     }
 
@@ -786,7 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    renderChapters();
-    focusFirstChapter();
+    rendereditions();
+    focusFirstedition();
 });
 
