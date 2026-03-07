@@ -94,6 +94,19 @@
             font-size: 0.8rem;
             color: var(--gray-dark);
         }
+        .carousel {
+            overflow-x: auto;
+        }
+
+        .carousel .slider {
+            display: flex;
+            gap: 1.5rem;
+            padding-bottom: 10px;
+        }
+
+        .carousel .slider::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
 
@@ -255,7 +268,7 @@
         <section class="mt-12">
             <h2 class="text-2xl font-bold mb-4">You may like</h2>
             <div class="carousel">
-                <div class="slider"></div>
+                <div class="slider" id="recommend-slider"></div>
             </div>
         </section>
     </main>
@@ -303,18 +316,12 @@
 
             const slides = slider.querySelectorAll('.reader-slide');
             let continuous = false;
-            const recSlider = document.querySelector('#reader-main .carousel .slider');
-            const recommendations = [
-                {cover:'https://via.placeholder.com/120x180?text=Book+1',title:'The Lost Pages',rating:4.2,views:1320},
-                {cover:'https://via.placeholder.com/120x180?text=Book+2',title:'Mystery of the Isle',rating:4.7,views:980},
-                {cover:'https://via.placeholder.com/120x180?text=Book+3',title:'Journey Through Time',rating:4.5,views:1500},
-                {cover:'https://via.placeholder.com/120x180?text=Book+4',title:'Secrets of the Forest',rating:4.0,views:760}
-            ];
-            recommendations.forEach(b=>{
-                const card=document.createElement('div');
-                card.className='recommend-card';
-                card.innerHTML = `<img src="${b.cover}" alt="${b.title} cover"><h3>${b.title}</h3><div class="rating">${b.rating} ★</div><div class="views">${b.views} views</div>`;
-                recSlider.appendChild(card);
+            const recSlider = document.getElementById('recommend-slider');
+            const mainCards = document.querySelectorAll('#items-grid .item-card');
+
+            [...mainCards].slice(0,4).forEach(card=>{
+                const clone = card.cloneNode(true);
+                recSlider.appendChild(clone);
             });
 
             function showSlide(index) {
@@ -357,6 +364,7 @@
             });
 
             updateMode();
+            
         });
     </script>
 </body>
