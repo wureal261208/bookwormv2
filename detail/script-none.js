@@ -237,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (titleEl) titleEl.textContent = title;
         if (authorEl) authorEl.textContent = `by ${author}`;
         if (statusEl) statusEl.innerHTML = `Status: <strong>${status}</strong>`;
+        if (viewsEl) viewsEl.innerHTML = `<i class='bx bx-eye'></i> ${views || 0} views`;
         if (ratingEl) ratingEl.textContent = rating;
         
         // Display description - show default message if empty
