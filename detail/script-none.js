@@ -120,13 +120,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const overrideCover = params.get('cover');
         const bookId = params.get('id');
 
-        // Get book from adminBooks (localStorage from admin panel)
-        // Fixed: Use String() comparison to handle both string and number IDs
+        // Default cover image for fallback
+        const defaultCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
+        
+        // Get book from adminBooks (localStorage from admin panel) - this is the SOURCE OF TRUTH for book covers
         if (bookId) {
             const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
             const adminBook = adminBooks.find(b => String(b.id) === String(bookId));
             
             if (adminBook) {
+                // PRIMARY: Get cover from admin dashboard (adminBooks is the source of truth)
                 title = adminBook.title || 'Book Title';
                 author = adminBook.author || 'Author Name';
                 status = adminBook.status || 'Completed';
@@ -149,14 +152,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     readBtn.href = `../reading/index-read-novel.html?book=${bookId}&chapter=1`;
                 }
                 
+                // Get cover from admin dashboard - this is the primary source
+                // Priority: 1. overrideCover param, 2. adminBook.image (from admin dashboard)
                 if (overrideCover && isValidCoverUrl(overrideCover)) {
                     cover = overrideCover;
                 } else if (adminBook.image) {
                     cover = adminBook.image;
                 } else {
-                    cover = '';
+                    cover = defaultCover;
                 }
             } else if (storedBook) {
+                // Fallback: try currentBook if not found in adminBooks
                 const book = JSON.parse(storedBook);
                 title = book.title || 'Book Title';
                 author = book.author || 'Author Name';
@@ -175,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     readBtn.href = `../reading/index-read-novel.html?book=${book.id || 'default'}&chapter=1`;
                 }
                 
-                cover = overrideCover && isValidUrl(overrideCover) ? overrideCover : (book.image || '');
+                cover = overrideCover && isValidCoverUrl(overrideCover) ? overrideCover : (book.image || defaultCover);
             } else {
                 title = params.get('title') || 'Book Title';
                 author = params.get('author') || 'Author Name';
@@ -184,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 rating = params.get('rating') || '★★★★★';
                 ratingCount = params.get('ratingCount') || '(1234 reviews)';
                 description = params.get('desc') || '';
-                cover = overrideCover || params.get('cover');
+                cover = overrideCover || params.get('cover') || defaultCover;
                 chapters = parseInt(params.get('chapters')) || 200;
                 
                 const readBtn = document.getElementById('read-btn');
@@ -216,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 readBtn.href = `../reading/index-read-novel.html?book=${book.id || 'default'}&chapter=1`;
             }
             
-            cover = overrideCover && isValidUrl(overrideCover) ? overrideCover : (book.image || '');
+            cover = overrideCover && isValidCoverUrl(overrideCover) ? overrideCover : (book.image || defaultCover);
         } else {
             const params = new URLSearchParams(window.location.search);
             title = params.get('title') || 'Book Title';
@@ -226,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
             rating = params.get('rating') || '★★★★★';
             ratingCount = params.get('ratingCount') || '(1234 reviews)';
             description = params.get('desc') || '';
-            cover = overrideCover || params.get('cover');
+            cover = overrideCover || params.get('cover') || defaultCover;
             chapters = parseInt(params.get('chapters')) || 200;
             
             const readBtn = document.getElementById('read-btn');
@@ -252,12 +258,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ratingCountEl) ratingCountEl.textContent = ratingCount;
         if (descEl) descEl.textContent = description || 'No summary provided.';
 
-        // Set book cover
-        const defaultCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
+        // Set book cover - use the defaultCover already defined above
         const bookCoverEl = document.getElementById('book-cover');
         const bookCoverLink = document.getElementById('book-cover-link');
         
         if (bookCoverEl) {
+            // Add class to skip lazy loading for this image
+            bookCoverEl.classList.add('no-lazy');
             bookCoverEl.src = (cover && isValidCoverUrl(cover)) ? cover : defaultCover;
             bookCoverEl.onerror = function() {
                 this.src = defaultCover;

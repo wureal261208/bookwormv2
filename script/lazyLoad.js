@@ -31,6 +31,10 @@
     }
 
     function prepareImg(img) {
+        // Skip images with no-lazy class
+        if (img.classList.contains('no-lazy')) {
+            return;
+        }
         if (!img.dataset.src) {
             img.dataset.src = img.src || '';
             img.src = placeholder;
