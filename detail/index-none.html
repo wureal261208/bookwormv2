@@ -24,7 +24,7 @@
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="#" class="text-2xl font-bold flex items-center gap-2">
+                        <a href="../main/index-none.html" class="text-2xl font-bold flex items-center gap-2">
                             <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm">
                             <span>BookWorm</span>
                         </a>
@@ -103,6 +103,7 @@
                 <a id="book-cover-link" href="#">
                     <img id="book-cover" class="no-lazy rounded-lg shadow-lg w-full max-w-xs mx-auto block hover:opacity-90 transition" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Book cover" />
                 </a>
+                <span id="book-type-tag" class="book-type-tag absolute top-2 left-2 hidden"><i class='bx bx-book-content'></i> <span id="book-type-label"></span></span>
             </figure>
             <div class="md:w-2/3">
                 <h1 id="book-title" class="text-3xl font-bold mb-2">Book Title</h1>
@@ -122,6 +123,7 @@
                         <dt class="sr-only">Rating</dt>
                         <dd id="book-rating" class="text-yellow-400">★★★★★</dd>
                     </div>
+                    <div id="book-tags-container" class="flex flex-wrap gap-1 mt-1"></div>
                 </dl>
                 <section class="mb-6" aria-labelledby="description-heading">
                     <h2 id="description-heading" class="text-xl font-semibold mb-2">

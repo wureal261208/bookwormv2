@@ -35,6 +35,46 @@
     max-height: none;
 }
 
+/* tags overlay on cover */
+#book-tags-container, #detail-book-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+/* label preceding tag list */
+.tags-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-right: 0.5rem;
+    color: var(--text);
+}
+
+/* (minimalist mode removed) page chrome visible */
+
+
+/* book-type badge border */
+.book-type-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 2px solid white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0 0.75rem 0.75rem 0; /* rounded left side only */
+}
+
+#book-tags span.category-tag,
+#detail-book-tags span.category-tag {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+    background: rgba(161, 194, 189, 0.8);
+    color: var(--text);
+    border-radius: 12px;
+    font-weight: 500;
+}
+
 /* Read more button for description - minimalist style */
 .read-more-btn {
     color: #6b7280;
@@ -98,6 +138,7 @@
     background: var(--accent) !important;
     color: var(--white);
 }
+
 
 /* chapter list scroll styling for better appearance */
 #chapter-container {
@@ -298,5 +339,24 @@ textarea:focus {
 
 .notification-item:hover {
     background-color: #f9fafb;
+}
+
+/* Book Type Tags (txt/img) on detail page cover */
+.book-type-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.book-type-tag.type-text {
+    background: linear-gradient(135deg, #4ecdc4, #45b7aa);
+    color: white;
+}
+
+.book-type-tag.type-img {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
 }
 

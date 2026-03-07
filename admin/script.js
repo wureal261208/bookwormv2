@@ -692,7 +692,7 @@ function addBook(event) {
             editions,
             // Additional fields (optional)
             description: description || '',
-            tags: [bookType], // Store book type as single-element array
+            tags: [bookType, genre].filter(Boolean), // type plus genre (subject)
             publisher: publisher || '',
             pubdate: pubdate || '',
             isbn: isbn || '',
@@ -915,6 +915,7 @@ function renderBooks() {
             <div class="book-info">
                 <div class="book-title">${highlightMatch(book.title, currentSearchQuery)}</div>
                 <div class="book-author">${highlightMatch(book.author, currentSearchQuery)}</div>
+                <div class="book-editions">Editions: ${book.editions ? book.editions.length : 0}</div>
             </div>
             <span class="book-status ${book.status}">${book.status === 'published' ? 'Published' : 'Draft'}</span>
             <div class="book-actions">
@@ -1027,83 +1028,7 @@ function closeModal(type) {
     }
 }
 
-function addBook(event) {
-    event.preventDefault();
-    
-    // Get form values
-    const title = document.getElementById('book-title').value.trim();
-    const author = document.getElementById('book-author').value.trim();
-    const imageUrl = document.getElementById('book-image').value.trim();
-    const genre = document.getElementById('book-genre').value.trim();
-    const pages = document.getElementById('book-pages').value;
-    const description = document.getElementById('book-description').value.trim();
-    const bookType = document.getElementById('book-type').value;
-    const publisher = document.getElementById('book-publisher').value.trim();
-    const pubdate = document.getElementById('book-pubdate').value;
-    const isbn = document.getElementById('book-isbn').value.trim();
-    const language = document.getElementById('book-language').value;
-    const status = document.getElementById('book-status').value;
-    
-    // Collect editions
-    const editions = collectEditions();
-    
-    // Use localStorage helper functions for cover image management
-    const finalImage = isValidCoverUrl(imageUrl) ? imageUrl : getDefaultCover();
-    if (imageUrl && finalImage === getDefaultCover()) {
-        showNotification('Invalid image URL. Using default cover.', 'warning');
-    }
 
-    const newBook = {
-        id: Date.now(),
-        title,
-        author,
-        image: finalImage,
-        genre,
-        pages: parseInt(pages),
-        status,
-        editions,
-        // Additional fields (optional)
-        description: description || '',
-        tags: [bookType], // Store book type as single-element array
-        publisher: publisher || '',
-        pubdate: pubdate || '',
-        isbn: isbn || '',
-        language: language || 'English',
-        // Metadata
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    };
-    
-    books.push(newBook);
-    saveBooksToStorage();
-    
-    // If book is added as published, create a notification for users
-    if (status === 'published') {
-        newBook.publishedAt = new Date().toISOString();
-        
-        // Store new book notification for users (include book cover image and author)
-        const newBookNotification = {
-            bookId: newBook.id,
-            title: newBook.title,
-            author: newBook.author || '',
-            image: newBook.image || '',
-            publishedAt: newBook.publishedAt,
-            seen: false
-        };
-        
-        // Get existing notifications
-        let notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
-        notifications.push(newBookNotification);
-        localStorage.setItem('newBookNotifications', JSON.stringify(notifications));
-    }
-    
-    renderBooks();
-    updateStatsCards();
-    closeModal('book');
-    event.target.reset();
-    clearEditionsForm();
-    showNotification(`Book "${title}" added successfully with ${editions.length} edition(s)!`, 'success');
-}
 
 // ═════════════════════════════════════════════════════════════
 // EDIT BOOK FUNCTIONS
@@ -1130,6 +1055,8 @@ function openEditModal(bookId) {
     // Get book type from tags array (first element) or default to 'text'
     const bookType = book.tags && book.tags.length > 0 ? book.tags[0] : 'text';
     document.getElementById('edit-book-type').value = bookType;
+    // put remaining tags into edit input (exclude type)
+    const otherTags = book.tags ? book.tags.slice(1) : [];
     document.getElementById('edit-book-publisher').value = book.publisher || '';
     document.getElementById('edit-book-pubdate').value = book.pubdate || '';
     document.getElementById('edit-book-isbn').value = book.isbn || '';
@@ -1383,7 +1310,7 @@ function editBook(event) {
             status,
             editions,
             description: description || '',
-            tags: [bookType], // Store book type as single-element array
+            tags: [bookType, genre].filter(Boolean), // type plus genre as tag
             publisher: publisher || '',
             pubdate: pubdate || '',
             isbn: isbn || '',
