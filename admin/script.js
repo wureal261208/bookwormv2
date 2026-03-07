@@ -781,15 +781,19 @@ function authenticateUser(username, password) {
 function showLoginPrompt() {
     const username = prompt('Enter your username/email:');
     if (!username) {
-        alert('Username is required!');
-        window.location.href = '../login/index.html';
+        showNotification('Username is required!', 'error');
+        setTimeout(() => {
+            window.location.href = '../login/index.html';
+        }, 1500);
         return null;
     }
     
     const password = prompt('Enter your password:');
     if (!password) {
-        alert('Password is required!');
-        window.location.href = '../login/index.html';
+        showNotification('Password is required!', 'error');
+        setTimeout(() => {
+            window.location.href = '../login/index.html';
+        }, 1500);
         return null;
     }
     
@@ -804,8 +808,10 @@ function showLoginPrompt() {
         showNotification('Login successful! Welcome ' + username.split('@')[0], 'success');
         return authResult;
     } else {
-        alert('Invalid username or password!');
-        window.location.href = '../login/index.html';
+        showNotification('Invalid username or password!', 'error');
+        setTimeout(() => {
+            window.location.href = '../login/index.html';
+        }, 1500);
         return null;
     }
 }
@@ -1218,27 +1224,31 @@ function deleteExistingEdition(editionIndex) {
     
     if (book && book.editions && book.editions[editionIndex]) {
         const editionTitle = book.editions[editionIndex].title;
-        if (confirm(`Are you sure you want to remove edition "${editionTitle}"?`)) {
-            // Remove the edition from the book's editions array
-            book.editions.splice(editionIndex, 1);
-            
-            // Re-number the remaining editions
-            book.editions.forEach((edition, idx) => {
-                edition.number = idx + 1;
-            });
-            
-            // Update the book's editions in the books array
-            const bookIndex = books.findIndex(b => b.id === bookId);
-            if (bookIndex !== -1) {
-                books[bookIndex].editions = book.editions;
-                saveBooksToStorage();
+        showConfirmModal(
+            'Remove Edition',
+            `Are you sure you want to remove edition "${editionTitle}"?`,
+            () => {
+                // Remove the edition from the book's editions array
+                book.editions.splice(editionIndex, 1);
+                
+                // Re-number the remaining editions
+                book.editions.forEach((edition, idx) => {
+                    edition.number = idx + 1;
+                });
+                
+                // Update the book's editions in the books array
+                const bookIndex = books.findIndex(b => b.id === bookId);
+                if (bookIndex !== -1) {
+                    books[bookIndex].editions = book.editions;
+                    saveBooksToStorage();
+                }
+                
+                // Re-populate the editions display
+                populateEditEditions(book.editions);
+                
+                showNotification(`Edition "${editionTitle}" removed successfully!`, 'success');
             }
-            
-            // Re-populate the editions display
-            populateEditEditions(book.editions);
-            
-            showNotification(`Edition "${editionTitle}" removed successfully!`, 'success');
-        }
+        );
     }
 }
 
@@ -1465,13 +1475,18 @@ function toggleBookStatus(bookId) {
 }
 
 function removeBook(bookId) {
-    if (confirm('Are you sure you want to remove this book?')) {
-        books = books.filter(b => b.id !== bookId);
-        saveBooksToStorage();
-        renderBooks();
-        updateStatsCards();
-        showNotification('Book removed successfully!', 'success');
-    }
+    const book = books.find(b => b.id === bookId);
+    showConfirmModal(
+        'Remove Book',
+        `Are you sure you want to remove "${book ? book.title : 'this book'}"?`,
+        () => {
+            books = books.filter(b => b.id !== bookId);
+            saveBooksToStorage();
+            renderBooks();
+            updateStatsCards();
+            showNotification('Book removed successfully!', 'success');
+        }
+    );
 }
 
 // Fetch books from API
@@ -1601,13 +1616,17 @@ function renderUsers() {
 
 
 function removeUser(email) {
-    if (confirm(`Are you sure you want to remove user: ${email}?`)) {
-        let users = getUsers();
-        users = users.filter(u => u.email !== email);
-        localStorage.setItem('users', JSON.stringify(users));
-        renderUsers();
-        showNotification('User removed successfully!', 'success');
-    }
+    showConfirmModal(
+        'Remove User',
+        `Are you sure you want to remove user "${email}"?`,
+        () => {
+            let users = getUsers();
+            users = users.filter(u => u.email !== email);
+            localStorage.setItem('users', JSON.stringify(users));
+            renderUsers();
+            showNotification('User removed successfully!', 'success');
+        }
+    );
 }
 
 // ═════════════════════════════════════════════════════════════
@@ -1719,13 +1738,16 @@ function navigateTo(section) {
 // ═════════════════════════════════════════════════════════════
 
 function logout() {
-    if (confirm('Are you sure you want to logout?')) {
-        localStorage.removeItem('user');
-        localStorage.removeItem('userRole');
-        // Clear first login flag so next login is treated as first time
-        localStorage.removeItem('firstLogin');
-        window.location.href = '../login/index.html';
-    }
+    showConfirmModal(
+        'Logout',
+        'Are you sure you want to logout?',
+        () => {
+            localStorage.removeItem('user');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('firstLogin');
+            window.location.href = '../login/index.html';
+        }
+    );
 }
 
 // Function to go back to main/home page
@@ -1760,6 +1782,63 @@ function showNotification(message, type = 'info') {
         setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
+
+// ═════════════════════════════════════════════════════════════
+// CUSTOM CONFIRMATION MODAL
+// ═════════════════════════════════════════════════════════════
+
+let confirmCallback = null;
+
+function showConfirmModal(title, message, callback) {
+    const modal = document.getElementById('confirm-modal');
+    const titleEl = document.getElementById('confirm-title');
+    const messageEl = document.getElementById('confirm-message');
+    const deleteBtn = document.getElementById('confirm-delete-btn');
+    
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    confirmCallback = callback;
+    
+    // Update button text based on context
+    if (title.toLowerCase().includes('logout')) {
+        deleteBtn.textContent = 'Logout';
+    } else {
+        deleteBtn.textContent = 'Delete';
+    }
+    
+    modal.classList.add('active');
+}
+
+function closeConfirmModal() {
+    const modal = document.getElementById('confirm-modal');
+    modal.classList.remove('active');
+    confirmCallback = null;
+}
+
+function executeConfirm() {
+    if (confirmCallback) {
+        confirmCallback();
+    }
+    closeConfirmModal();
+}
+
+// Update the delete button onclick
+document.addEventListener('DOMContentLoaded', () => {
+    const deleteBtn = document.getElementById('confirm-delete-btn');
+    if (deleteBtn) {
+        deleteBtn.onclick = executeConfirm;
+    }
+    
+    // Close modal when clicking outside
+    const confirmModal = document.getElementById('confirm-modal');
+    if (confirmModal) {
+        confirmModal.addEventListener('click', (e) => {
+            if (e.target === confirmModal) {
+                closeConfirmModal();
+            }
+        });
+    }
+});
 
 // Add animation styles
 const style = document.createElement('style');

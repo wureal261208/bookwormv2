@@ -374,6 +374,105 @@ body {
     font-size: 0.85rem;
 }
 
+/* Custom Confirmation Modal */
+.confirm-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.confirm-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.confirm-modal {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    transform: scale(0.8);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.confirm-modal-overlay.active .confirm-modal {
+    transform: scale(1);
+}
+
+.confirm-modal-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(231, 76, 60, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.confirm-modal-icon i {
+    font-size: 2rem;
+    color: #e74c3c;
+}
+
+.confirm-modal h3 {
+    color: var(--color-1);
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.confirm-modal p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+}
+
+.confirm-modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.confirm-modal-buttons button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.confirm-modal-buttons .btn-confirm-cancel {
+    background: var(--gray);
+    color: var(--text);
+}
+
+.confirm-modal-buttons .btn-confirm-cancel:hover {
+    background: #ddd;
+}
+
+.confirm-modal-buttons .btn-confirm-delete {
+    background: #e74c3c;
+    color: var(--white);
+}
+
+.confirm-modal-buttons .btn-confirm-delete:hover {
+    background: #c0392b;
+}
+
 .book-item .book-status {
     padding: 4px 10px;
     border-radius: 12px;
