@@ -25,10 +25,12 @@
         #prev-page, #next-page { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
         #prev-page { left: 10px; }
         #next-page { right: 10px; }
-        .recommend-card { display: inline-block; width: 160px; margin: 0 0.5rem; text-align: center; }
-        .recommend-card img { width: 100%; border-radius: 0.5rem; }
-        .recommend-card h3 { font-size: 0.9rem; margin: 0.4rem 0 0.2rem; }
-        .recommend-card .rating, .recommend-card .views { font-size: 0.8rem; color: var(--gray-dark); }
+        .recommend-card { display: inline-block; width: calc(25% - 1rem); margin: 0.5rem; text-align: center; vertical-align: top; }
+        .recommend-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 0.5rem; }
+        .recommend-card h3 { font-size: 0.85rem; margin: 0.4rem 0 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recommend-card .rating, .recommend-card .views { font-size: 0.75rem; color: #666; }
+        @media (max-width: 768px) { .recommend-card { width: calc(50% - 1rem); } .recommend-card img { height: 180px; } }
+        @media (max-width: 480px) { .recommend-card { width: calc(50% - 0.5rem); margin: 0.25rem; } .recommend-card img { height: 150px; } }
     </style>
 </head>
 <body>
@@ -149,7 +151,7 @@
                 else if (currentBook.genre) { currentTags = [currentBook.genre.toLowerCase()]; }
             }
             if (currentTags.length === 0) { currentTags = ['adventure', 'fantasy']; }
-            var recContainer = document.getElementById('recommend-slider');
+            var recContainer = document.getElementById('recommend-list');
             var storedBooks = localStorage.getItem('adminBooks');
             var allBooks = [];
             if (storedBooks) { allBooks = JSON.parse(storedBooks).filter(function(book) { return book.status === 'published'; }); }

@@ -25,10 +25,12 @@
         #prev-page, #next-page { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
         #prev-page { left: 10px; }
         #next-page { right: 10px; }
-        .recommend-card { display: inline-block; width: 160px; margin: 0 0.5rem; text-align: center; }
-        .recommend-card img { width: 100%; border-radius: 0.5rem; }
-        .recommend-card h3 { font-size: 0.9rem; margin: 0.4rem 0 0.2rem; }
-        .recommend-card .rating, .recommend-card .views { font-size: 0.8rem; color: var(--gray-dark); }
+        .recommend-card { display: inline-block; width: calc(25% - 1rem); margin: 0.5rem; text-align: center; vertical-align: top; }
+        .recommend-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 0.5rem; }
+        .recommend-card h3 { font-size: 0.85rem; margin: 0.4rem 0 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recommend-card .rating, .recommend-card .views { font-size: 0.75rem; color: #666; }
+        @media (max-width: 768px) { .recommend-card { width: calc(50% - 1rem); } .recommend-card img { height: 180px; } }
+        @media (max-width: 480px) { .recommend-card { width: calc(50% - 0.5rem); margin: 0.25rem; } .recommend-card img { height: 150px; } }
     </style>
 </head>
 <body>
@@ -54,7 +56,7 @@
                             <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'></i>
                             <input type="search" placeholder="Search books..." class="custom-input text-sm pl-10" aria-label="Search books">
                         </div>
-                        <a href="../login/index.html" class="getStarted flex items-center gap-1"><i class='bx bx-log-in'></i><span>Get Started</span></a>
+                        <a href="../login/index.html" class="flex items-center gap-2 focus:outline-none getStarted px-4 py-2 rounded-md text-sm font-medium"><i class='bx bx-log-in'></i><span>Get Started</span></a>
                         <button class="mobile-menu-btn md:hidden p-2 focus:outline-none" aria-expanded="false" aria-controls="mobile-menu"><span class="sr-only">Open menu</span><i class='bx bx-menu text-2xl'></i></button>
                     </div>
             </div>
@@ -82,7 +84,7 @@
         <!-- "You may like" recommendations - below content -->
         <section class="mt-12">
             <h2 class="text-2xl font-bold mb-4">You may like</h2>
-            <div class="carousel"><div class="slider" id="recommend-slider"></div></div>
+            <div id="recommend-list" class="flex flex-wrap"></div>
         </section>
     </main>
     <footer class="site-footer mt-12">
@@ -180,3 +182,4 @@
     </script>
 </body>
 </html>
+

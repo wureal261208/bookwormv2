@@ -23,47 +23,48 @@
         #next-page { right: 12px; }
         #prev-page i, #next-page i { color: var(--white) !important; }
         @media (max-width: 640px) { #prev-page, #next-page { width: 42px; height: 64px; font-size: 1.3rem; } }
-        .recommend-card { display: inline-block; width: 160px; margin: 0 0.5rem; text-align: center; }
-        .recommend-card img { width: 100%; border-radius: 0.5rem; }
-        .recommend-card h3 { font-size: 0.9rem; margin: 0.4rem 0 0.2rem; }
-        .recommend-card .rating, .recommend-card .views { font-size: 0.8rem; color: var(--gray-dark); }
+        .recommend-card { display: inline-block; width: calc(25% - 1rem); margin: 0.5rem; text-align: center; vertical-align: top; }
+        .recommend-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 0.5rem; }
+        .recommend-card h3 { font-size: 0.85rem; margin: 0.4rem 0 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recommend-card .rating, .recommend-card .views { font-size: 0.75rem; color: #666; }
+        @media (max-width: 768px) { .recommend-card { width: calc(50% - 1rem); } .recommend-card img { height: 180px; } }
+        @media (max-width: 480px) { .recommend-card { width: calc(50% - 0.5rem); margin: 0.25rem; } .recommend-card img { height: 150px; } }
     </style>
 </head>
 <body>
-    <nav class="fixed top-0 left-0 right-0 z-50 custom-navbar border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <a href="../main/index-none.html" class="text-2xl font-bold flex items-center gap-2">
-                            <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm">
+    <header>
+        <nav aria-label="Main navigation" class="fixed inset-x-0 top-0 z-50 custom-navbar border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="../main/index-none.html" class="flex items-center gap-2 text-2xl font-bold">
+                            <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm logo">
                             <span>BookWorm</span>
                         </a>
-                    </div>
-                    <div class="hidden md:block ml-10">
-                        <div class="flex items-baseline space-x-4 nav-links">
-                            <a href="../main/index-none.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link active"><i class='bx bx-search' aria-hidden="true"></i> Browse</a>
-                            <a href="../main/categories.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i class='bx bx-category' aria-hidden="true"></i> Categories</a>
-                            <a href="../main/explore.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i class='bx bx-compass' aria-hidden="true"></i> Explore</a>
+                        <div class="hidden md:lblock ml-10">
+                            <div class="flex items-baseline space-x-4 nav-links">
+                                <a href="../main/index-none.html" class="nav-link active" aria-current="page"><i class='bx bx-search'></i> Browse</a>
+                                <a href="../main/categories.html" class="nav-link"><i class='bx bx-category'></i> Categories</a>
+                                <a href="../main/explore.html" class="nav-link"><i class='bx bx-compass'></i> Explore</a>
+                            </div>
                         </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="relative hidden sm:block" id="search-wrapper">
-                        <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' aria-hidden="true"></i>
-                        <input type="text" id="main-search-input" placeholder="Search books..." class="custom-input text-sm pl-10 pr-10" autocomplete="off">
-                        <button type="button" id="search-clear-btn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden"><i class='bx bx-x'></i></button>
-                        <div id="search-dropdown" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg max-h-96 overflow-y-auto z-50 hidden"><div id="search-results"></div>
                     </div>
-                    <a href="../login/index.html" class="flex items-center gap-2 focus:outline-none getStarted px-4 py-2 rounded-md text-sm font-medium"><i class='bx bx-log-in' aria-hidden="true"></i> Get Started</a>
-                    <div class="md:hidden"><button class="mobile-menu-btn inline-flex items-center justify-center p-2 rounded-md text-white"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg></button></div>
+                    <div class="flex items-center gap-4">
+                        <div class="relative hidden sm:block">
+                            <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'></i>
+                            <input type="search" placeholder="Search books..." class="custom-input text-sm pl-10" aria-label="Search books">
+                        </div>
+                        <a href="../login/index.html" class="flex items-center gap-2 focus:outline-none getStarted px-4 py-2 rounded-md text-sm font-medium"><i class='bx bx-log-in'></i><span>Get Started</span></a>
+                        <button class="mobile-menu-btn md:hidden p-2 focus:outline-none" aria-expanded="false" aria-controls="mobile-menu"><span class="sr-only">Open menu</span><i class='bx bx-menu text-2xl'></i></button>
+                    </div>
             </div>
-        <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 z-40" style="background:linear-gradient(135deg,var(--secondary-color),var(--primary-color))">
-            <div class="px-4 py-4 space-y-2">
-                <a href="../main/index-none.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link active">Browse</a>
-                <a href="../main/categories.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Categories</a>
-                <a href="../main/explore.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Explore</a>
+            <div id="mobile-menu" class="mobile-menu hidden md:hidden">
+                <a href="../main/index-none.html" class="block nav-link active">Browse</a>
+                <a href="../main/categories.html" class="block nav-link">Categories</a>
+                <a href="../main/explore.html" class="block nav-link">Explore</a>
             </div>
-    </nav>
+        </nav>
+    </header>
     <div class="h-16"></div>
     <div class="max-w-4xl mx-auto px-4 pt-6">
         <a href="../detail/index-none.html" class="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors"><i class='bx bx-arrow-back text-xl'></i><span>Back to Book Details</span></a>
