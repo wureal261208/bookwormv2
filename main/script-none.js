@@ -232,7 +232,8 @@ function viewBookDetail(bookId) {
     const storedBooks = localStorage.getItem('adminBooks');
     if (storedBooks) {
         const books = JSON.parse(storedBooks);
-        const book = books.find(b => b.id === bookId);
+        // Use String comparison to handle both number and string IDs
+        const book = books.find(b => String(b.id) === String(bookId));
         if (book) {
             // Update views count when clicking on a book
             updateViews(bookId);
@@ -250,7 +251,8 @@ function updateViews(bookId) {
     const storedBooks = localStorage.getItem('adminBooks');
     if (storedBooks) {
         const books = JSON.parse(storedBooks);
-        const book = books.find(b => b.id === bookId);
+        // Use String comparison to handle both number and string IDs
+        const book = books.find(b => String(b.id) === String(bookId));
         if (book) {
             book.views = (book.views || 0) + 1;
             localStorage.setItem('adminBooks', JSON.stringify(books));
@@ -381,7 +383,8 @@ function viewSearchedBook(bookId) {
     const storedBooks = localStorage.getItem('adminBooks');
     if (storedBooks) {
         const books = JSON.parse(storedBooks);
-        const book = books.find(b => b.id === bookId);
+        // Use String comparison to handle both number and string IDs
+        const book = books.find(b => String(b.id) === String(bookId));
         if (book) {
             // Update views count when clicking on a book
             updateViews(bookId);

@@ -124,7 +124,7 @@
         </nav>
     </header>
 
-    <!-- spacer so content isn’t hidden behind navbar -->
+    <!-- spacer so content isn't hidden behind navbar -->
     <div class="h-16"></div>
 
     <!-- Back Button -->
@@ -164,9 +164,14 @@
                         </dd>
                     </div>
                 </dl>
-                <section class="mb-6" aria-labelledby="summary-heading">
-                    <h2 id="summary-heading" class="text-xl font-semibold mb-2">
-                        Summary
+                <section class="mb-6" aria-labelledby="description-heading">
+                    <h2 id="description-heading" class="text-xl font-semibold mb-2">
+                        Description
+                    </h2>
+                    <p id="book-description" class="text-gray-800 leading-relaxed">
+                        No description available.
+                    </p>
+                    <button id="read-more-btn" class="read-more-btn" style="display: none;">Read more</button>
                 
                 <!-- Main Read Button -->
                 <div class="flex gap-3 mb-6">
@@ -193,20 +198,6 @@
         </nav>
     </main>
 
-    <div class="flex flex-col items-center justify-center my-8 gap-3 text-center">
-        <a id="continue-btn" href="#"
-            class="hidden px-6 py-2 bg-black text-white rounded-full hover:scale-105 transition">
-            Continue Reading
-        </a>
-
-        <div class="w-48 bg-gray-200 rounded-full h-1.5">
-            <div id="progress-bar" class="bg-black h-1.5 rounded-full transition-all duration-300" style="width: 0%">
-            </div>
-        </div>
-
-        <span id="progress-text" class="text-xs text-gray-500">0%</span>
-    </div>
-
     <footer class="site-footer mt-12" aria-labelledby="feedback-heading">
         <div class="footer-container">
             <div class="mt-8 bg-white p-4 rounded-lg shadow">
@@ -217,8 +208,8 @@
                 <div class="contact-info">
                     <p><strong>BookWorm</strong> • hello@bookworm.vn</p>
                     <p>
-                        <a href="tel:+842839301234">+84 28 3930 1234</a> •
-                        Ho Chi Minh City, Vietnam
+                        <a href="tel:+842839301234">+84 28 3930 1234</a> •
+                        Ho Chi Minh City, Vietnam
                     </p>
                 </div>
             </div>
@@ -228,7 +219,7 @@
     <script src="../script/lazyLoad.js" defer></script>
     <!-- page logic for authenticated users -->
     <script src="script-acc.js" defer></script>
-    <script src="Progressing-bar.js"></script>
 </body>
 
 </html>
+

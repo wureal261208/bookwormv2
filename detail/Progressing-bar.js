@@ -14,7 +14,7 @@ function getTotalChapters() {
     
     if (urlBookId) {
         const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
-        const book = adminBooks.find(b => b.id == urlBookId);
+        const book = adminBooks.find(b => String(b.id) === String(urlBookId));
         if (book && book.pages) {
             return book.pages;
         }
@@ -40,7 +40,7 @@ function loadProgress() {
 
     if (currentChapter > 0 && continueBtn) {
         continueBtn.classList.remove("hidden");
-        continueBtn.href = `../reading/index-read-novel.html?book=${bookId}&chapter=${currentChapter}`;
+        continueBtn.href = `../reading/none-text.html?book=${bookId}&chapter=${currentChapter}`;
     }
 
     const percent = Math.floor((currentChapter / totalChapters) * 100);
@@ -65,7 +65,7 @@ function renderChapters() {
     for (let i = 1; i <= totalChapters; i++) {
         const li = document.createElement("li");
         li.innerHTML = `
-            <a href="../reading/index-read-novel.html?book=${bookId}&chapter=${i}"
+            <a href="../reading/none-text.html?book=${bookId}&chapter=${i}"
             class="block py-1 hover:text-blue-500">
             Chapter ${i}
             </a>

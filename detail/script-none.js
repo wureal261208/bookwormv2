@@ -1,8 +1,236 @@
-// detail/script-none.js
-// Script for non-authenticated users (simpler version without notifications, progress bar, comments)
-// This script reads from localStorage: adminBooks, currentBook
+// detail/script-acc.js
+// Script for authenticated users (with notifications, progress bar, comments)
+// This script reads from localStorage: adminBooks, currentBook, readingProgress
 
 document.addEventListener('DOMContentLoaded', () => {
+    // =====================
+    // NOTIFICATION SYSTEM (Authenticated Users)
+    // =====================
+    const notificationBtn = document.getElementById('notification-btn');
+    const notificationDropdown = document.getElementById('notification-list');
+    const notificationBadge = document.getElementById('notification-badge');
+    const notificationContainer = document.getElementById('notification-btn')?.parentElement;
+
+    // Get current book ID from URL
+    const params = new URLSearchParams(window.location.search);
+    const currentBookId = params.get('id');
+
+    // Check if user arrived from a notification click (stored in sessionStorage)
+    const fromNotificationClick = sessionStorage.getItem('fromNotificationClick') === 'true';
+    
+    // Clear the sessionStorage flag after reading
+    if (fromNotificationClick) {
+        sessionStorage.removeItem('fromNotificationClick');
+    }
+
+    // Check if current book is newly published (within 7 days)
+    function isNewlyPublishedBook(bookId) {
+        const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+        const book = adminBooks.find(b => String(b.id) === String(bookId));
+        
+        if (!book || !book.pubdate) return false;
+        
+        const publishedDate = new Date(book.pubdate);
+        const now = new Date();
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        
+        return publishedDate > sevenDaysAgo;
+    }
+
+    // Show notification for newly published book if not from notification click
+    function showNewBookNotification() {
+        if (!currentBookId || fromNotificationClick) return;
+        
+        if (isNewlyPublishedBook(currentBookId)) {
+            const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+            const book = adminBooks.find(b => String(b.id) === String(currentBookId));
+            
+            if (book) {
+                // Add to notifications if not already there
+                let notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
+                const exists = notifications.some(n => String(n.bookId) === String(currentBookId));
+                
+                if (!exists) {
+                    notifications.unshift({
+                        bookId: currentBookId,
+                        title: book.title,
+                        author: book.author,
+                        image: book.image,
+                        publishedAt: book.pubdate,
+                        seen: false
+                    });
+                    localStorage.setItem('newBookNotifications', JSON.stringify(notifications));
+                }
+                
+                // Show a toast notification to inform user
+                showToastNotification(book.title);
+            }
+        }
+    }
+
+    // Show toast notification for new book
+    function showToastNotification(bookTitle) {
+        // Remove any existing toast
+        const existingToast = document.getElementById('new-book-toast');
+        if (existingToast) existingToast.remove();
+
+        const toast = document.createElement('div');
+        toast.id = 'new-book-toast';
+        toast.className = 'fixed top-20 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full opacity-0';
+        toast.innerHTML = `
+            <div class="flex items-center gap-3">
+                <i class='bx bx-bell-ring text-xl'></i>
+                <span>New book published: <strong>${bookTitle}</strong></span>
+            </div>
+        `;
+        document.body.appendChild(toast);
+
+        // Show toast with animation
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full', 'opacity-0');
+        }, 100);
+
+        // Auto hide after 4 seconds
+        setTimeout(() => {
+            toast.classList.add('translate-x-full', 'opacity-0');
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    // Load and display notifications when hovering
+    function loadNotifications() {
+        if (!notificationDropdown) return;
+
+        // Get notifications from localStorage
+        let notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
+        
+        // Get books from admin to get cover images (reads from admin localStorage)
+        const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+        
+        // Get book data for each notification - handle type mismatch (string vs number)
+        const notificationsWithCovers = notifications.map(notif => {
+            const book = adminBooks.find(b => String(b.id) === String(notif.bookId));
+            return {
+                ...notif,
+                image: book ? book.image : null
+            };
+        });
+
+        // Update badge count
+        const unreadCount = notificationsWithCovers.filter(n => !n.seen).length;
+        if (notificationBadge) {
+            if (unreadCount > 0) {
+                notificationBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                notificationBadge.classList.remove('hidden');
+            } else {
+                notificationBadge.classList.add('hidden');
+            }
+        }
+
+        // Render notifications
+        if (notificationsWithCovers.length === 0) {
+            notificationDropdown.innerHTML = '<p class="px-4 py-3 text-sm text-black text-center">No new notifications</p>';
+            return;
+        }
+
+        const defaultCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
+        
+        notificationDropdown.innerHTML = notificationsWithCovers.map((notif) => {
+            const coverImage = notif.image || defaultCover;
+            const date = notif.publishedAt ? new Date(notif.publishedAt).toLocaleDateString() : '';
+            
+            return `
+                <div class="notification-item flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b" onclick="handleNotificationClick(${notif.bookId})">
+                    <img src="${coverImage}" alt="${notif.title}" class="w-12 h-16 object-cover rounded">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-black truncate">${notif.title}</p>
+                        <p class="text-xs text-gray-600">New book published! ${date ? '- ' + date : ''}</p>
+                    </div>
+                    ${!notif.seen ? '<span class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></span>' : ''}
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Load notifications on hover
+    if (notificationBtn && notificationContainer) {
+        notificationBtn.addEventListener('mouseenter', () => {
+            loadNotifications();
+        });
+    }
+
+    // Handle notification click - set flag before navigating
+    window.handleNotificationClick = function(bookId) {
+        sessionStorage.setItem('fromNotificationClick', 'true');
+        viewBookDetail(bookId);
+    };
+
+    // Mark notifications as seen and remove the clicked one
+    function markNotificationAsSeen(bookId) {
+        let notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
+        notifications = notifications.filter(n => n.bookId !== bookId);
+        localStorage.setItem('newBookNotifications', JSON.stringify(notifications));
+        if (notificationBadge) {
+            const unreadCount = notifications.filter(n => !n.seen).length;
+            if (unreadCount > 0) {
+                notificationBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+            } else {
+                notificationBadge.classList.add('hidden');
+            }
+        }
+    }
+
+    // Make viewBookDetail available globally
+    window.viewBookDetail = function(bookId) {
+        const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+        const book = adminBooks.find(b => String(b.id) === String(bookId));
+        if (book) {
+            // Mark notification as seen/remove it
+            markNotificationAsSeen(bookId);
+            
+            localStorage.setItem('currentBook', JSON.stringify(book));
+            window.location.href = '../detail/index-acc.html?id=' + bookId;
+        }
+    };
+
+    // Mark all as read button
+    const markAllReadBtn = document.getElementById('mark-all-read');
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            localStorage.removeItem('newBookNotifications');
+            loadNotifications();
+        });
+    }
+
+    // Load notifications on page load
+    loadNotifications();
+
+    // Show notification for new book (only if not from notification click)
+    showNewBookNotification();
+
+    // =====================
+    // DISPLAY USER EMAIL IN DROPDOWN
+    // =====================
+    function displayUserEmail() {
+        const userEmailDisplay = document.getElementById('user-email-display');
+        if (!userEmailDisplay) return;
+        
+        const currentUser = localStorage.getItem('currentUser') || localStorage.getItem('user');
+        
+        if (currentUser) {
+            try {
+                const userObj = JSON.parse(currentUser);
+                const displayName = userObj.name || userObj.email || 'User';
+                userEmailDisplay.textContent = displayName;
+            } catch (e) {
+                userEmailDisplay.textContent = currentUser.includes('@') ? currentUser.split('@')[0] : currentUser;
+            }
+        }
+    }
+    
+    displayUserEmail();
+
     // =====================
     // MOBILE MENU
     // =====================
@@ -19,6 +247,128 @@ document.addEventListener('DOMContentLoaded', () => {
                 mobileBtn.setAttribute('aria-expanded', 'false');
                 mobileMenu.classList.add('hidden');
             });
+        });
+    }
+
+    // =====================
+    // COMMENT SYSTEM
+    // =====================
+    const commentForm = document.getElementById('comment-form');
+    const commentInput = document.getElementById('comment-input');
+    const commentsList = document.getElementById('comments-list');
+
+    function getCurrentBookId() {
+        const params = new URLSearchParams(window.location.search);
+        const bookId = params.get('id');
+        if (bookId) return bookId;
+        
+        const storedBook = localStorage.getItem('currentBook');
+        if (storedBook) {
+            const book = JSON.parse(storedBook);
+            return book.id || 'default';
+        }
+        return 'default';
+    }
+
+    function saveComment(bookId, text) {
+        const commentsKey = `bookComments_${bookId}`;
+        const existingComments = JSON.parse(localStorage.getItem(commentsKey)) || [];
+        
+        // Get user info from localStorage
+        const currentUser = localStorage.getItem('user') || localStorage.getItem('currentUser') || 'Anonymous User';
+        let userName = 'Anonymous User';
+        try {
+            const userObj = JSON.parse(currentUser);
+            userName = userObj.name || userObj.email || 'Anonymous User';
+        } catch (e) {
+            userName = currentUser.includes('@') ? currentUser.split('@')[0] : 'Anonymous User';
+        }
+        
+        const newComment = {
+            id: Date.now(),
+            text: text,
+            timestamp: new Date().toISOString(),
+            user: userName
+        };
+        
+        existingComments.push(newComment);
+        localStorage.setItem(commentsKey, JSON.stringify(existingComments));
+        
+        return newComment;
+    }
+
+    function loadComments(bookId) {
+        const commentsKey = `bookComments_${bookId}`;
+        return JSON.parse(localStorage.getItem(commentsKey)) || [];
+    }
+
+    function renderComments(comments) {
+        if (!commentsList) return;
+        
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<p class="text-gray-500">No comments yet. Be the first to share your thoughts!</p>';
+            return;
+        }
+
+        commentsList.innerHTML = comments.map(comment => {
+            const date = new Date(comment.timestamp);
+            const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            return `
+                <div class="p-3 mb-2 border rounded bg-gray-50 comment-item">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="font-semibold text-sm">${comment.user}</span>
+                        <span class="text-xs text-gray-500">${formattedDate}</span>
+                    </div>
+                    <p class="text-sm">${comment.text}</p>
+                </div>
+            `;
+        }).join('');
+        
+        commentsList.scrollTop = commentsList.scrollHeight;
+    }
+
+    // Get book ID for comments
+    const commentBookId = getCurrentBookId();
+    if (commentsList) {
+        const initialComments = loadComments(commentBookId);
+        renderComments(initialComments);
+    }
+
+    function addComment(text) {
+        if (!text) return;
+        
+        const savedComment = saveComment(commentBookId, text);
+        
+        if (commentsList.children.length === 1 && commentsList.children[0].classList.contains('text-gray-500')) {
+            commentsList.innerHTML = '';
+        }
+        
+        const date = new Date(savedComment.timestamp);
+        const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        const div = document.createElement('div');
+        div.className = 'p-3 mb-2 border rounded bg-gray-50 comment-item';
+        div.innerHTML = `
+            <div class="flex justify-between items-start mb-1">
+                <span class="font-semibold text-sm">${savedComment.user}</span>
+                <span class="text-xs text-gray-500">${formattedDate}</span>
+            </div>
+            <p class="text-sm">${savedComment.text}</p>
+        `;
+        commentsList.appendChild(div);
+        commentsList.scrollTop = commentsList.scrollHeight;
+    }
+
+    if (commentForm && commentInput && commentsList) {
+        commentForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const txt = commentInput.value.trim();
+            if (txt) {
+                addComment(txt);
+                commentInput.value = '';
+                commentInput.focus();
+            }
         });
     }
 
@@ -114,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadBook() {
         const storedBook = localStorage.getItem('currentBook');
         
-        let title, author, status, views, rating, ratingCount, description, cover, chapters;
+        let title, author, status, views, rating, ratingCount, description, cover, chapters, bookType;
         
         const params = new URLSearchParams(window.location.search);
         const overrideCover = params.get('cover');
@@ -136,6 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 views = adminBook.views || 0;
                 description = adminBook.description || '';
                 chapters = adminBook.pages || 200;
+                bookType = adminBook.type || 'text'; // Default to text
                 const publishedAt = adminBook.pubdate || adminBook.publishedAt;
                 
                 const ratingData = generateRating(views);
@@ -147,9 +498,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     newBadge.classList.remove('hidden');
                 }
                 
+                // Set Read Now button href based on book type
                 const readBtn = document.getElementById('read-btn');
                 if (readBtn) {
-                    readBtn.href = `../reading/index-read-novel.html?book=${bookId}&chapter=1`;
+                    if (bookType === 'img') {
+                        readBtn.href = `../reading/acc-img.html?book=${bookId}&chapter=1`;
+                    } else {
+                        readBtn.href = `../reading/acc-text.html?book=${bookId}&chapter=1`;
+                    }
                 }
                 
                 // Get cover from admin dashboard - this is the primary source
@@ -170,6 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 views = book.views || 0;
                 description = book.description || '';
                 chapters = book.pages || 200;
+                bookType = book.type || 'text';
                 const publishedAt = book.pubdate || book.publishedAt;
                 
                 const ratingData = generateRating(views);
@@ -178,7 +535,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const readBtn = document.getElementById('read-btn');
                 if (readBtn) {
-                    readBtn.href = `../reading/index-read-novel.html?book=${book.id || 'default'}&chapter=1`;
+                    if (bookType === 'img') {
+                        readBtn.href = `../reading/acc-img.html?book=${book.id || 'default'}&chapter=1`;
+                    } else {
+                        readBtn.href = `../reading/acc-text.html?book=${book.id || 'default'}&chapter=1`;
+                    }
                 }
                 
                 cover = overrideCover && isValidCoverUrl(overrideCover) ? overrideCover : (book.image || defaultCover);
@@ -192,10 +553,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 description = params.get('desc') || '';
                 cover = overrideCover || params.get('cover') || defaultCover;
                 chapters = parseInt(params.get('chapters')) || 200;
+                bookType = 'text';
                 
                 const readBtn = document.getElementById('read-btn');
                 if (readBtn) {
-                    readBtn.href = `../reading/index-read-novel.html?book=${bookId || 'default'}&chapter=1`;
+                    readBtn.href = `../reading/acc-text.html?book=${bookId || 'default'}&chapter=1`;
                 }
             }
         } else if (storedBook) {
@@ -206,6 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
             views = book.views || 0;
             description = book.description || '';
             chapters = book.pages || 200;
+            bookType = book.type || 'text';
             const publishedAt = book.pubdate || book.publishedAt;
             
             const ratingData = generateRating(views);
@@ -219,7 +582,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const readBtn = document.getElementById('read-btn');
             if (readBtn) {
-                readBtn.href = `../reading/index-read-novel.html?book=${book.id || 'default'}&chapter=1`;
+                if (bookType === 'img') {
+                    readBtn.href = `../reading/acc-img.html?book=${book.id || 'default'}&chapter=1`;
+                } else {
+                    readBtn.href = `../reading/acc-text.html?book=${book.id || 'default'}&chapter=1`;
+                }
             }
             
             cover = overrideCover && isValidCoverUrl(overrideCover) ? overrideCover : (book.image || defaultCover);
@@ -234,10 +601,11 @@ document.addEventListener('DOMContentLoaded', () => {
             description = params.get('desc') || '';
             cover = overrideCover || params.get('cover') || defaultCover;
             chapters = parseInt(params.get('chapters')) || 200;
+            bookType = 'text';
             
             const readBtn = document.getElementById('read-btn');
             if (readBtn) {
-                readBtn.href = '../reading/index-read-novel.html?book=default&chapter=1';
+                readBtn.href = '../reading/acc-text.html?book=default&chapter=1';
             }
         }
 
@@ -256,7 +624,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (viewsEl) viewsEl.textContent = `Views: ${views}`;
         if (ratingEl) ratingEl.textContent = rating;
         if (ratingCountEl) ratingCountEl.textContent = ratingCount;
-        if (descEl) descEl.textContent = description || 'No summary provided.';
+        
+        // Display description - show default message if empty
+        if (descEl) {
+            if (description && description.trim() !== '') {
+                descEl.textContent = description;
+            } else {
+                descEl.textContent = 'No description available.';
+            }
+        }
 
         // Set book cover - use the defaultCover already defined above
         const bookCoverEl = document.getElementById('book-cover');
@@ -273,7 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (bookCoverLink) {
             const readBtn = document.getElementById('read-btn');
-            bookCoverLink.href = readBtn ? readBtn.href : `../reading/index-read-novel.html?book=${bookId || 'default'}&chapter=1`;
+            bookCoverLink.href = readBtn ? readBtn.href : `../reading/acc-text.html?book=${bookId || 'default'}&chapter=1`;
         }
         
         return chapters;
@@ -299,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const bookId = params.get('id');
         if (!editions.length && bookId) {
             const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
-            const adminBook = adminBooks.find(b => b.id == bookId);
+            const adminBook = adminBooks.find(b => String(b.id) === String(bookId));
             if (adminBook) {
                 editions = adminBook.editions || [];
             }
@@ -324,7 +700,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const start = currentPage * pageSize;
         const end = Math.min(editions.length, start + pageSize);
         
-        if (totalEditions === 0) {
+        // Show message when no editions
+        if (editions.length === 0) {
             editionList.innerHTML = `
                 <li class="text-center py-8 text-gray-500">
                     <i class='bx bx-book' style="font-size: 3rem;"></i>
@@ -356,33 +733,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                     <div class="edition-actions flex gap-2">
-                        <a href="index-none.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-about px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-100">
+                        <a href="index-acc.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-about px-4 py-2 border-2 border-gray-600 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition">
                             About
                         </a>
-                        <a href="../reading/index-read-img.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-read px-3 py-1.5 bg-black text-white text-sm rounded hover:opacity-80">
-                            Read
-                        </a>
-                    </div>
-                `;
-                editionList.appendChild(li);
-            }
-        } else {
-            for (let i = start; i < end; i++) {
-                const li = document.createElement('li');
-                li.className = "edition-item flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50";
-                li.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <img src="${defaultEditionCover}" alt="Edition ${i + 1}" class="w-10 h-14 object-cover rounded">
-                        <div class="edition-info">
-                            <p class="font-semibold">Edition ${i + 1}</p>
-                            <p class="text-sm text-gray-500">Language: English</p>
-                        </div>
-                    </div>
-                    <div class="edition-actions flex gap-2">
-                        <a href="index-none.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-about px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-100">
-                            About
-                        </a>
-                        <a href="../reading/index-read-img.html?edition=${i + 1}" class="edition-read px-3 py-1.5 bg-black text-white text-sm rounded hover:opacity-80">
+                        <a href="../reading/acc-img.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-read px-4 py-2 bg-black text-white font-semibold rounded-lg hover:opacity-80 transition">
                             Read
                         </a>
                     </div>

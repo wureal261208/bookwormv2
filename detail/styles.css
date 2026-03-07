@@ -8,11 +8,11 @@
 /* Description section styling */
 #book-description {
     display: -webkit-box;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 8;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-height: 6em;
+    max-height: 12em;
     position: relative;
 }
 
@@ -89,14 +89,15 @@
 
 /* chapter list scroll styling for better appearance */
 #chapter-container {
-    background: var(--bg); /* use page background instead of white */
-    /* height to show exactly 5 rows with 6 columns */
+    background: var(--bg);
     max-height: calc((2.25rem + 0.5rem) * 5);
     overflow-y: auto;
 }
+
 #chapter-container::-webkit-scrollbar {
     width: 6px;
 }
+
 #chapter-container::-webkit-scrollbar-thumb {
     background: var(--secondary-color);
     border-radius: 3px;
@@ -116,11 +117,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     padding: 10px 14px;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
-
     background: white;
     transition: 0.2s;
 }
@@ -133,6 +132,11 @@
 .edition-info {
     display: flex;
     flex-direction: column;
+    color: #000000;
+}
+
+.edition-info p {
+    color: #000000;
 }
 
 /* edition actions container */
@@ -257,7 +261,6 @@ textarea:focus {
     right: 0;
     top: 100%;
     margin-top: 0.5rem;
-    /* ensure dropdown text is readable by default */
     color: #000;
 }
 
@@ -284,3 +287,4 @@ textarea:focus {
 .notification-item:hover {
     background-color: #f9fafb;
 }
+

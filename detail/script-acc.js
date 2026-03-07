@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Make viewBookDetail available globally
     window.viewBookDetail = function(bookId) {
         const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
-        const book = adminBooks.find(b => b.id === bookId);
+        const book = adminBooks.find(b => String(b.id) === String(bookId));
         if (book) {
             // Mark notification as seen/remove it
             markNotificationAsSeen(bookId);
@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadBook() {
         const storedBook = localStorage.getItem('currentBook');
         
-        let title, author, status, views, rating, ratingCount, description, cover, chapters;
+        let title, author, status, views, rating, ratingCount, description, cover, chapters, bookType;
         
         const params = new URLSearchParams(window.location.search);
         const overrideCover = params.get('cover');
@@ -486,6 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 views = adminBook.views || 0;
                 description = adminBook.description || '';
                 chapters = adminBook.pages || 200;
+                bookType = adminBook.type || 'text'; // Default to text
                 const publishedAt = adminBook.pubdate || adminBook.publishedAt;
                 
                 const ratingData = generateRating(views);
@@ -497,9 +498,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     newBadge.classList.remove('hidden');
                 }
                 
+                // Set Read Now button href based on book type
                 const readBtn = document.getElementById('read-btn');
                 if (readBtn) {
-                    readBtn.href = `../reading/index-read-novel.html?book=${bookId}&chapter=1`;
+                    if (bookType === 'img') {
+                        readBtn.href = `../reading/acc-img.html?book=${bookId}&chapter=1`;
+                    } else {
+                        readBtn.href = `../reading/acc-text.html?book=${bookId}&chapter=1`;
+                    }
                 }
                 
                 // Get cover from admin dashboard - this is the primary source
@@ -520,6 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 views = book.views || 0;
                 description = book.description || '';
                 chapters = book.pages || 200;
+                bookType = book.type || 'text';
                 const publishedAt = book.pubdate || book.publishedAt;
                 
                 const ratingData = generateRating(views);
@@ -528,7 +535,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const readBtn = document.getElementById('read-btn');
                 if (readBtn) {
-                    readBtn.href = `../reading/index-read-novel.html?book=${book.id || 'default'}&chapter=1`;
+                    if (bookType === 'img') {
+                        readBtn.href = `../reading/acc-img.html?book=${book.id || 'default'}&chapter=1`;
+                    } else {
+                        readBtn.href = `../reading/acc-text.html?book=${book.id || 'default'}&chapter=1`;
+                    }
                 }
                 
                 cover = overrideCover && isValidCoverUrl(overrideCover) ? overrideCover : (book.image || defaultCover);
@@ -542,10 +553,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 description = params.get('desc') || '';
                 cover = overrideCover || params.get('cover') || defaultCover;
                 chapters = parseInt(params.get('chapters')) || 200;
+                bookType = 'text';
                 
                 const readBtn = document.getElementById('read-btn');
                 if (readBtn) {
-                    readBtn.href = `../reading/index-read-novel.html?book=${bookId || 'default'}&chapter=1`;
+                    readBtn.href = `../reading/acc-text.html?book=${bookId || 'default'}&chapter=1`;
                 }
             }
         } else if (storedBook) {
@@ -556,6 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
             views = book.views || 0;
             description = book.description || '';
             chapters = book.pages || 200;
+            bookType = book.type || 'text';
             const publishedAt = book.pubdate || book.publishedAt;
             
             const ratingData = generateRating(views);
@@ -569,7 +582,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const readBtn = document.getElementById('read-btn');
             if (readBtn) {
-                readBtn.href = `../reading/index-read-novel.html?book=${book.id || 'default'}&chapter=1`;
+                if (bookType === 'img') {
+                    readBtn.href = `../reading/acc-img.html?book=${book.id || 'default'}&chapter=1`;
+                } else {
+                    readBtn.href = `../reading/acc-text.html?book=${book.id || 'default'}&chapter=1`;
+                }
             }
             
             cover = overrideCover && isValidCoverUrl(overrideCover) ? overrideCover : (book.image || defaultCover);
@@ -584,10 +601,11 @@ document.addEventListener('DOMContentLoaded', () => {
             description = params.get('desc') || '';
             cover = overrideCover || params.get('cover') || defaultCover;
             chapters = parseInt(params.get('chapters')) || 200;
+            bookType = 'text';
             
             const readBtn = document.getElementById('read-btn');
             if (readBtn) {
-                readBtn.href = '../reading/index-read-novel.html?book=default&chapter=1';
+                readBtn.href = '../reading/acc-text.html?book=default&chapter=1';
             }
         }
 
@@ -606,7 +624,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (viewsEl) viewsEl.textContent = `Views: ${views}`;
         if (ratingEl) ratingEl.textContent = rating;
         if (ratingCountEl) ratingCountEl.textContent = ratingCount;
-        if (descEl) descEl.textContent = description || 'No summary provided.';
+        
+        // Display description - show default message if empty
+        if (descEl) {
+            if (description && description.trim() !== '') {
+                descEl.textContent = description;
+            } else {
+                descEl.textContent = 'No description available.';
+            }
+        }
 
         // Set book cover - use the defaultCover already defined above
         const bookCoverEl = document.getElementById('book-cover');
@@ -623,7 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (bookCoverLink) {
             const readBtn = document.getElementById('read-btn');
-            bookCoverLink.href = readBtn ? readBtn.href : `../reading/index-read-novel.html?book=${bookId || 'default'}&chapter=1`;
+            bookCoverLink.href = readBtn ? readBtn.href : `../reading/acc-text.html?book=${bookId || 'default'}&chapter=1`;
         }
         
         return chapters;
@@ -649,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const bookId = params.get('id');
         if (!editions.length && bookId) {
             const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
-            const adminBook = adminBooks.find(b => b.id == bookId);
+            const adminBook = adminBooks.find(b => String(b.id) === String(bookId));
             if (adminBook) {
                 editions = adminBook.editions || [];
             }
@@ -710,7 +736,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <a href="index-acc.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-about px-4 py-2 border-2 border-gray-600 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition">
                             About
                         </a>
-                        <a href="../reading/index-read-img.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-read px-4 py-2 bg-black text-white font-semibold rounded-lg hover:opacity-80 transition">
+                        <a href="../reading/acc-img.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-read px-4 py-2 bg-black text-white font-semibold rounded-lg hover:opacity-80 transition">
                             Read
                         </a>
                     </div>
