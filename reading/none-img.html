@@ -285,12 +285,12 @@
                     slides.forEach(s => s.style.display = 'block');
                     prevBtn.style.display = 'none';
                     nextBtn.style.display = 'none';
-                    toggle.innerHTML = '<i class="bx bx-pause-circle"></i>';
+                    toggle.innerHTML = '<i class="bx bx-pause-circle">Change read mode</i>';
                 } else {
                     slides.forEach((s,i) => s.style.display = i === current ? 'block' : 'none');
                     prevBtn.style.display = '';
                     nextBtn.style.display = '';
-                    toggle.innerHTML = '<i class="bx bx-sort-alt-2"></i>';
+                    toggle.innerHTML = '<i class="bx bx-sort-alt-2">Change read mode</i>';
                 }
             }
 
