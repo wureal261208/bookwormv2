@@ -5,7 +5,7 @@
     align-self: flex-start;
 }
 
-/* Description section styling */
+/* Description section styling - for index-none.html */
 #book-description {
     display: -webkit-box;
     -webkit-line-clamp: 8;
@@ -16,8 +16,20 @@
     position: relative;
 }
 
+/* Description section styling - for index-acc.html */
+#detail-book-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 12em;
+    position: relative;
+}
+
 /* Expanded description - no limit */
-#book-description.expanded {
+#book-description.expanded,
+#detail-book-description.expanded {
     display: block;
     -webkit-line-clamp: unset;
     max-height: none;

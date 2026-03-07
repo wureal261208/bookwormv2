@@ -375,8 +375,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // =====================
     // READ MORE BUTTON FOR DESCRIPTION
     // =====================
-    const readMoreBtn = document.getElementById('read-more-btn');
-    const bookDescription = document.getElementById('book-description');
+    const readMoreBtn = document.getElementById('detail-read-more-btn');
+    const bookDescription = document.getElementById('detail-book-description');
     
     if (readMoreBtn && bookDescription) {
         // Check if description is long enough to need truncation
@@ -419,19 +419,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const viewCount = typeof views === 'number' ? views : parseInt(views) || 0;
         const rating = Math.min(5, Math.ceil(viewCount / 100));
         
+        // Generate stars HTML using Boxicons (synchronized with main/ pages)
         let starsHtml = '';
         for (let i = 1; i <= 5; i++) {
-            starsHtml += i <= rating ? '★' : '☆';
+            if (i <= rating) {
+                starsHtml += '<i class=\'bx bxs-star text-yellow-400\'></i>';
+            } else {
+                starsHtml += '<i class=\'bx bx-star text-gray-300\'></i>';
+            }
         }
         
-        let formattedViews;
-        if (viewCount >= 1000) {
-            formattedViews = (viewCount / 1000).toFixed(1) + 'k';
-        } else {
-            formattedViews = viewCount.toString();
-        }
-        
-        return { stars: starsHtml, formattedViews: formattedViews };
+        return starsHtml;
     }
 
     function isValidUrl(url) {
@@ -489,9 +487,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 bookType = adminBook.type || 'text'; // Default to text
                 const publishedAt = adminBook.pubdate || adminBook.publishedAt;
                 
-                const ratingData = generateRating(views);
-                rating = ratingData.stars;
-                ratingCount = `(${ratingData.formattedViews} views)`;
+                // Generate rating stars using Boxicons (synchronized with main/ pages)
+                rating = generateRating(views);
                 
                 const newBadge = document.getElementById('new-badge');
                 if (newBadge && isNewBook(publishedAt)) {
@@ -499,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Set Read Now button href based on book type
-                const readBtn = document.getElementById('read-btn');
+                const readBtn = document.getElementById('detail-read-btn');
                 if (readBtn) {
                     if (bookType === 'img') {
                         readBtn.href = `../reading/acc-img.html?book=${bookId}&edition=1`;
@@ -533,7 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 rating = ratingData.stars;
                 ratingCount = `(${ratingData.formattedViews} views)`;
                 
-                const readBtn = document.getElementById('read-btn');
+                const readBtn = document.getElementById('detail-read-btn');
                 if (readBtn) {
                     if (bookType === 'img') {
                         readBtn.href = `../reading/acc-img.html?book=${book.id || 'default'}&edition=1`;
@@ -555,7 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 editions = parseInt(params.get('editions')) || 200;
                 bookType = 'text';
                 
-                const readBtn = document.getElementById('read-btn');
+                const readBtn = document.getElementById('detail-read-btn');
                 if (readBtn) {
                     readBtn.href = `../reading/acc-text.html?book=${bookId || 'default'}&edition=1`;
                 }
@@ -580,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 newBadge.classList.remove('hidden');
             }
             
-            const readBtn = document.getElementById('read-btn');
+            const readBtn = document.getElementById('detail-read-btn');
             if (readBtn) {
                 if (bookType === 'img') {
                     readBtn.href = `../reading/acc-img.html?book=${book.id || 'default'}&edition=1`;
@@ -603,20 +600,20 @@ document.addEventListener('DOMContentLoaded', () => {
             editions = parseInt(params.get('editions')) || 200;
             bookType = 'text';
             
-            const readBtn = document.getElementById('read-btn');
+            const readBtn = document.getElementById('detail-read-btn');
             if (readBtn) {
                 readBtn.href = '../reading/acc-text.html?book=default&edition=1';
             }
         }
 
-        // Update DOM elements
-        const titleEl = document.getElementById('book-title');
-        const authorEl = document.getElementById('book-author');
-        const statusEl = document.getElementById('book-status');
-        const viewsEl = document.getElementById('book-views');
-        const ratingEl = document.getElementById('book-rating');
-        const ratingCountEl = document.getElementById('book-rating-count');
-        const descEl = document.getElementById('book-description');
+        // Update DOM elements with detail- prefix
+        const titleEl = document.getElementById('detail-book-title');
+        const authorEl = document.getElementById('detail-book-author');
+        const statusEl = document.getElementById('detail-book-status');
+        const viewsEl = document.getElementById('detail-book-views');
+        const ratingEl = document.getElementById('detail-book-rating');
+        const ratingCountEl = document.getElementById('detail-book-rating-count');
+        const descEl = document.getElementById('detail-book-description');
         
         if (titleEl) titleEl.textContent = title;
         if (authorEl) authorEl.textContent = `by ${author}`;
@@ -635,8 +632,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Set book cover - use the defaultCover already defined above
-        const bookCoverEl = document.getElementById('book-cover');
-        const bookCoverLink = document.getElementById('book-cover-link');
+        const bookCoverEl = document.getElementById('detail-book-cover');
+        const bookCoverLink = document.getElementById('detail-book-cover-link');
         
         if (bookCoverEl) {
             // Add class to skip lazy loading for this image
@@ -648,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         if (bookCoverLink) {
-            const readBtn = document.getElementById('read-btn');
+            const readBtn = document.getElementById('detail-read-btn');
             bookCoverLink.href = readBtn ? readBtn.href : `../reading/acc-text.html?book=${bookId || 'default'}&edition=1`;
         }
         
@@ -687,9 +684,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalEditions = editions.length > 0 ? editions.length : editionsCount;
     const pageSize = 6;
     let currentPage = 0;
-    const editionList = document.getElementById('edition-list');
-    const btnPrev = document.getElementById('chap-prev');
-    const btnNext = document.getElementById('chap-next');
+    const editionList = document.getElementById('detail-edition-list');
+    const btnPrev = document.getElementById('detail-prev');
+    const btnNext = document.getElementById('detail-next');
 
     const defaultEditionCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?w=80";
 
