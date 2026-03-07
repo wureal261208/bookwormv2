@@ -145,6 +145,25 @@
         // =====================
         // DISPLAY USER EMAIL IN DROPDOWN
         // =====================
+        
+        // Helper to shorten an email address for display (sniptext)
+        // Shortens if domain (letters after @) has MORE than 10 characters
+        function shortenEmail(email) {
+            if (!email) return '';
+            const parts = email.split('@');
+            if (parts.length !== 2) return email;
+            const user = parts[0];
+            const domain = parts[1];
+            
+            // If domain is 10 characters or less, show full email
+            if (domain.length <= 10) {
+                return email;
+            }
+            
+            // If domain has MORE than 10 characters, shorten the username part
+            return user.substring(0, 5) + '...' + '@' + domain;
+        }
+
         function displayUserEmail() {
             const userEmailDisplay = document.getElementById('user-email-display');
             if (!userEmailDisplay) return;
@@ -154,10 +173,20 @@
             if (currentUser) {
                 try {
                     const userObj = JSON.parse(currentUser);
-                    const displayName = userObj.name || userObj.email || 'User';
-                    userEmailDisplay.textContent = displayName;
+                    // Get the email from user object
+                    let userEmail = userObj.email || userObj.name || '';
+                    if (userEmail) {
+                        userEmailDisplay.textContent = shortenEmail(userEmail);
+                    } else {
+                        userEmailDisplay.textContent = 'User';
+                    }
                 } catch (e) {
-                    userEmailDisplay.textContent = currentUser.includes('@') ? currentUser.split('@')[0] : currentUser;
+                    // If not JSON, it's a plain string (email)
+                    if (currentUser.includes('@')) {
+                        userEmailDisplay.textContent = shortenEmail(currentUser);
+                    } else {
+                        userEmailDisplay.textContent = currentUser;
+                    }
                 }
             }
         }

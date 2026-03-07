@@ -72,17 +72,25 @@ body {
 .input-group {
     position: relative;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     width: 100%;
     margin: 1rem 0;
 }
 
+/* Input wrapper to hold input and icons together */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
 /* allow input to grow inside flex container */
-.input-group input {
+.input-wrapper input {
     flex: 1;
 }
 
-.input-group i:first-child {
+.input-wrapper i:first-child {
     position: absolute;
     left: 1rem;
     top: 50%;
@@ -93,7 +101,7 @@ body {
     pointer-events: none;
 }
 
-.input-group input {
+.input-wrapper input {
     width: 100%;
     padding: 1rem 3rem;
     font-size: 1rem;
@@ -106,13 +114,31 @@ body {
     box-sizing: border-box;
 }
 
-.input-group input[type="password"],
-.input-group input[type="text"] {
+.input-wrapper input[type="password"],
+.input-wrapper input[type="text"] {
     padding-right: 3rem;
 }
 
-.input-group input:focus {
+.input-wrapper input:focus {
     border: 0.125rem solid var(--primary-color);
+}
+
+/* Toggle password icon */
+.toggle-password {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.3rem;
+    color: var(--gray-2);
+    cursor: pointer;
+    z-index: 3;
+    transition: color 0.3s ease;
+    pointer-events: auto;
+}
+
+.toggle-password:hover {
+    color: var(--primary-color);
 }
 
 /* Error message styling */
@@ -121,20 +147,24 @@ body {
     width: 100%;
     color: #e74c3c;
     font-size: 0.75rem;
-    margin-top: 4px;
+    margin-top: 6px;
     font-weight: 500;
-    padding-left: 1rem;
-    order: 4;
+    padding-left: 0.5rem;
+    text-align: left;
+    line-height: 1.4;
 }
 
 .input-group.has-error .errorMessage {
     display: block;
 }
 
+.input-group.has-error .input-wrapper input {
+    border-color: #e74c3c;
+}
+
 .form button {
     cursor: pointer;
     width: 100%;
-    width: calc(100% + 2rem);
     padding: 1rem 0;
     border-radius: .5rem;
     border: none;

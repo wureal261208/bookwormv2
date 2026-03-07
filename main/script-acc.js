@@ -750,7 +750,7 @@ function getTimeAgo(date) {
 }
 
 // Helper to shorten an email address for display (sniptext)
-// Only shortens if username is 8+ characters
+// Shortens if domain (letters after @) has MORE than 10 characters
 function shortenEmail(email) {
     if (!email) return '';
     const parts = email.split('@');
@@ -758,12 +758,12 @@ function shortenEmail(email) {
     const user = parts[0];
     const domain = parts[1];
     
-    // If username is less than 8 characters, show full email
-    if (user.length < 8) {
+    // If domain is 10 characters or less, show full email
+    if (domain.length <= 10) {
         return email;
     }
     
-    // If username is 8+ characters, shorten it
+    // If domain has MORE than 10 characters, shorten the username part
     return user.substring(0, 5) + '...' + '@' + domain;
 }
 

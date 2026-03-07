@@ -62,6 +62,24 @@ function initUsersDB() {
 // Initialize on page load
 initUsersDB();
 
+// Toggle password visibility
+document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            this.classList.remove('bx-show');
+            this.classList.add('bx-hide');
+        } else {
+            input.type = 'password';
+            this.classList.remove('bx-hide');
+            this.classList.add('bx-show');
+        }
+    });
+});
+
 // Toggle between login and register forms
 let container = document.getElementById('container');
 
@@ -86,6 +104,11 @@ const showError = (element, message) => {
         element.style.fontSize = "0.75rem";
         element.style.marginTop = "4px";
         element.style.display = "block";
+        // Add has-error class to parent input-group
+        const inputGroup = element.closest('.input-group');
+        if (inputGroup) {
+            inputGroup.classList.add('has-error');
+        }
     }
 };
 
@@ -93,6 +116,11 @@ const clearErrors = (...elements) => {
     elements.forEach(el => {
         if (el) {
             el.textContent = "";
+            // Remove has-error class from parent input-group
+            const inputGroup = el.closest('.input-group');
+            if (inputGroup) {
+                inputGroup.classList.remove('has-error');
+            }
         }
     });
 };
