@@ -141,6 +141,8 @@
                 <a id="detail-book-cover-link" href="#">
                     <img id="detail-book-cover" class="no-lazy rounded-lg shadow-lg w-full max-w-xs mx-auto block hover:opacity-90 transition" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Book cover" />
                 </a>
+                <!-- book type badge positioned left of cover -->
+                <span id="detail-book-type-tag" class="book-type-tag absolute top-2 left-2 hidden"><i class='bx bx-book-content'></i> <span id="detail-book-type-label"></span></span>
             </figure>
             <div class="md:w-2/3">
                 <h1 id="detail-book-title" class="text-3xl font-bold mb-2">Book Title</h1>
@@ -156,11 +158,13 @@
                         <dt class="sr-only">Views</dt>
                         <dd id="detail-book-views" class="text-gray-600"><i class='bx bx-eye'></i> 0 views</dd>
                     </div>
-                    <div id="detail-book-rating-row" class="flex items-center">
+                    <div id="detail-book-rating-row" class="flex items-centered">
                         <dt class="sr-only">Rating</dt>
                         <dd id="detail-book-rating" class="text-yellow-400">★★★★★</dd>
                     </div>
                 </dl>
+                <!-- tags now shown alongside metadata in right column -->
+                <div id="detail-book-tags-container" class="flex flex-wrap gap-1 mt-1"></div>
                 <section class="mb-6" aria-labelledby="description-heading">
                     <h2 id="description-heading" class="text-xl font-semibold mb-2">
                         Description

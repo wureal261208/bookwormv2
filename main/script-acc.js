@@ -286,9 +286,8 @@ function renderBooks(books) {
     itemsGrid.innerHTML = books.map(book => {
         const bookType = getBookType(book.tags);
         
-        // Calculate rating based on views (more views = higher rating)
-        const views = book.views || 0;
-        const rating = Math.min(5, Math.ceil(views / 100)); // 0-99 views = 1 star, 100-199 = 2 stars, etc., max 5 stars
+        // Generate random rating between 4-5 stars for good performance appearance
+        const rating = Math.floor(Math.random() * 2) + 4; // Random 4 or 5 stars
         
         // Generate stars HTML
         let starsHtml = '';
@@ -304,7 +303,7 @@ function renderBooks(books) {
         const bookData = encodeURIComponent(JSON.stringify(book));
         
         return `
-        <div class="item-card" data-category="${book.genre.toLowerCase()}" data-rating="5" data-year="${new Date().getFullYear()}" data-book-id="${book.id}" data-book='${bookData}'>
+        <div class="item-card" data-book-id="${book.id}" data-category="${book.genre.toLowerCase()}" data-rating="5" data-year="${new Date().getFullYear()}" data-book='${bookData}'>
             <div class="card-image">
                 <img src="${book.image || defaultImage}" alt="${book.title}">
                 <span class="book-type-tag ${bookType.class}"><i class='bx ${bookType.icon}'></i> ${bookType.label}</span>

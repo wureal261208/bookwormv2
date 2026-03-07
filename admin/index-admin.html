@@ -175,15 +175,12 @@
                     </select>
                     <span class="field-hint">Select the type of book: picture book or chapter book</span>
                 </div>
-
-                <!-- Additional Details Row -->
-                <div class="form-row">
-                    <div class="form-group flex-1">
-                        <label for="book-publisher"><i class='bx bx-building'></i> Publisher</label>
-                        <input type="text" id="book-publisher" placeholder="Publisher name (optional)">
-                    </div>
-                    <div class="form-group flex-1">
-                        <label for="book-pubdate"><i class='bx bx-calendar'></i> Publication Date</label>
+                <!-- Subject Tags -->
+                <div class="form-group">
+                    <label for="book-tags"><i class='bx bx-book-reader'></i> Subjects / Tags</label>
+                    <input type="text" id="book-tags" placeholder="e.g. Fiction, Horror, Biography (comma-separated)" />
+                    <span class="field-hint">Enter one or more subjects separated by commas.</span>
+                </div>
                         <input type="date" id="book-pubdate">
                     </div>
                 </div>
@@ -316,6 +313,12 @@
                         <option value="text">Chapter Book (text)</option>
                     </select>
                     <span class="field-hint">Select the type of book: picture book or chapter book</span>
+                </div>
+                <!-- Subject Tags -->
+                <div class="form-group">
+                    <label for="edit-book-tags"><i class='bx bx-book-reader'></i> Subjects / Tags</label>
+                    <input type="text" id="edit-book-tags" placeholder="e.g. Fiction, Horror, Biography (comma-separated)" />
+                    <span class="field-hint">Enter one or more subjects separated by commas.</span>
                 </div>
 
                 <!-- Additional Details Row -->
