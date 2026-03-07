@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateRating(views) {
         const viewCount = Number(views) || 0;
-        const ratingNum = Math.min(5, Math.ceil(viewCount / 100));
+const ratingNum = viewCount >= 400 ? 5 : 4;
         let starsHtml = '';
         for (let i = 1; i <= 5; i++) {
             if (i <= ratingNum) {

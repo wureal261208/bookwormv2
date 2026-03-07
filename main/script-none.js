@@ -167,21 +167,27 @@ function renderBooks(books) {
         return;
     }
     
-    itemsGrid.innerHTML = books.map(book => {
-        const bookType = getBookType(book.tags);
-        
-        // Generate random rating between 4-5 stars for good performance appearance
-        const rating = Math.floor(Math.random() * 2) + 4; // Random 4 or 5 stars
-        
-        // Generate stars HTML
+    // Helper function to generate rating stars - always 4-5 stars for good performance appearance
+    function generateRatingFromViews(views) {
+        const viewCount = Number(views) || 0;
+        // Always show at least 4 stars, 5 stars if views >= 400
+        const ratingNum = viewCount >= 400 ? 5 : 4;
         let starsHtml = '';
         for (let i = 1; i <= 5; i++) {
-            if (i <= rating) {
+            if (i <= ratingNum) {
                 starsHtml += '<i class=\'bx bxs-star text-yellow-400\'></i>';
             } else {
                 starsHtml += '<i class=\'bx bx-star text-gray-300\'></i>';
             }
         }
+        return starsHtml;
+    }
+
+    itemsGrid.innerHTML = books.map(book => {
+        const bookType = getBookType(book.tags);
+        
+        // Generate rating stars from localStorage data (views) - same as detail pages
+        const starsHtml = generateRatingFromViews(book.views);
         
         return `
         <div class="item-card" data-book-id="${book.id}" data-category="${book.genre.toLowerCase()}" data-rating="5" data-year="${new Date().getFullYear()}" onclick="viewBookDetail(${book.id})">

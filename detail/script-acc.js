@@ -1,4 +1,4 @@
-// detail/script-acc.js
+-// detail/script-acc.js
 // Script for authenticated users (with notifications, progress bar, comments)
 // This script reads from localStorage: adminBooks, currentBook, readingProgress
 
@@ -350,9 +350,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return publishedDate > sevenDaysAgo;
     }
 
-    function generateRating(views) {
+function generateRating(views) {
         const viewCount = Number(views) || 0;
-        const ratingNum = Math.min(5, Math.ceil(viewCount / 100));
+        // Always show at least 4 stars, 5 stars if views >= 400
+        const ratingNum = viewCount >= 400 ? 5 : 4;
         let starsHtml = '';
         for (let i = 1; i <= 5; i++) {
             if (i <= ratingNum) {

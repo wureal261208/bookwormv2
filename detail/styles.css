@@ -141,10 +141,14 @@
 
 
 /* chapter list scroll styling for better appearance */
-#chapter-container {
+#detail-edition-container, #chapter-container {
     background: var(--bg);
     max-height: calc((2.25rem + 0.5rem) * 5);
     overflow-y: auto;
+    /* Enhanced border styling for editions column */
+    border: 2px solid #e5e7eb !important;
+    border-radius: 12px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 #chapter-container::-webkit-scrollbar {
