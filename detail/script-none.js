@@ -113,7 +113,7 @@ const ratingNum = viewCount >= 400 ? 5 : 4;
                 status = adminBook.status || 'Completed';
                 views = adminBook.views || 0;
                 description = adminBook.description || '';
-                editions = adminBook.pages || 200;
+                editions = adminBook.editions || []; // Get editions array from adminBooks
                 genre = adminBook.genre || '';
                 bookTags = adminBook.tags || []; // Get tags array from adminBooks
                 // include genre as a tag as well (if not already present)

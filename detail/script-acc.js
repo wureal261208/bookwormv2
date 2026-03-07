@@ -411,7 +411,7 @@ function generateRating(views) {
                 status = adminBook.status || 'Completed';
                 views = adminBook.views || 0;
                 description = adminBook.description || '';
-                editions = adminBook.pages || 200;
+                editions = adminBook.editions || []; // Get editions array from adminBooks
                 genre = adminBook.genre || '';
                 bookTags = adminBook.tags || []; // Get tags array from adminBooks
                 if (genre && !bookTags.includes(genre)) {
