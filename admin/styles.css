@@ -369,6 +369,13 @@ body {
     flex-shrink: 0;
 }
 
+/* small edition count label inside book-item */
+.book-item .book-editions {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
 .book-item .book-status.published {
     background: rgba(46, 204, 113, 0.2);
     color: #27ae60;

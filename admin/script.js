@@ -612,8 +612,6 @@ function addBook(event) {
     const pages = document.getElementById('book-pages').value;
     const description = document.getElementById('book-description').value.trim();
     const bookType = document.getElementById('book-type').value;
-    const tagInput = document.getElementById('book-tags').value.trim();
-    const tagList = tagInput ? tagInput.split(',').map(t => t.trim()).filter(t => t) : [];
     const publisher = document.getElementById('book-publisher').value.trim();
     const pubdate = document.getElementById('book-pubdate').value;
     const isbn = document.getElementById('book-isbn').value.trim();
@@ -694,7 +692,7 @@ function addBook(event) {
             editions,
             // Additional fields (optional)
             description: description || '',
-            tags: [bookType, ...tagList], // include type and subjects
+            tags: [bookType, genre].filter(Boolean), // type plus genre (subject)
             publisher: publisher || '',
             pubdate: pubdate || '',
             isbn: isbn || '',
@@ -917,6 +915,7 @@ function renderBooks() {
             <div class="book-info">
                 <div class="book-title">${highlightMatch(book.title, currentSearchQuery)}</div>
                 <div class="book-author">${highlightMatch(book.author, currentSearchQuery)}</div>
+                <div class="book-editions">Editions: ${book.editions ? book.editions.length : 0}</div>
             </div>
             <span class="book-status ${book.status}">${book.status === 'published' ? 'Published' : 'Draft'}</span>
             <div class="book-actions">
@@ -1058,7 +1057,6 @@ function openEditModal(bookId) {
     document.getElementById('edit-book-type').value = bookType;
     // put remaining tags into edit input (exclude type)
     const otherTags = book.tags ? book.tags.slice(1) : [];
-    document.getElementById('edit-book-tags').value = otherTags.join(', ');
     document.getElementById('edit-book-publisher').value = book.publisher || '';
     document.getElementById('edit-book-pubdate').value = book.pubdate || '';
     document.getElementById('edit-book-isbn').value = book.isbn || '';
@@ -1277,8 +1275,6 @@ function editBook(event) {
     const pages = document.getElementById('edit-book-pages').value;
     const description = document.getElementById('edit-book-description').value.trim();
     const bookType = document.getElementById('edit-book-type').value;
-    const tagInput = document.getElementById('edit-book-tags').value.trim();
-    const tagList = tagInput ? tagInput.split(',').map(t => t.trim()).filter(t => t) : [];
     const publisher = document.getElementById('edit-book-publisher').value.trim();
     const pubdate = document.getElementById('edit-book-pubdate').value;
     const isbn = document.getElementById('edit-book-isbn').value.trim();
@@ -1314,7 +1310,7 @@ function editBook(event) {
             status,
             editions,
             description: description || '',
-            tags: [bookType, ...tagList], // include type and any subjects/tags
+            tags: [bookType, genre].filter(Boolean), // type plus genre as tag
             publisher: publisher || '',
             pubdate: pubdate || '',
             isbn: isbn || '',
