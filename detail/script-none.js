@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     readBtn.href = `../reading/index-read-novel.html?book=${bookId}&chapter=1`;
                 }
                 
-                if (overrideCover && isValidUrl(overrideCover)) {
+                if (overrideCover && isValidCoverUrl(overrideCover)) {
                     cover = overrideCover;
                 } else if (adminBook.image) {
                     cover = adminBook.image;

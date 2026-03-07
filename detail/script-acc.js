@@ -115,6 +115,28 @@ document.addEventListener('DOMContentLoaded', () => {
     loadNotifications();
 
     // =====================
+    // DISPLAY USER EMAIL IN DROPDOWN
+    // =====================
+    function displayUserEmail() {
+        const userEmailDisplay = document.getElementById('user-email-display');
+        if (!userEmailDisplay) return;
+        
+        const currentUser = localStorage.getItem('currentUser') || localStorage.getItem('user');
+        
+        if (currentUser) {
+            try {
+                const userObj = JSON.parse(currentUser);
+                const displayName = userObj.name || userObj.email || 'User';
+                userEmailDisplay.textContent = displayName;
+            } catch (e) {
+                userEmailDisplay.textContent = currentUser.includes('@') ? currentUser.split('@')[0] : currentUser;
+            }
+        }
+    }
+    
+    displayUserEmail();
+
+    // =====================
     // MOBILE MENU
     // =====================
     const mobileBtn = document.querySelector('.mobile-menu-btn');
@@ -381,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     readBtn.href = `../reading/index-read-novel.html?book=${bookId}&chapter=1`;
                 }
                 
-                if (overrideCover && isValidUrl(overrideCover)) {
+                if (overrideCover && isValidCoverUrl(overrideCover)) {
                     cover = overrideCover;
                 } else if (adminBook.image) {
                     cover = adminBook.image;
