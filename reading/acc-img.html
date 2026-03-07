@@ -26,67 +26,96 @@
         .reader-slide img {
             max-width: 100%;
             height: auto;
-            border-radius: .5rem;
-        }
-        /* container for positioning the toggle */
-        #reader-container { position: relative; padding-top: 3rem; }
-        #toggle-mode { background: rgba(255,255,255,0.9); }
-        /* make switch icon black */
-        #toggle-mode i { color: #000 !important; }
-        /* navigation button details */
-        #prev-page, #next-page {
             border-radius: 0.5rem;
-            min-width: 120px;
         }
+
+        /* container for positioning the toggle */
+        #reader-container { 
+            position: relative;
+            padding-top: 3rem; 
+        }
+
+        /* toggle button */
         #toggle-mode {
+            background: rgba(255,255,255,0.9);
             border-radius: 0.5rem;
             min-width: 140px;
-        }
-        #prev-page, #next-page {
-            border: 2px solid var(--primary-color);
-            background: var(--secondary-color);
-            color: var(--white);
-            transition: background 0.3s, transform 0.2s;
-        }
-        #prev-page:hover, #next-page:hover {
-            background: var(--primary-color);
-            transform: translateY(-2px);
-        }
-        #toggle-mode {
             border: 2px solid var(--secondary-color);
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
         }
+
         #toggle-mode:hover {
             background: var(--secondary-color);
             color: var(--white);
         }
-        /* icons inside buttons should always be white, except toggle icon */
-        #prev-page i, #next-page i {
-            color: var(--white) !important;
-        }
-        /* toggle icon black for clarity */
+
+        /* toggle icon */
         #toggle-mode i {
             color: var(--black) !important;
         }
-        /* Center prev/next buttons in the middle of the image */
+
+        /* reader area */
         #reader-slider {
             position: relative;
-            min-height: 400px;
+            min-height: 420px;
         }
-        #prev-page, #next-page {
+
+        /* navigation buttons */
+        #prev-page,
+        #next-page {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
+            width: 48px;
+            height: 72px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(17, 24, 39, 0.55);
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
             z-index: 10;
         }
+
+        /* button hover */
+        #prev-page:hover,
+        #next-page:hover {
+            background: rgba(17, 24, 39, 0.8);
+        }
+
+        /* button positions */
         #prev-page {
-            left: 10px;
+            left: 12px;
         }
+
         #next-page {
-            right: 10px;
+            right: 12px;
         }
-        /* Adjust container to accommodate centered buttons */
+
+        /* icons inside buttons */
+        #prev-page i,
+        #next-page i {
+            color: var(--white) !important;
+        }
+
+        /* Adjust container */
         .nav-controls {
             position: relative;
+        }
+
+        /* mobile responsive */
+        @media (max-width: 640px) {
+            #prev-page,
+            #next-page {
+                width: 42px;
+                height: 64px;
+                font-size: 1.3rem;
+            }
         }
         /* recommendation cards */
         .recommend-card {
@@ -170,14 +199,14 @@
 
     <!-- Reader area -->
     <main class="max-w-4xl mx-auto px-4 py-12" id="reader-main">
-        <div id="reader-container" class="relative">
+        <div id="reader-container" class="flex items-center justify-center mx-auto relative">
             <!-- book info pulled from localStorage -->
             <div id="book-info" class="mb-6 flex items-center gap-4">
                 <!-- cover + metadata filled by script -->
             </div>
             <button id="toggle-mode" title="Switch read mode"
                 class="btn-action btn-details text-xl px-4 py-2 absolute top-0 left-1/2 transform -translate-x-1/2 z-10">
-                <i class="bx bx-sort-alt-2"></i> <span id="mode-label" class="ml-2">Switching box</span>
+                <i class="bx bx-sort-alt-2"></i> Switching reading mode
             </button>
             <div id="reader-slider">
                 <button id="prev-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Previous page"><i class="bx bx-chevron-left"></i></button>
@@ -216,11 +245,16 @@
             let current = parseInt(params.get('edition') || params.get('chapter') || '1') - 1;
 
             const sampleImages = [
-                'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800',
-                'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=800',
-                'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800',
-                'https://images.unsplash.com/photo-1517511620798-cec17d428bc0?w=800',
-                'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800'
+                'https://picsum.photos/800/1200?1',
+                'https://picsum.photos/800/1200?2',
+                'https://picsum.photos/800/1200?3',
+                'https://picsum.photos/800/1200?4',
+                'https://picsum.photos/800/1200?5',
+                'https://picsum.photos/800/1200?6',
+                'https://picsum.photos/800/1200?7',
+                'https://picsum.photos/800/1200?8',
+                'https://picsum.photos/800/1200?9',
+                'https://picsum.photos/800/1200?10'
             ];
             // pretend current book tags retrieved from query/localStorage
             const currentTags = ['adventure','fantasy'];

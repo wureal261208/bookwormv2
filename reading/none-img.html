@@ -12,6 +12,7 @@
     <script src="https://cdn.tailwindcss.com" defer></script>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <style>
+        /* use global font from main site */
         .reader-slide {
             display: none;
             text-align: center;
@@ -24,37 +25,116 @@
         .reader-slide img {
             max-width: 100%;
             height: auto;
-            border-radius: .5rem;
+            border-radius: 0.5rem;
         }
-        #reader-container { position: relative; padding-top: 3rem; }
-        #toggle-mode { background: rgba(255,255,255,0.9); }
-        /* make switch icon black */
-        #toggle-mode i { color: #000 !important; }
-        /* navigation button details */
-        #prev-page, #next-page {
-            border: 2px solid var(--primary-color);
-            background: var(--secondary-color);
-            color: var(--white);
-            transition: background 0.3s, transform 0.2s;
+
+        /* container for positioning the toggle */
+        #reader-container { 
+            position: relative;
+            padding-top: 3rem; 
         }
-        #prev-page:hover, #next-page:hover {
-            background: var(--primary-color);
-            transform: translateY(-2px);
-        }
+
+        /* toggle button */
         #toggle-mode {
+            background: rgba(255,255,255,0.9);
+            border-radius: 0.5rem;
+            min-width: 140px;
             border: 2px solid var(--secondary-color);
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
         }
+
         #toggle-mode:hover {
             background: var(--secondary-color);
             color: var(--white);
         }
-        /* icons inside buttons should always be white, except toggle icon */
-        #prev-page i, #next-page i {
-            color: var(--white) !important;
-        }
-        /* toggle icon black for clarity */
+
+        /* toggle icon */
         #toggle-mode i {
             color: var(--black) !important;
+        }
+
+        /* reader area */
+        #reader-slider {
+            position: relative;
+            min-height: 420px;
+        }
+
+        /* navigation buttons */
+        #prev-page,
+        #next-page {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 72px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(17, 24, 39, 0.55);
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        /* button hover */
+        #prev-page:hover,
+        #next-page:hover {
+            background: rgba(17, 24, 39, 0.8);
+        }
+
+        /* button positions */
+        #prev-page {
+            left: 12px;
+        }
+
+        #next-page {
+            right: 12px;
+        }
+
+        /* icons inside buttons */
+        #prev-page i,
+        #next-page i {
+            color: var(--white) !important;
+        }
+
+        /* Adjust container */
+        .nav-controls {
+            position: relative;
+        }
+
+        /* mobile responsive */
+        @media (max-width: 640px) {
+            #prev-page,
+            #next-page {
+                width: 42px;
+                height: 64px;
+                font-size: 1.3rem;
+            }
+        }
+        /* recommendation cards */
+        .recommend-card {
+            display: inline-block;
+            width: 160px;
+            margin: 0 0.5rem;
+            text-align: center;
+        }
+        .recommend-card img {
+            width: 100%;
+            border-radius: 0.5rem;
+        }
+        .recommend-card h3 {
+            font-size: 0.9rem;
+            margin: 0.4rem 0 0.2rem;
+        }
+        .recommend-card .rating,
+        .recommend-card .views {
+            font-size: 0.8rem;
+            color: var(--gray-dark);
         }
     </style>
 </head>
@@ -118,16 +198,19 @@
 
     <!-- Reader area -->
     <main class="max-w-4xl mx-auto px-4 py-12" id="reader-main">
-        <div id="reader-container" class="relative">
+        <div id="reader-container" class="flex items-center justify-center mx-auto relative">
+            <!-- book info pulled from localStorage -->
+            <div id="book-info" class="mb-6 flex items-center gap-4">
+                <!-- cover + metadata filled by script -->
+            </div>
             <button id="toggle-mode" title="Switch read mode"
                 class="btn-action btn-details text-xl px-4 py-2 absolute top-0 left-1/2 transform -translate-x-1/2 z-10">
-                <i class="bx bx-sort-alt-2"></i>
+                <i class="bx bx-sort-alt-2"></i> Switching reading mode
             </button>
-            <div id="reader-slider"></div>
-        </div>
-        <div class="flex justify-between mt-8 items-center">
-            <button id="prev-page" class="btn-action btn-read text-lg px-5 py-3">◀ Previous</button>
-            <button id="next-page" class="btn-action btn-read text-lg px-5 py-3">Next ▶</button>
+            <div id="reader-slider">
+                <button id="prev-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Previous page"><i class="bx bx-chevron-left"></i></button>
+                <button id="next-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Next page"><i class="bx bx-chevron-right"></i></button>
+            </div>
         </div>
 
         <!-- "You may like" recommendations -->
@@ -164,11 +247,16 @@
             let current = parseInt(params.get('edition') || params.get('chapter') || '1') - 1;
 
             const sampleImages = [
-                'https://via.placeholder.com/800x1200?text=Page+1',
-                'https://via.placeholder.com/800x1200?text=Page+2',
-                'https://via.placeholder.com/800x1200?text=Page+3',
-                'https://via.placeholder.com/800x1200?text=Page+4',
-                'https://via.placeholder.com/800x1200?text=Page+5'
+                'https://picsum.photos/800/1200?1',
+                'https://picsum.photos/800/1200?2',
+                'https://picsum.photos/800/1200?3',
+                'https://picsum.photos/800/1200?4',
+                'https://picsum.photos/800/1200?5',
+                'https://picsum.photos/800/1200?6',
+                'https://picsum.photos/800/1200?7',
+                'https://picsum.photos/800/1200?8',
+                'https://picsum.photos/800/1200?9',
+                'https://picsum.photos/800/1200?10'
             ];
 
             const slider = document.getElementById('reader-slider');
