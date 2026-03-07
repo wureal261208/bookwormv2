@@ -20,8 +20,10 @@
         .reader-slide.active {
             display: block;
         }
-        #reader-container { position: relative; }
+        #reader-container { position: relative; padding-top: 3rem; }
         #toggle-mode { background: rgba(255,255,255,0.9); }
+        /* make switch icon black */
+        #toggle-mode i { color: #000 !important; }
         /* navigation button details */
         #prev-page, #next-page {
             border: 2px solid var(--primary-color);
@@ -105,7 +107,7 @@
     <main class="max-w-4xl mx-auto px-4 py-12" id="reader-main">
         <div id="reader-container" class="relative">
             <button id="toggle-mode" title="Switch read mode"
-                class="btn-action btn-details text-xl px-4 py-2 absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                class="btn-action btn-details text-xl px-4 py-2 absolute top-0 left-1/2 transform -translate-x-1/2 z-10">
                 <i class="bx bx-sort-alt-2"></i>
             </button>
             <div id="reader-slider"></div>

@@ -21,8 +21,12 @@
         .reader-slide.active {
             display: block;
         }
-        #reader-container { position: relative; }
+        #reader-container { position: relative; padding-top: 3rem; }
         #toggle-mode { background: rgba(255,255,255,0.9); }
+        /* make switch icon black */
+        #toggle-mode i { color: #000 !important; }
+        /* ensure prev/next icons are white and slightly larger */
+        #prev-page i, #next-page i { color: var(--white) !important; font-size:1.25rem; }
         /* navigation button details */
         #prev-page, #next-page {
             border: 2px solid var(--primary-color);
@@ -52,6 +56,23 @@
         /* toggle icon black for clarity */
         #toggle-mode i {
             color: var(--black) !important;
+        }
+        /* Center prev/next buttons in the middle of the content */
+        #reader-slider {
+            position: relative;
+            min-height: 300px;
+        }
+        #prev-page, #next-page {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        #prev-page {
+            left: 10px;
+        }
+        #next-page {
+            right: 10px;
         }
         /* recommendation cards */
         .recommend-card {
@@ -128,16 +149,17 @@
 
     <!-- Reader area -->
     <main class="max-w-4xl mx-auto px-4 py-12" id="reader-main">
-        <div id="reader-container" class="relative">
+        <div id="reader-container" class="relative">            <!-- book info pulled from localStorage -->
+            <div id="book-info" class="mb-6 flex items-center gap-4"></div>
             <button id="toggle-mode" title="Switch read mode"
-                class="btn-action btn-details text-xl px-4 py-2 absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-                <i class="bx bx-sort-alt-2"></i> <span id="mode-label">Paged</span>
+                class="btn-action btn-details text-xl px-4 py-2 absolute top-0 left-1/2 transform -translate-x-1/2 z-10">
+                <i class="bx bx-sort-alt-2"></i>
+                <span id="mode-label" class="ml-2">Switching box</span>
             </button>
-            <div id="reader-slider"></div>
-        </div>
-        <div class="flex justify-between mt-8 items-center">
-            <button id="prev-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Previous page">◀ Previous</button>
-            <button id="next-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Next page">Next ▶</button>
+            <div id="reader-slider">
+                <button id="prev-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Previous page"><i class="bx bx-chevron-left"></i></button>
+                <button id="next-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Next page"><i class="bx bx-chevron-right"></i></button>
+            </div>
         </div>
 
         <!-- "You may like" recommendations -->
@@ -191,6 +213,24 @@
             const slides = slider.querySelectorAll('.reader-slide');
             let continuous = false;
             const recSlider = document.querySelector('#reader-main .carousel .slider');
+            // display stored book info if available
+            const infoContainer = document.getElementById('book-info');
+            const stored = localStorage.getItem('currentBook');
+            if (stored && infoContainer) {
+                try {
+                    const book = JSON.parse(stored);
+                    infoContainer.innerHTML = `
+                        <img src="${book.cover||'/img/default.jpg'}" alt="${book.title} cover" class="w-24 h-32 object-cover rounded" />
+                        <div>
+                            <h2 class="text-xl font-semibold">${book.title||''}</h2>
+                            <div class="flex items-center gap-1">
+                                <i class="bx bx-star text-yellow-400"></i>
+                                <span>${book.rating||0}</span>
+                            </div>
+                            <div class="text-sm text-gray-600">${book.views||0} views</div>
+                        </div>`;
+                } catch {}            
+            }
             const recommendations = [
                 {cover:'https://via.placeholder.com/120x180?text=Book+1',title:'The Lost Pages',rating:4.2,views:1320},
                 {cover:'https://via.placeholder.com/120x180?text=Book+2',title:'Mystery of the Isle',rating:4.7,views:980},
