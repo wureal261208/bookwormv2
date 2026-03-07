@@ -111,31 +111,34 @@ body {
 .toggle-password {
     position: absolute;
     right: 1rem;
-    /* center vertically irrespective of input height/padding */
     top: 50%;
+
     transform: translateY(-50%);
 
-    background: none;
+    background: transparent;
     border: none;
     cursor: pointer;
-    padding: 8px;
+    padding: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--gray-2);
     transition: color 0.3s ease;
     z-index: 1;
-    pointer-events: auto;
 }
 
 .toggle-password:hover {
     color: var(--primary-color);
 }
 
+.toggle-password:focus {
+    outline: none;
+    color: var(--primary-color);
+}
+
 .toggle-password i {
-    font-size: 1.2rem;
-    position: static;
-    transform: none;
+    font-size: 1.25rem;
+    line-height: 1;
 }
 
 /* Error message styling */
@@ -423,3 +426,4 @@ b {
         opacity: 0;
     }
 }
+

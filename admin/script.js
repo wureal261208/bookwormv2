@@ -388,7 +388,7 @@ const ValidationUtils = {
         return null;
     },
 
-    // Validate genre
+    // Validate genre (allows letters, numbers, spaces, and common special characters)
     genre: (value) => {
         if (!value || value.trim() === '') {
             return 'Genre is required';
@@ -396,6 +396,13 @@ const ValidationUtils = {
         
         if (value.trim().length > 50) {
             return 'Genre cannot exceed 50 characters';
+        }
+        
+        // Allow letters, numbers, spaces, and common special characters: - / ( ) & .
+        // This supports genres like: Sci-Fi, Fantasy 2024, Action/Adventure, Young Adult (YA), etc.
+        const validGenrePattern = /^[a-zA-Z0-9\s\-/\(\)&.]+$/;
+        if (!validGenrePattern.test(value.trim())) {
+            return 'Genre contains invalid characters';
         }
         
         return null;
@@ -1069,84 +1076,6 @@ function closeModal(type) {
         // Clear image preview
         document.getElementById('edit-book-image-preview').innerHTML = '';
     }
-}
-
-function addBook(event) {
-    event.preventDefault();
-    
-    // Get form values
-    const title = document.getElementById('book-title').value.trim();
-    const author = document.getElementById('book-author').value.trim();
-    const imageUrl = document.getElementById('book-image').value.trim();
-    const genre = document.getElementById('book-genre').value.trim();
-    const pages = document.getElementById('book-pages').value;
-    const description = document.getElementById('book-description').value.trim();
-    const bookType = document.getElementById('book-type').value;
-    const publisher = document.getElementById('book-publisher').value.trim();
-    const pubdate = document.getElementById('book-pubdate').value;
-    const isbn = document.getElementById('book-isbn').value.trim();
-    const language = document.getElementById('book-language').value;
-    const status = document.getElementById('book-status').value;
-    
-    // Collect editions
-    const editions = collectEditions();
-    
-    // Use localStorage helper functions for cover image management
-    const finalImage = isValidCoverUrl(imageUrl) ? imageUrl : getDefaultCover();
-    if (imageUrl && finalImage === getDefaultCover()) {
-        showNotification('Invalid image URL. Using default cover.', 'warning');
-    }
-
-    const newBook = {
-        id: Date.now(),
-        title,
-        author,
-        image: finalImage,
-        genre,
-        pages: parseInt(pages),
-        status,
-        editions,
-        // Additional fields (optional)
-        description: description || '',
-        tags: [bookType], // Store book type as single-element array
-        publisher: publisher || '',
-        pubdate: pubdate || '',
-        isbn: isbn || '',
-        language: language || 'English',
-        // Metadata
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    };
-    
-    books.push(newBook);
-    saveBooksToStorage();
-    
-    // If book is added as published, create a notification for users
-    if (status === 'published') {
-        newBook.publishedAt = new Date().toISOString();
-        
-        // Store new book notification for users (include book cover image and author)
-        const newBookNotification = {
-            bookId: newBook.id,
-            title: newBook.title,
-            author: newBook.author || '',
-            image: newBook.image || '',
-            publishedAt: newBook.publishedAt,
-            seen: false
-        };
-        
-        // Get existing notifications
-        let notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
-        notifications.push(newBookNotification);
-        localStorage.setItem('newBookNotifications', JSON.stringify(notifications));
-    }
-    
-    renderBooks();
-    updateStatsCards();
-    closeModal('book');
-    event.target.reset();
-    clearEditionsForm();
-    showNotification(`Book "${title}" added successfully with ${editions.length} edition(s)!`, 'success');
 }
 
 // ═════════════════════════════════════════════════════════════

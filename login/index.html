@@ -30,13 +30,17 @@
                         <div class="input-group">
                             <i class='bx bxs-lock-alt'></i>
                             <input type="password" id="inputPass" placeholder="Password">
-                            <i class='toggle-password bx bx-show' data-target="inputPass"></i>
+                            <button type="button" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="inputPass">
+                                <i class='bx bx-show'></i>
+                            </button>
                             <span class="errorMessage" id="errorPassReg"></span>
                         </div>
                         <div class="input-group">
                             <i class='bx bxs-lock-alt'></i>
                             <input type="password" id="inputRedeemPass" placeholder="Confirm password">
-                            <i class='toggle-password bx bx-show' data-target="inputRedeemPass"></i>
+                            <button type="button" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="inputRedeemPass">
+                                <i class='bx bx-show'></i>
+                            </button>
                             <span class="errorMessage" id="errorRedeemPass"></span>
                         </div>
                         <button id="btnRegister">
@@ -68,6 +72,9 @@
                         <div class="input-group">
                             <i class='bx bxs-lock-alt'></i>
                             <input type="password" id="signin-password" placeholder="Password">
+                            <button type="button" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="signin-password">
+                                <i class='bx bx-show'></i>
+                            </button>
                             <span class="errorMessage" id="errorPassLogin"></span>
                         </div>
                         <button id="signin-btn">
@@ -138,26 +145,49 @@
     <script src="../script/lazyLoad.js" defer></script>
     <script src="script.js"></script>
     <script>
-        // Password toggle functionality
-        document.querySelectorAll('.toggle-password').forEach(icon => {
-            icon.style.cursor = 'pointer';
-            icon.addEventListener('click', function () {
+        // Enhanced Password toggle functionality with better UX and accessibility
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.setAttribute('type', 'button');
+            button.style.cursor = 'pointer';
+            // indicate current state to assistive tech
+            button.setAttribute('aria-pressed', 'false');
+
+            const toggleIcon = button.querySelector('i');
+            if (toggleIcon) {
+                toggleIcon.style.pointerEvents = 'none';
+            }
+
+            button.addEventListener('click', function () {
                 const targetId = this.getAttribute('data-target');
                 const input = document.getElementById(targetId);
                 if (!input) return;
 
+                const icon = this.querySelector('i');
+
+                // Toggle password visibility
                 if (input.type === 'password') {
                     input.type = 'text';
-                    this.classList.remove('bx-show');
-                    this.classList.add('bx-hide');
+                    icon.classList.remove('bx-show');
+                    icon.classList.add('bx-hide');
+                    this.setAttribute('aria-label', 'Hide password');
+                    this.setAttribute('aria-pressed', 'true');
                 } else {
                     input.type = 'password';
-                    this.classList.remove('bx-hide');
-                    this.classList.add('bx-show');
+                    icon.classList.remove('bx-hide');
+                    icon.classList.add('bx-show');
+                    this.setAttribute('aria-label', 'Show password');
+                    this.setAttribute('aria-pressed', 'false');
+                }
+            });
+
+            // Keyboard accessibility - Enter/Space key toggles password
+            button.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.click();
                 }
             });
         });
     </script>
 </body>
 
-</html>
