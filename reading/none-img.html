@@ -12,7 +12,6 @@
     <script src="https://cdn.tailwindcss.com" defer></script>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <style>
-        /* use global font from main site */
         .reader-slide {
             display: none;
             text-align: center;
@@ -25,26 +24,40 @@
         .reader-slide img {
             max-width: 100%;
             height: auto;
-            border-radius: 0.5rem;
+            border-radius: .5rem;
         }
 
-        /* container for positioning the toggle */
-        #reader-container { 
+        #reader-container {
             position: relative;
-            padding-top: 3rem; 
+            padding-top: 3rem;
         }
 
-        /* toggle button */
         #toggle-mode {
-            background: rgba(255,255,255,0.9);
-            border-radius: 0.5rem;
-            min-width: 140px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* make switch icon black */
+        #toggle-mode i {
+            color: #000 !important;
+        }
+
+        /* navigation button details */
+        #prev-page,
+        #next-page {
+            border: 2px solid var(--primary-color);
+            background: var(--secondary-color);
+            color: var(--white);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        #prev-page:hover,
+        #next-page:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        #toggle-mode {
             border: 2px solid var(--secondary-color);
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20;
         }
 
         #toggle-mode:hover {
@@ -52,149 +65,100 @@
             color: var(--white);
         }
 
-        /* toggle icon */
-        #toggle-mode i {
-            color: var(--black) !important;
-        }
-
-        /* reader area */
-        #reader-slider {
-            position: relative;
-            min-height: 420px;
-        }
-
-        /* navigation buttons */
-        #prev-page,
-        #next-page {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 48px;
-            height: 72px;
-            border-radius: 12px;
-            border: none;
-            background: rgba(17, 24, 39, 0.55);
-            color: var(--white);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            z-index: 10;
-        }
-
-        /* button hover */
-        #prev-page:hover,
-        #next-page:hover {
-            background: rgba(17, 24, 39, 0.8);
-        }
-
-        /* button positions */
-        #prev-page {
-            left: 12px;
-        }
-
-        #next-page {
-            right: 12px;
-        }
-
-        /* icons inside buttons */
+        /* icons inside buttons should always be white, except toggle icon */
         #prev-page i,
         #next-page i {
             color: var(--white) !important;
         }
 
-        /* Adjust container */
-        .nav-controls {
-            position: relative;
-        }
-
-        /* mobile responsive */
-        @media (max-width: 640px) {
-            #prev-page,
-            #next-page {
-                width: 42px;
-                height: 64px;
-                font-size: 1.3rem;
-            }
-        }
-        /* recommendation cards */
-        .recommend-card {
-            display: inline-block;
-            width: 160px;
-            margin: 0 0.5rem;
-            text-align: center;
-        }
-        .recommend-card img {
-            width: 100%;
-            border-radius: 0.5rem;
-        }
-        .recommend-card h3 {
-            font-size: 0.9rem;
-            margin: 0.4rem 0 0.2rem;
-        }
-        .recommend-card .rating,
-        .recommend-card .views {
-            font-size: 0.8rem;
-            color: var(--gray-dark);
+        /* toggle icon black for clarity */
+        #toggle-mode i {
+            color: var(--black) !important;
         }
     </style>
 </head>
 
 <body>
-    <!-- Navbar component (identical to other pages) -->
-    <header>
-        <nav aria-label="Main navigation" class="fixed inset-x-0 top-0 z-50 custom-navbar border-b">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-                    <div class="flex items-center">
-                        <a href="../main/index-none.html" class="flex items-center gap-2 text-2xl font-bold">
-                            <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm logo">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 custom-navbar border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="../main/index-none.html" class="text-2xl font-bold flex items-center gap-2">
+                            <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm">
                             <span>BookWorm</span>
                         </a>
-                        <div class="hidden md:block ml-10">
-                            <div class="flex items-baseline space-x-4 nav-links">
-                                <a href="../main/index-none.html" class="nav-link active" aria-current="page"><i
-                                        class='bx bx-search'></i> Browse</a>
-                                <a href="../main/categories.html" class="nav-link"><i class='bx bx-category'></i>
-                                    Categories</a>
-                                <a href="../main/explore.html" class="nav-link"><i class='bx bx-compass'></i>
-                                    Explore</a>
-                            </div>
+                    </div>
+                    <div class="hidden md:block ml-10">
+                        <div class="flex items-baseline space-x-4 nav-links">
+                            <a href="../main/index-none.html"
+                                class="px-3 py-2 rounded-md text-sm font-medium nav-link active"><i class='bx bx-search'
+                                    aria-hidden="true"></i> Browse</a>
+                            <a href="../main/categories.html"
+                                class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i class='bx bx-category'
+                                    aria-hidden="true"></i> Categories</a>
+                            <a href="../main/explore.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
+                                    class='bx bx-compass' aria-hidden="true"></i> Explore</a>
                         </div>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <div class="relative hidden sm:block">
-                            <i
-                                class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'></i>
-                            <input type="search" placeholder="Search books..." class="custom-input text-sm pl-10"
-                                aria-label="Search books">
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Search Bar with Dropdown -->
+                    <div class="relative hidden sm:block" id="search-wrapper">
+                        <i class='bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400'
+                            aria-hidden="true"></i>
+                        <input type="text" id="main-search-input" placeholder="Search books..."
+                            class="custom-input text-sm pl-10 pr-10" autocomplete="off">
+                        <button type="button" id="search-clear-btn"
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden">
+                            <i class='bx bx-x'></i>
+                        </button>
+                        <!-- Search Results Dropdown -->
+                        <div id="search-dropdown"
+                            class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg max-h-96 overflow-y-auto z-50 hidden">
+                            <div id="search-results"></div>
                         </div>
-                        <a href="../login/index.html" class="getStarted flex items-center gap-1">
-                            <i class='bx bx-log-in'></i><span>Get&nbsp;Started</span>
-                        </a>
-                        <button class="mobile-menu-btn md:hidden p-2 focus:outline-none" aria-expanded="false"
-                            aria-controls="mobile-menu">
-                            <span class="sr-only">Open menu</span>
-                            <i class='bx bx-menu text-2xl'></i>
+                    </div>
+                    <a href="../login/index.html"
+                        class="flex items-center gap-2 focus:outline-none getStarted px-4 py-2 rounded-md text-sm font-medium">
+                        <i class='bx bx-log-in' aria-hidden="true"></i>
+                        Get Started
+                    </a>
+                    <div class="md:hidden">
+                        <button
+                            class="mobile-menu-btn inline-flex items-center justify-center p-2 rounded-md text-white">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
                         </button>
                     </div>
                 </div>
             </div>
-            <div id="mobile-menu" class="mobile-menu hidden md:hidden">
-                <a href="../main/index-none.html" class="block nav-link active">Browse</a>
-                <a href="../main/categories.html" class="block nav-link">Categories</a>
-                <a href="../main/explore.html" class="block nav-link">Explore</a>
+        </div>
+        <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 z-40"
+            style="background:linear-gradient(135deg,var(--secondary-color),var(--primary-color))">
+            <div class="px-4 py-4 space-y-2">
+                <a href="../main/index-none.html"
+                    class="block px-3 py-2 rounded-md text-sm font-medium nav-link active">Browse</a>
+                <a href="../main/categories.html"
+                    class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Categories</a>
+                <a href="../main/explore.html"
+                    class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Explore</a>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
     <div class="h-16"></div>
 
-        <div class="max-w-4xl mx-auto px-4 pt-6">
-            <a href="../detail/index-none.html" class="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors">
-                <i class='bx bx-arrow-back text-xl'></i>
-                <span>Back to Book Details</span>
-            </a>
-        </div>
+    <div class="max-w-4xl mx-auto px-4 pt-6">
+        <a href="../detail/index-none.html"
+            class="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors">
+            <i class='bx bx-arrow-back text-xl'></i>
+            <span>Back to Book Details</span>
+        </a>
+    </div>
 
     <!-- Reader area -->
     <main class="max-w-4xl mx-auto px-4 py-12" id="reader-main">
@@ -205,7 +169,7 @@
             </div>
             <button id="toggle-mode" title="Switch read mode"
                 class="btn-action btn-details text-xl px-4 py-2 absolute top-0 left-1/2 transform -translate-x-1/2 z-10">
-                <i class="bx bx-sort-alt-2"></i> Switching reading mode
+                <i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>
             </button>
             <div id="reader-slider">
                 <button id="prev-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Previous page"><i class="bx bx-chevron-left"></i></button>
@@ -234,29 +198,25 @@
             <div class="footer-bottom">
                 <div class="contact-info">
                     <p><strong>BookWorm</strong> • hello@bookworm.vn</p>
-                    <p><a href="tel:+842839301234">+84 28 3930 1234</a> • Ho Chi Minh City, Vietnam</p>
+                    <p><a href="tel:+842839301234">+84 28 3930 1234</a> • Ho Chi Minh City, Vietnam</p>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script src="../main/script-acc.js" defer></script>
+    <script src="../script/navbar-loader.js" defer></script>
+    <script src="../main/script-none.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const params = new URLSearchParams(window.location.search);
             let current = parseInt(params.get('edition') || params.get('chapter') || '1') - 1;
 
             const sampleImages = [
-                'https://picsum.photos/800/1200?1',
-                'https://picsum.photos/800/1200?2',
-                'https://picsum.photos/800/1200?3',
-                'https://picsum.photos/800/1200?4',
-                'https://picsum.photos/800/1200?5',
-                'https://picsum.photos/800/1200?6',
-                'https://picsum.photos/800/1200?7',
-                'https://picsum.photos/800/1200?8',
-                'https://picsum.photos/800/1200?9',
-                'https://picsum.photos/800/1200?10'
+                'https://via.placeholder.com/800x1200?text=Page+1',
+                'https://via.placeholder.com/800x1200?text=Page+2',
+                'https://via.placeholder.com/800x1200?text=Page+3',
+                'https://via.placeholder.com/800x1200?text=Page+4',
+                'https://via.placeholder.com/800x1200?text=Page+5'
             ];
 
             const slider = document.getElementById('reader-slider');
@@ -285,12 +245,12 @@
                     slides.forEach(s => s.style.display = 'block');
                     prevBtn.style.display = 'none';
                     nextBtn.style.display = 'none';
-                    toggle.innerHTML = '<i class="bx bx-pause-circle">Change read mode</i>';
+                    toggle.innerHTML = '<i class="bx bx-pause-circle"></i><span class="mode-label"> Continuous</span>';
                 } else {
-                    slides.forEach((s,i) => s.style.display = i === current ? 'block' : 'none');
+                    slides.forEach((s, i) => s.style.display = i === current ? 'block' : 'none');
                     prevBtn.style.display = '';
                     nextBtn.style.display = '';
-                    toggle.innerHTML = '<i class="bx bx-sort-alt-2">Change read mode</i>';
+                    toggle.innerHTML = '<i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>';
                 }
             }
 

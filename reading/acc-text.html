@@ -94,42 +94,28 @@
             font-size: 0.8rem;
             color: var(--gray-dark);
         }
-        .carousel {
-            overflow-x: auto;
-        }
-
-        .carousel .slider {
-            display: flex;
-            gap: 1.5rem;
-            padding-bottom: 10px;
-        }
-
-        .carousel .slider::-webkit-scrollbar {
-            display: none;
-        }
     </style>
 </head>
 
 <body>
     <!-- Navbar for authenticated / accessible users -->
-    <header>
     <nav class="fixed top-0 left-0 right-0 z-50 custom-navbar border-b">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <a href="#" class="text-2xl font-bold flex items-center gap-2">
+                        <a href="../main/index-acc.html" class="text-2xl font-bold flex items-center gap-2">
                             <img class="h-8 w-auto" src="/img/logo.jpg" alt="BookWorm">
                             <span>BookWorm</span>
                         </a>
                     </div>
                     <div class="hidden md:block ml-10">
                         <div class="flex items-baseline space-x-4 nav-links">
-                            <a href="#" class="px-3 py-2 rounded-md text-sm font-medium nav-link active"><i
+                            <a href="../main/index-acc.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link active"><i
                                     class='bx bx-search' aria-hidden="true"></i> Browse</a>
-                            <a href="categories.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
+                            <a href="../main/categories.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
                                     class='bx bx-category' aria-hidden="true"></i> Categories</a>
-                            <a href="explore.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
+                            <a href="../main/explore.html" class="px-3 py-2 rounded-md text-sm font-medium nav-link"><i
                                     class='bx bx-compass' aria-hidden="true"></i> Explore</a>
                         </div>
                     </div>
@@ -163,7 +149,7 @@
                         </button>
                         <!-- Notification Dropdown -->
                         <div id="notification-dropdown"
-                            class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 max-h-96 overflow-y-auto">
+                            class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible transition-all duration-200 z-50 max-h-96 overflow-y-auto">
                             <div class="px-4 py-2 border-b border-gray-200">
                                 <h4 class="font-semibold text-black">Notifications</h4>
                             </div>
@@ -178,9 +164,9 @@
                         <!-- Show dropdown on click for notification button -->
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
-                                const notifBtn = document.getElementById('notification-btn');
-                                const notifDropdown = document.getElementById('notification-dropdown');
-                                const container = document.getElementById('notification-container');
+                                var notifBtn = document.getElementById('notification-btn');
+                                var notifDropdown = document.getElementById('notification-dropdown');
+                                var container = document.getElementById('notification-container');
 
                                 if (notifBtn && notifDropdown && container) {
                                     notifBtn.addEventListener('click', function (e) {
@@ -232,13 +218,12 @@
         <div class="mobile-menu hidden md:hidden fixed top-16 left-0 right-0 z-40"
             style="background:linear-gradient(135deg,var(--secondary-color),var(--primary-color))">
             <div class="px-4 py-4 space-y-2">
-                <a href="#" class="block px-3 py-2 rounded-md text-sm font-medium nav-link active">Browse</a>
-                <a href="categories.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Categories</a>
-                <a href="explore.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">My Library</a>
+                <a href="../main/index-acc.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link active">Browse</a>
+                <a href="../main/categories.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Categories</a>
+                <a href="../main/explore.html" class="block px-3 py-2 rounded-md text-sm font-medium nav-link">Explore</a>
             </div>
         </div>
     </nav>
-    </header>
 
     <div class="h-16"></div>
 
@@ -255,8 +240,7 @@
             <div id="book-info" class="mb-6 flex items-center gap-4"></div>
             <button id="toggle-mode" title="Switch read mode"
                 class="btn-action btn-details text-xl px-4 py-2 absolute top-0 left-1/2 transform -translate-x-1/2 z-10">
-                <i class="bx bx-sort-alt-2"></i>
-                <span id="mode-label" class="ml-2">Switching box</span>
+                <i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>
             </button>
             <div id="reader-slider">
                 <button id="prev-page" class="btn-action btn-read text-lg px-5 py-3" aria-label="Previous page"><i class="bx bx-chevron-left"></i></button>
@@ -268,7 +252,7 @@
         <section class="mt-12">
             <h2 class="text-2xl font-bold mb-4">You may like</h2>
             <div class="carousel">
-                <div class="slider" id="recommend-slider"></div>
+                <div class="slider"></div>
             </div>
         </section>
     </main>
@@ -284,12 +268,13 @@
             <div class="footer-bottom">
                 <div class="contact-info">
                     <p><strong>BookWorm</strong> • hello@bookworm.vn</p>
-                    <p><a href="tel:+842839301234">+84 28 3930 1234</a> • Ho Chi Minh City, Vietnam</p>
+                    <p><a href="tel:+842839301234">+84 28 3930 1234</a> • Ho Chi Minh City, Vietnam</p>
                 </div>
             </div>
         </div>
     </footer>
 
+    <script src="../script/navbar-loader.js" defer></script>
     <script src="../main/script-acc.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -300,7 +285,7 @@
                 "Once upon a time, in a land far away, beyond the misty mountains and endless forests, there lived people who believed that magic had long vanished from the world. Yet hidden beneath the silence of ancient ruins and forgotten temples, traces of that magic still quietly waited to be discovered.",
                 "One quiet evening, the hero slowly opened the ancient book he had found buried deep within a ruined library. Dust rose into the air as the fragile pages turned, revealing symbols and stories that no one had read for centuries. With every word he read, it felt as if the past itself was awakening.",
                 "Suddenly, a powerful storm swept across the plains outside, dark clouds swirling like restless spirits. Thunder echoed across the sky, and the wind carried whispers that seemed almost alive. It was as though the world itself was responding to the secrets hidden within the book.",
-                "Standing near the window, she whispered words that hadn’t been spoken in centuries. The language was old, older than the kingdoms that once ruled the land. As the final syllable left her lips, the air shimmered faintly with a strange and forgotten power.",
+                "Standing near the window, she whispered words that hadn't been spoken in centuries. The language was old, older than the kingdoms that once ruled the land. As the final syllable left her lips, the air shimmered faintly with a strange and forgotten power.",
                 "At last, after trials, danger, and revelations that changed everything they believed, the journey was over. But as the sun rose over the horizon, illuminating a new path ahead, they realized something important — the story they had lived was only the beginning of something far greater.",
                 "Beyond the hills, far past the villages they once called home, new lands waited to be explored. Rumors spoke of cities hidden beneath the sea, forests where time itself moved differently, and ancient guardians that still watched over the world from the shadows.",
                 "The hero closed the book slowly, realizing that its final pages were still blank. It was not a story meant only to be read — it was a story meant to be continued. With determination in his eyes and the quiet promise of adventure in the air, he took his first step toward the unknown future."
@@ -316,12 +301,18 @@
 
             const slides = slider.querySelectorAll('.reader-slide');
             let continuous = false;
-            const recSlider = document.getElementById('recommend-slider');
-            const mainCards = document.querySelectorAll('#items-grid .item-card');
-
-            [...mainCards].slice(0,4).forEach(card=>{
-                const clone = card.cloneNode(true);
-                recSlider.appendChild(clone);
+            const recSlider = document.querySelector('#reader-main .carousel .slider');
+            const recommendations = [
+                {cover:'https://via.placeholder.com/120x180?text=Book+1',title:'The Lost Pages',rating:4.2,views:1320},
+                {cover:'https://via.placeholder.com/120x180?text=Book+2',title:'Mystery of the Isle',rating:4.7,views:980},
+                {cover:'https://via.placeholder.com/120x180?text=Book+3',title:'Journey Through Time',rating:4.5,views:1500},
+                {cover:'https://via.placeholder.com/120x180?text=Book+4',title:'Secrets of the Forest',rating:4.0,views:760}
+            ];
+            recommendations.forEach(b=>{
+                const card=document.createElement('div');
+                card.className='recommend-card';
+                card.innerHTML = `<img src="${b.cover}" alt="${b.title} cover"><h3>${b.title}</h3><div class="rating">${b.rating} ★</div><div class="views">${b.views} views</div>`;
+                recSlider.appendChild(card);
             });
 
             function showSlide(index) {
@@ -333,21 +324,18 @@
 
             function updateMode() {
                 const toggle = document.getElementById('toggle-mode');
-                const label = document.getElementById('mode-label');
                 const prevBtn = document.getElementById('prev-page');
                 const nextBtn = document.getElementById('next-page');
                 if (continuous) {
                     slides.forEach(s => s.style.display = 'block');
                     prevBtn.style.display = 'none';
                     nextBtn.style.display = 'none';
-                    toggle.innerHTML = '<i class="bx bx-pause-circle">Change read mode</i>';
-                    if (label) label.textContent = 'Continuous';
+                    toggle.innerHTML = '<i class="bx bx-pause-circle"></i><span class="mode-label"> Continuous</span>';
                 } else {
                     slides.forEach((s,i) => s.style.display = i === current ? 'block' : 'none');
                     prevBtn.style.display = '';
                     nextBtn.style.display = '';
-                    toggle.innerHTML = '<i class="bx bx-sort-alt-2">Change read mode</i>';
-                    if (label) label.textContent = 'Paged';
+                    toggle.innerHTML = '<i class="bx bx-sort-alt-2"></i><span class="mode-label"> Paged</span>';
                 }
             }
 
@@ -364,9 +352,9 @@
             });
 
             updateMode();
-            
         });
     </script>
 </body>
 
 </html>
+

@@ -643,21 +643,29 @@
         try {
             editionsCount = loadBook();
 
+            const params = new URLSearchParams(window.location.search);
+            const bookId = params.get('id');
+            
+            // First try to get from currentBook (set when clicking on a book in main page)
             const storedBook = localStorage.getItem('currentBook');
             if (storedBook) {
                 const book = JSON.parse(storedBook);
-                editions = book.editions || [];
+                if (book.editions && Array.isArray(book.editions)) {
+                    editions = book.editions;
+                }
             }
-
-            const params = new URLSearchParams(window.location.search);
-            const bookId = params.get('id');
+            
+            // If no editions from currentBook, try to get from adminBooks using bookId
             if (!editions.length && bookId) {
                 const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
                 const adminBook = adminBooks.find(b => String(b.id) === String(bookId));
-                if (adminBook) {
-                    editions = adminBook.editions || [];
+                if (adminBook && adminBook.editions && Array.isArray(adminBook.editions)) {
+                    editions = adminBook.editions;
                 }
             }
+            
+            // Debug log for editions (can be removed in production)
+            console.log('Loaded editions:', editions);
         } catch (e) {
             console.error('Error loading editions:', e);
         }
