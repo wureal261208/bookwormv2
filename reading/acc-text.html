@@ -147,6 +147,13 @@
 
     <div class="h-16"></div>
 
+    <div class="max-w-4xl mx-auto px-4 pt-6">
+        <a href="../detail/index-acc.html" class="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors">
+            <i class='bx bx-arrow-back text-xl'></i>
+            <span>Back to Book Details</span>
+        </a>
+    </div>
+
     <!-- Reader area -->
     <main class="max-w-4xl mx-auto px-4 py-12" id="reader-main">
         <div id="reader-container" class="relative">            <!-- book info pulled from localStorage -->
@@ -195,11 +202,13 @@
             let current = parseInt(params.get('chapter') || params.get('edition') || '1') - 1;
 
             const sampleTexts = [
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                "Vestibulum at eros eget urna tincidunt consectetur.",
-                "Curabitur sit amet sapien vel orci pharetra dignissim.",
-                "Donec pulvinar, lorem sed malesuada pulvinar, nunc urna sodales arcu, id venenatis nulla nulla a erat.",
-                "Praesent luctus felis vitae nisi blandit, sed consequat tellus tempus."
+                "Once upon a time, in a land far away, beyond the misty mountains and endless forests, there lived people who believed that magic had long vanished from the world. Yet hidden beneath the silence of ancient ruins and forgotten temples, traces of that magic still quietly waited to be discovered.",
+                "One quiet evening, the hero slowly opened the ancient book he had found buried deep within a ruined library. Dust rose into the air as the fragile pages turned, revealing symbols and stories that no one had read for centuries. With every word he read, it felt as if the past itself was awakening.",
+                "Suddenly, a powerful storm swept across the plains outside, dark clouds swirling like restless spirits. Thunder echoed across the sky, and the wind carried whispers that seemed almost alive. It was as though the world itself was responding to the secrets hidden within the book.",
+                "Standing near the window, she whispered words that hadn’t been spoken in centuries. The language was old, older than the kingdoms that once ruled the land. As the final syllable left her lips, the air shimmered faintly with a strange and forgotten power.",
+                "At last, after trials, danger, and revelations that changed everything they believed, the journey was over. But as the sun rose over the horizon, illuminating a new path ahead, they realized something important — the story they had lived was only the beginning of something far greater.",
+                "Beyond the hills, far past the villages they once called home, new lands waited to be explored. Rumors spoke of cities hidden beneath the sea, forests where time itself moved differently, and ancient guardians that still watched over the world from the shadows.",
+                "The hero closed the book slowly, realizing that its final pages were still blank. It was not a story meant only to be read — it was a story meant to be continued. With determination in his eyes and the quiet promise of adventure in the air, he took his first step toward the unknown future."
             ];
 
             const slider = document.getElementById('reader-slider');
@@ -213,24 +222,6 @@
             const slides = slider.querySelectorAll('.reader-slide');
             let continuous = false;
             const recSlider = document.querySelector('#reader-main .carousel .slider');
-            // display stored book info if available
-            const infoContainer = document.getElementById('book-info');
-            const stored = localStorage.getItem('currentBook');
-            if (stored && infoContainer) {
-                try {
-                    const book = JSON.parse(stored);
-                    infoContainer.innerHTML = `
-                        <img src="${book.cover||'/img/default.jpg'}" alt="${book.title} cover" class="w-24 h-32 object-cover rounded" />
-                        <div>
-                            <h2 class="text-xl font-semibold">${book.title||''}</h2>
-                            <div class="flex items-center gap-1">
-                                <i class="bx bx-star text-yellow-400"></i>
-                                <span>${book.rating||0}</span>
-                            </div>
-                            <div class="text-sm text-gray-600">${book.views||0} views</div>
-                        </div>`;
-                } catch {}            
-            }
             const recommendations = [
                 {cover:'https://via.placeholder.com/120x180?text=Book+1',title:'The Lost Pages',rating:4.2,views:1320},
                 {cover:'https://via.placeholder.com/120x180?text=Book+2',title:'Mystery of the Isle',rating:4.7,views:980},
