@@ -200,6 +200,120 @@
     </footer>
     <script src="../main/script-acc.js" defer></script>
     <script>
+        // =====================
+        // CURRENTLY READING TRACKING
+        // =====================
+        function addToCurrentlyReading(bookId, bookTitle, bookAuthor, bookCover) {
+            if (!bookId) return;
+            
+            let currentlyReading = JSON.parse(localStorage.getItem('currentlyReading')) || [];
+            
+            // Remove if already exists (to update position)
+            currentlyReading = currentlyReading.filter(book => String(book.id) !== String(bookId));
+            
+            // Add to front of list
+            currentlyReading.unshift({
+                id: bookId,
+                title: bookTitle || 'Unknown Title',
+                author: bookAuthor || 'Unknown Author',
+                cover: bookCover || '',
+                startedAt: new Date().toISOString()
+            });
+            
+            // Keep only last 10 books
+            currentlyReading = currentlyReading.slice(0, 10);
+            
+            localStorage.setItem('currentlyReading', JSON.stringify(currentlyReading));
+            
+            // Update notification badge
+            updateNotificationBadge();
+        }
+        
+        function removeFromCurrentlyReading(bookId) {
+            if (!bookId) return;
+            
+            let currentlyReading = JSON.parse(localStorage.getItem('currentlyReading')) || [];
+            currentlyReading = currentlyReading.filter(book => String(book.id) !== String(bookId));
+            localStorage.setItem('currentlyReading', JSON.stringify(currentlyReading));
+            
+            // Update notification badge
+            updateNotificationBadge();
+        }
+        
+        function updateNotificationBadge() {
+            const currentlyReading = JSON.parse(localStorage.getItem('currentlyReading')) || [];
+            const badge = document.getElementById('notification-badge');
+            
+            if (badge) {
+                if (currentlyReading.length > 0) {
+                    badge.textContent = currentlyReading.length > 9 ? '9+' : currentlyReading.length;
+                    badge.classList.remove('hidden');
+                    badge.classList.add('animate-pulse');
+                } else {
+                    badge.classList.add('hidden');
+                    badge.classList.remove('animate-pulse');
+                }
+            }
+        }
+        
+        // Get book info from URL or localStorage
+        function getCurrentBookInfo() {
+            const params = new URLSearchParams(window.location.search);
+            const bookId = params.get('book') || params.get('id');
+            
+            if (bookId) {
+                const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+                const book = adminBooks.find(b => String(b.id) === String(bookId));
+                if (book) {
+                    return {
+                        id: book.id,
+                        title: book.title,
+                        author: book.author,
+                        cover: book.image
+                    };
+                }
+            }
+            
+            // Fallback to currentBook localStorage
+            const currentBookData = localStorage.getItem('currentBook');
+            if (currentBookData) {
+                const book = JSON.parse(currentBookData);
+                return {
+                    id: book.id,
+                    title: book.title,
+                    author: book.author,
+                    cover: book.image
+                };
+            }
+            
+            return null;
+        }
+        
+        // Register this book as currently being read
+        document.addEventListener('DOMContentLoaded', function() {
+            const bookInfo = getCurrentBookInfo();
+            if (bookInfo && bookInfo.id) {
+                addToCurrentlyReading(bookInfo.id, bookInfo.title, bookInfo.author, bookInfo.cover);
+            }
+            
+            // Remove from currently reading when user leaves the page
+            window.addEventListener('pagehide', function() {
+                if (bookInfo && bookInfo.id) {
+                    removeFromCurrentlyReading(bookInfo.id);
+                }
+            });
+            
+            // Also handle beforeunload for better compatibility
+            window.addEventListener('beforeunload', function() {
+                if (bookInfo && bookInfo.id) {
+                    removeFromCurrentlyReading(bookInfo.id);
+                }
+            });
+        });
+        
+        // =====================
+        // READING SLIDER FUNCTIONALITY
+        // =====================
         document.addEventListener('DOMContentLoaded', function () {
             var params = new URLSearchParams(window.location.search);
             var current = parseInt(params.get('edition') || params.get('chapter') || '1') - 1;

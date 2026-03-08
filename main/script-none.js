@@ -1,3 +1,78 @@
+// ═════════════════════════════════════════════════════════════
+// CAROUSEL NAVIGATION FUNCTIONALITY
+// ═════════════════════════════════════════════════════════════
+
+// Carousel state
+let carouselPosition = 0;
+const slideWidth = 265; // 250px + 1.5rem gap
+
+function moveCarousel(direction) {
+    const slider = document.querySelector('.slider');
+    if (!slider) return;
+    
+    const totalSlides = slider.children.length;
+    const visibleSlides = Math.floor(window.innerWidth / slideWidth) || 4;
+    const maxPosition = totalSlides - visibleSlides;
+    
+    // Update position
+    carouselPosition += direction;
+    
+    // Clamp position
+    if (carouselPosition < 0) carouselPosition = 0;
+    if (carouselPosition > maxPosition) carouselPosition = maxPosition;
+    
+    // Apply transform
+    slider.style.transform = `translateX(-${carouselPosition * slideWidth}px)`;
+    slider.style.transition = 'transform 0.5s ease';
+}
+
+// Auto-scroll carousel
+let autoScrollInterval;
+
+function startAutoScroll() {
+    const slider = document.querySelector('.slider');
+    if (!slider) return;
+    
+    autoScrollInterval = setInterval(() => {
+        const totalSlides = slider.children.length;
+        const currentTransform = slider.style.transform;
+        const currentX = currentTransform ? parseInt(currentTransform.replace(/[^\d-]/g, '')) || 0 : 0;
+        const currentPosition = Math.abs(currentX) / slideWidth;
+        
+        // If we've reached the end, reset to beginning
+        if (currentPosition >= totalSlides / 2) {
+            slider.style.transition = 'none';
+            slider.style.transform = 'translateX(0)';
+            carouselPosition = 0;
+            setTimeout(() => {
+                slider.style.transition = 'transform 0.5s ease';
+            }, 50);
+        } else {
+            // Move one slide
+            carouselPosition++;
+            slider.style.transform = `translateX(-${carouselPosition * slideWidth}px)`;
+        }
+    }, 3000);
+}
+
+function stopAutoScroll() {
+    if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+    }
+}
+
+// Start auto-scroll when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    startAutoScroll();
+    
+    // Stop auto-scroll on hover
+    const carousel = document.querySelector('.carousel');
+    if (carousel) {
+        carousel.addEventListener('mouseenter', stopAutoScroll);
+        carousel.addEventListener('mouseleave', startAutoScroll);
+    }
+});
+
 // Pagination State
 let currentPage = 1;
 const itemsPerPage = 8;

@@ -51,6 +51,9 @@
 
             let notifications = JSON.parse(localStorage.getItem('newBookNotifications')) || [];
             const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+            
+            // Get currently reading books
+            const currentlyReading = JSON.parse(localStorage.getItem('currentlyReading')) || [];
 
             const notificationsWithCovers = notifications.map(notif => {
                 const book = adminBooks.find(b => String(b.id) === String(notif.bookId));
@@ -61,38 +64,88 @@
             });
 
             const unreadCount = notificationsWithCovers.filter(n => !n.seen).length;
+            
+            // Combine currently reading + new notifications for badge count
+            const totalUnread = currentlyReading.length + unreadCount;
+            
             if (notificationBadge) {
-                if (unreadCount > 0) {
-                    notificationBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                if (totalUnread > 0) {
+                    notificationBadge.textContent = totalUnread > 9 ? '9+' : totalUnread;
                     notificationBadge.classList.remove('hidden');
                 } else {
                     notificationBadge.classList.add('hidden');
                 }
             }
-
-            if (notificationsWithCovers.length === 0) {
-                notificationDropdown.innerHTML = '<p class="px-4 py-3 text-sm text-black text-center">No new notifications</p>';
-                return;
-            }
-
+            
             const defaultCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
-
-            notificationDropdown.innerHTML = notificationsWithCovers.map((notif) => {
-                const coverImage = notif.image || defaultCover;
-                const date = notif.publishedAt ? new Date(notif.publishedAt).toLocaleDateString() : '';
-
-                return `
-                <div class="notification-item flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b" onclick="handleNotificationClick(${notif.bookId})">
-                    <img src="${coverImage}" alt="${notif.title}" class="w-12 h-16 object-cover rounded">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-black truncate">${notif.title}</p>
-                        <p class="text-xs text-gray-600">New book published! ${date ? '- ' + date : ''}</p>
+            
+            // Build notification HTML
+            let notificationsHtml = '';
+            
+            // Add "Currently Reading" section if there are books being read
+            if (currentlyReading.length > 0) {
+                notificationsHtml += `
+                    <div class="px-4 py-2 border-b border-gray-200 bg-blue-50">
+                        <p class="text-xs font-semibold text-blue-600 uppercase tracking-wide">
+                            <i class='bx bx-book-reader'></i> Currently Reading (${currentlyReading.length})
+                        </p>
                     </div>
-                    ${!notif.seen ? '<span class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></span>' : ''}
-                </div>
-            `;
-            }).join('');
+                `;
+                
+                currentlyReading.forEach(book => {
+                    notificationsHtml += `
+                    <div class="notification-item flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-200" onclick="handleCurrentlyReadingClick('${book.id}')">
+                        <img src="${book.cover || defaultCover}" alt="${book.title}" class="w-12 h-16 object-cover rounded">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-black truncate">Currently Reading</p>
+                            <p class="text-sm font-semibold text-black truncate">${book.title}</p>
+                            <p class="text-xs text-gray-600">${book.author || 'Unknown Author'}</p>
+                        </div>
+                        <span class="w-2 h-2 bg-green-500 rounded-full flex-shrink-0 mt-2"></span>
+                    </div>
+                `;
+                });
+            }
+            
+            // Add "New Books" section if there are new notifications
+            if (notificationsWithCovers.length > 0) {
+                notificationsHtml += `
+                    <div class="px-4 py-2 border-b border-gray-200 ${currentlyReading.length > 0 ? '' : 'bg-gray-50'}">
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            <i class='bx bx-bell'></i> New Books (${notificationsWithCovers.length})
+                        </p>
+                    </div>
+                `;
+                
+                notificationsHtml += notificationsWithCovers.map((notif) => {
+                    const coverImage = notif.image || defaultCover;
+                    const date = notif.publishedAt ? new Date(notif.publishedAt).toLocaleDateString() : '';
+
+                    return `
+                    <div class="notification-item flex items-start gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-200" onclick="handleNotificationClick(${notif.bookId})">
+                        <img src="${coverImage}" alt="${notif.title}" class="w-12 h-16 object-cover rounded">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-black truncate">${notif.title}</p>
+                            <p class="text-xs text-gray-600">New book published! ${date ? '- ' + date : ''}</p>
+                        </div>
+                        ${!notif.seen ? '<span class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></span>' : ''}
+                    </div>
+                `;
+                }).join('');
+            }
+            
+            // If no notifications at all
+            if (currentlyReading.length === 0 && notificationsWithCovers.length === 0) {
+                notificationsHtml = '<p class="px-4 py-3 text-sm text-black text-center">No new notifications</p>';
+            }
+            
+            notificationDropdown.innerHTML = notificationsHtml;
         }
+        
+        // Function to handle currently reading book click
+        window.handleCurrentlyReadingClick = function(bookId) {
+            viewBookDetail(bookId);
+        };
 
         if (notificationBtn && notificationContainer) {
             notificationBtn.addEventListener('mouseenter', () => {

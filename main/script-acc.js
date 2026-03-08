@@ -1,3 +1,78 @@
+// ═════════════════════════════════════════════════════════════
+// CAROUSEL NAVIGATION FUNCTIONALITY
+// ═════════════════════════════════════════════════════════════
+
+// Carousel state
+let carouselPosition = 0;
+const slideWidth = 265; // 250px + 1.5rem gap
+
+function moveCarousel(direction) {
+    const slider = document.querySelector('.slider');
+    if (!slider) return;
+    
+    const totalSlides = slider.children.length;
+    const visibleSlides = Math.floor(window.innerWidth / slideWidth) || 4;
+    const maxPosition = totalSlides - visibleSlides;
+    
+    // Update position
+    carouselPosition += direction;
+    
+    // Clamp position
+    if (carouselPosition < 0) carouselPosition = 0;
+    if (carouselPosition > maxPosition) carouselPosition = maxPosition;
+    
+    // Apply transform
+    slider.style.transform = `translateX(-${carouselPosition * slideWidth}px)`;
+    slider.style.transition = 'transform 0.5s ease';
+}
+
+// Auto-scroll carousel
+let autoScrollInterval;
+
+function startAutoScroll() {
+    const slider = document.querySelector('.slider');
+    if (!slider) return;
+    
+    autoScrollInterval = setInterval(() => {
+        const totalSlides = slider.children.length;
+        const currentTransform = slider.style.transform;
+        const currentX = currentTransform ? parseInt(currentTransform.replace(/[^\d-]/g, '')) || 0 : 0;
+        const currentPosition = Math.abs(currentX) / slideWidth;
+        
+        // If we've reached the end, reset to beginning
+        if (currentPosition >= totalSlides / 2) {
+            slider.style.transition = 'none';
+            slider.style.transform = 'translateX(0)';
+            carouselPosition = 0;
+            setTimeout(() => {
+                slider.style.transition = 'transform 0.5s ease';
+            }, 50);
+        } else {
+            // Move one slide
+            carouselPosition++;
+            slider.style.transform = `translateX(-${carouselPosition * slideWidth}px)`;
+        }
+    }, 3000);
+}
+
+function stopAutoScroll() {
+    if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+    }
+}
+
+// Start auto-scroll when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    startAutoScroll();
+    
+    // Stop auto-scroll on hover
+    const carousel = document.querySelector('.carousel');
+    if (carousel) {
+        carousel.addEventListener('mouseenter', stopAutoScroll);
+        carousel.addEventListener('mouseleave', startAutoScroll);
+    }
+});
+
 // Pagination State
 let currentPage = 1;
 const itemsPerPage = 8;
@@ -633,15 +708,21 @@ function loadAndDisplayNotifications() {
     const seenKey = `seenNotifications_${currentUser}`;
     const seenNotifications = JSON.parse(localStorage.getItem(seenKey)) || [];
     
+    // Get currently reading books
+    const currentlyReading = JSON.parse(localStorage.getItem('currentlyReading')) || [];
+    
     // Filter out seen notifications and sort by newest first
     const unseenNotifications = notifications
         .filter(n => !seenNotifications.includes(n.bookId))
         .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
     
+    // Combine currently reading + new notifications for badge count
+    const totalUnread = currentlyReading.length + unseenNotifications.length;
+    
     // Update badge count
     if (notificationBadge) {
-        if (unseenNotifications.length > 0) {
-            notificationBadge.textContent = unseenNotifications.length > 9 ? '9+' : unseenNotifications.length;
+        if (totalUnread > 0) {
+            notificationBadge.textContent = totalUnread > 9 ? '9+' : totalUnread;
             notificationBadge.classList.remove('hidden');
             // Add pulse animation for visibility
             notificationBadge.classList.add('animate-pulse');
@@ -651,20 +732,58 @@ function loadAndDisplayNotifications() {
         }
     }
     
-    // Render notifications
-    if (unseenNotifications.length === 0) {
-        notificationList.innerHTML = `
-            <p class="px-4 py-3 text-sm text-black text-center">No new notifications</p>
+    // Default cover image
+    const defaultImage = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
+    
+    // Get all books to find the cover image
+    const storedBooks = localStorage.getItem('adminBooks');
+    const allBooks = storedBooks ? JSON.parse(storedBooks) : [];
+    
+    // Build notification HTML
+    let notificationsHtml = '';
+    
+    // Add "Currently Reading" section if there are books being read
+    if (currentlyReading.length > 0) {
+        notificationsHtml += `
+            <div class="px-4 py-2 border-b border-gray-100 bg-blue-50">
+                <p class="text-xs font-semibold text-blue-600 uppercase tracking-wide">
+                    <i class='bx bx-book-reader'></i> Currently Reading (${currentlyReading.length})
+                </p>
+            </div>
         `;
-    } else {
-        // Default cover image
-        const defaultImage = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=150&q=80";
         
-        // Get all books to find the cover image
-        const storedBooks = localStorage.getItem('adminBooks');
-        const allBooks = storedBooks ? JSON.parse(storedBooks) : [];
+        currentlyReading.forEach(book => {
+            notificationsHtml += `
+            <div class="notification-item px-4 py-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100" onclick="viewCurrentlyReadingBook('${book.id}')">
+                <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0">
+                        <img src="${book.cover || defaultImage}" alt="${book.title}" class="w-12 h-16 object-cover rounded">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-black truncate">Currently Reading</p>
+                        <p class="text-sm font-medium text-black truncate">${book.title}</p>
+                        <p class="text-xs text-gray-500 truncate">${book.author || 'Unknown Author'}</p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <span class="w-2 h-2 bg-green-500 rounded-full" title="Reading in progress"></span>
+                    </div>
+                </div>
+            </div>
+        `;
+        });
+    }
+    
+    // Add "New Books" section if there are new notifications
+    if (unseenNotifications.length > 0) {
+        notificationsHtml += `
+            <div class="px-4 py-2 border-b border-gray-100 ${currentlyReading.length > 0 ? '' : 'bg-gray-50'}">
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                    <i class='bx bx-bell'></i> New Books (${unseenNotifications.length})
+                </p>
+            </div>
+        `;
         
-        notificationList.innerHTML = unseenNotifications.map(notif => {
+        notificationsHtml += unseenNotifications.map(notif => {
             const publishedDate = new Date(notif.publishedAt);
             const timeAgo = getTimeAgo(publishedDate);
             
@@ -701,6 +820,23 @@ function loadAndDisplayNotifications() {
         `;
         }).join('');
     }
+    
+    // If no notifications at all
+    if (currentlyReading.length === 0 && unseenNotifications.length === 0) {
+        notificationsHtml = `
+            <div class="px-4 py-8 text-center">
+                <i class='bx bx-bell-slash text-4xl text-gray-300 mb-2'></i>
+                <p class="text-sm text-gray-500">No new notifications</p>
+            </div>
+        `;
+    }
+    
+    notificationList.innerHTML = notificationsHtml;
+}
+
+// Function to view currently reading book
+function viewCurrentlyReadingBook(bookId) {
+    viewBookDetail(bookId);
 }
 
 function viewNotificationBook(bookId) {
