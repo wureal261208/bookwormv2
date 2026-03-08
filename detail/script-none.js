@@ -344,135 +344,143 @@ document.addEventListener('DOMContentLoaded', () => {
         return bookEditionsCount;
     }
 
-    // =====================
-    // EDITIONS (from localStorage)
-    // =====================
+// =====================
+// EDITIONS (from localStorage)
+// =====================
 
-    let editions = [];
-    let editionsCount = 200;          // fallback page count
+let editions = [];
+let editionsCount = 200;
+let globalBookId = null;
 
-    try {
-        editionsCount = loadBook();   // loadBook() already returns fallback count
+try {
+    editionsCount = loadBook();
 
-        const params = new URLSearchParams(window.location.search);
-        const bookId = params.get('id');
+    const params = new URLSearchParams(window.location.search);
+    globalBookId = params.get('id');
 
-        // first try the transient currentBook object
-        const storedBook = localStorage.getItem('currentBook');
-        if (storedBook) {
-            const book = JSON.parse(storedBook);
-            if (book.editions && Array.isArray(book.editions)) {
-                editions = book.editions;
-            }
+    const storedBook = localStorage.getItem('currentBook');
+
+    if (storedBook) {
+        const book = JSON.parse(storedBook);
+        if (book.editions && Array.isArray(book.editions)) {
+            editions = book.editions;
         }
-
-        // if nothing found, look up adminBooks by id
-        if (!editions.length && bookId) {
-            const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
-            const adminBook = adminBooks.find(b => String(b.id) === String(bookId));
-            if (adminBook && adminBook.editions && Array.isArray(adminBook.editions)) {
-                editions = adminBook.editions;
-            }
-        }
-        console.log('Loaded editions:', editions);
-    } catch (e) {
-        console.error('Error loading editions:', e);
     }
 
-    const totalEditions = editions.length > 0 ? editions.length : editionsCount;
-    const pageSize = 6;
-    let currentPage = 0;
-    const chapterList = document.getElementById('detail-edition-list');
-    const btnPrev = document.getElementById('detail-prev');
-    const btnNext = document.getElementById('detail-next');
-    const defaultEditionCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?w=80";
+    if (!editions.length && globalBookId) {
+        const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+        const adminBook = adminBooks.find(b => String(b.id) === String(globalBookId));
 
-    function renderEditions() {
-        if (!chapterList) return [];
-        chapterList.innerHTML = '';
-
-        const start = currentPage * pageSize;
-        const end = Math.min(editions.length, start + pageSize);
-
-        if (editions.length === 0) {
-            chapterList.innerHTML = `
-            <li class="edition-item text-center py-8 text-gray-500 border rounded-lg">
-                <i class='bx bx-book' style="font-size: 3rem;"></i>
-                <p class="mt-2 font-medium">This book doesn't have editions</p>
-                <p class="text-sm text-gray-400">Check back later for updates.</p>
-            </li>
-        `;
-            btnPrev?.setAttribute('disabled', true);
-            btnNext?.setAttribute('disabled', true);
-            return [];
+        if (adminBook && adminBook.editions && Array.isArray(adminBook.editions)) {
+            editions = adminBook.editions;
         }
+    }
 
-        for (let i = start; i < end; i++) {
-            const ed = editions[i];
-            const li = document.createElement('li');
-            li.className = "edition-item flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50";
+    console.log("Loaded editions:", editions);
 
-            const imgSrc = ed.image || defaultEditionCover;
-            const title = ed.title || `Edition ${i + 1}`;
+} catch (e) {
+    console.error("Error loading editions:", e);
+}
 
-            li.innerHTML = `
-            <div class="flex items-center gap-3">
-                <img src="${imgSrc}" alt="${title}" class="w-10 h-14 object-cover rounded">
-                <div class="edition-info">
-                    <p class="font-semibold">${title}</p>
-                </div>
+const totalEditions = editions.length > 0 ? editions.length : editionsCount;
+const pageSize = 6;
+let currentPage = 0;
+
+const chapterList = document.getElementById('detail-edition-list');
+const btnPrev = document.getElementById('detail-prev');
+const btnNext = document.getElementById('detail-next');
+
+const defaultEditionCover = "https://images.unsplash.com/photo-1543002588-bfa74090ca80?w=80";
+
+function renderEditions() {
+
+    if (!chapterList) return [];
+
+    chapterList.innerHTML = "";
+
+    const start = currentPage * pageSize;
+    const end = Math.min(totalEditions, start + pageSize);
+
+    for (let i = start; i < end; i++) {
+
+        const ed = editions[i] || {};
+        const li = document.createElement("li");
+
+        li.className = "edition-item flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50";
+
+        const imgSrc = ed.image || defaultEditionCover;
+        const title = ed.title || `Edition ${i + 1}`;
+
+        li.innerHTML = `
+        <div class="flex items-center gap-3">
+            <img src="${imgSrc}" class="w-10 h-14 object-cover rounded">
+            <div class="edition-info">
+                <p class="font-semibold">${title}</p>
             </div>
-            <div class="edition-actions flex gap-2">
-                <a href="index-none.html?edition=${i + 1}&bookId=${bookId || ''}"
-                   class="edition-about px-4 py-2 border-2 border-gray-600 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition">
-                    About
-                </a>
-                <a href="../reading/none-img.html?edition=${i + 1}&bookId=${bookId || ''}"
-                   class="edition-read px-4 py-2 bg-black text-white font-semibold rounded-lg hover:opacity-80 transition">
-                    Read
-                </a>
-            </div>
+        </div>
+
+        <div class="edition-actions flex gap-2">
+
+            <a href="index-none.html?edition=${i + 1}&id=${globalBookId || ''}"
+               class="edition-about px-4 py-2 border-2 border-gray-600 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition">
+               About
+            </a>
+
+            <a href="../reading/none-img.html?edition=${i + 1}&book=${globalBookId || ''}"
+               class="edition-read px-4 py-2 bg-black text-white font-semibold rounded-lg hover:opacity-80 transition">
+               Read
+            </a>
+
+        </div>
         `;
-            chapterList.appendChild(li);
-        }
 
-        btnPrev.disabled = currentPage === 0;
-        btnNext.disabled = end >= totalEditions;
-
-        return chapterList.querySelectorAll('a');
+        chapterList.appendChild(li);
     }
 
-    btnPrev?.addEventListener('click', () => {
-        if (currentPage > 0) {
-            currentPage--;
-            focusFirstEdition();
-        }
-    });
-    btnNext?.addEventListener('click', () => {
-        const maxPage = Math.floor((totalEditions - 1) / pageSize);
-        if (currentPage < maxPage) {
-            currentPage++;
-            focusFirstEdition();
-        }
-    });
+    btnPrev.disabled = currentPage === 0;
+    btnNext.disabled = end >= totalEditions;
 
-    function focusFirstEdition() {
-        const links = renderEditions();
-        if (links.length) links[0].focus();
+    return chapterList.querySelectorAll("a");
+}
+
+btnPrev?.addEventListener("click", () => {
+    if (currentPage > 0) {
+        currentPage--;
+        focusFirstEdition();
+    }
+});
+
+btnNext?.addEventListener("click", () => {
+    const maxPage = Math.floor((totalEditions - 1) / pageSize);
+    if (currentPage < maxPage) {
+        currentPage++;
+        focusFirstEdition();
+    }
+});
+
+function focusFirstEdition() {
+    const links = renderEditions();
+    if (links.length) links[0].focus();
+}
+
+document.addEventListener("keydown", e => {
+
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+
+    if (e.key === "ArrowRight" && btnNext && !btnNext.disabled) {
+        btnNext.click();
+        e.preventDefault();
     }
 
-    document.addEventListener('keydown', e => {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-        if (e.key === 'ArrowRight' && btnNext && !btnNext.disabled) {
-            btnNext.click();
-            e.preventDefault();
-        } else if (e.key === 'ArrowLeft' && btnPrev && !btnPrev.disabled) {
-            btnPrev.click();
-            e.preventDefault();
-        }
-    });
-    renderEditions();
-    focusFirstEdition();
+    if (e.key === "ArrowLeft" && btnPrev && !btnPrev.disabled) {
+        btnPrev.click();
+        e.preventDefault();
+    }
+
+});
+
+renderEditions();
+focusFirstEdition();
 });
 
 // =====================

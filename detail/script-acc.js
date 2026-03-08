@@ -672,13 +672,20 @@
         let editions = [];
         let editionsCount = 200;
 
+        const bookId = params.get('id');
+
+            // ===== ADD: GET EDITIONS FROM ADMIN =====
+            const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
+            const adminBook = adminBooks.find(b => String(b.id) === String(bookId));
+
+            if (adminBook && adminBook.editions && Array.isArray(adminBook.editions)) {
+                editions = adminBook.editions;
+            }
+// ===== END ADD =====
+
         try {
             editionsCount = loadBook();
-
-            const params = new URLSearchParams(window.location.search);
-            const bookId = params.get('id');
-
-            // First try to get from currentBook (set when clicking on a book in main page)
+// First try to get from currentBook (set when clicking on a book in main page)
             const storedBook = localStorage.getItem('currentBook');
             if (storedBook) {
                 const book = JSON.parse(storedBook);
