@@ -262,14 +262,23 @@
     transition: transform 0.3s;
 }
 
-/* focus states */
+/* focus states - only show outline on keyboard navigation, not mouse click */
+.btn-action:focus-visible,
+.mobile-menu-btn:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* Remove default focus outline on mouse click - keeping only for accessibility */
 .btn-action:focus,
 .mobile-menu-btn:focus,
 a:focus,
 input:focus,
 textarea:focus {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+    outline: none;
 }
 
 /* input/textarea improvements */
