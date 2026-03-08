@@ -769,7 +769,7 @@
                         <a href="index-acc.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-about px-4 py-2 border-2 border-gray-600 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition">
                             About
                         </a>
-                        <a href="../reading/acc-img.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-read px-4 py-2 bg-black text-white font-semibold rounded-lg hover:opacity-80 transition">
+                        <a href="../reading/acc-img.html?edition=${i + 1}&bookId=${bookId || ''}" class="edition-read px-4 py-2 font-semibold rounded-lg hover:opacity-80 transition" style="background: linear-gradient(135deg, var(--secondary-color), var(--primary-color)); color: var(--white);">
                             Read
                         </a>
                     </div>

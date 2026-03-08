@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadBook() {
         const storedBook = localStorage.getItem('currentBook');
 
-        let title, author, status, views, rating, ratingCount, description, cover, editions, bookType, bookTags, genre;
+        let title, author, status, views, rating, ratingCount, description, cover, editions, bookType, bookTags, genre, bookEditionsCount;
 
         const params = new URLSearchParams(window.location.search);
         const overrideCover = params.get('cover');
@@ -352,31 +352,42 @@ let editions = [];
 let editionsCount = 200;
 let globalBookId = null;
 
+const params = new URLSearchParams(window.location.search);
+globalBookId = params.get('id');
+
 try {
     editionsCount = loadBook();
 
-    const params = new URLSearchParams(window.location.search);
-    globalBookId = params.get('id');
-
+    // ===== ADD: PUSH EDITIONS TO LOCALSTORAGE =====
+    // First try to get from currentBook (set when clicking on a book in main page)
     const storedBook = localStorage.getItem('currentBook');
-
     if (storedBook) {
         const book = JSON.parse(storedBook);
         if (book.editions && Array.isArray(book.editions)) {
             editions = book.editions;
         }
     }
-
+    
+    // If no editions from currentBook, try to get from adminBooks using bookId
     if (!editions.length && globalBookId) {
         const adminBooks = JSON.parse(localStorage.getItem('adminBooks')) || [];
         const adminBook = adminBooks.find(b => String(b.id) === String(globalBookId));
-
         if (adminBook && adminBook.editions && Array.isArray(adminBook.editions)) {
             editions = adminBook.editions;
         }
     }
-
-    console.log("Loaded editions:", editions);
+    
+    // Debug log for editions (can be removed in production)
+    console.log('Loaded editions:', editions);
+    console.log('Book ID from URL:', globalBookId);
+    console.log('currentBook from localStorage:', storedBook ? JSON.parse(storedBook) : null);
+    
+    // Debug: Also check adminBooks directly
+    const adminBooksDebug = JSON.parse(localStorage.getItem('adminBooks')) || [];
+    const adminBookDebug = globalBookId ? adminBooksDebug.find(b => String(b.id) === String(globalBookId)) : null;
+    console.log('Book from adminBooks:', adminBookDebug);
+    console.log('Editions in adminBooks:', adminBookDebug ? adminBookDebug.editions : 'N/A');
+    // ===== END ADD =====
 
 } catch (e) {
     console.error("Error loading editions:", e);
@@ -401,6 +412,19 @@ function renderEditions() {
     const start = currentPage * pageSize;
     const end = Math.min(totalEditions, start + pageSize);
 
+    if (editions.length === 0) {
+        chapterList.innerHTML = `
+        <li class="edition-item text-center py-8 text-gray-500 border rounded-lg">
+            <i class='bx bx-book' style="font-size: 3rem;"></i>
+            <p class="mt-2 font-medium">This book doesn't have editions</p>
+            <p class="text-sm text-gray-400">Check back later for updates.</p>
+        </li>
+    `;
+        if (btnPrev) btnPrev.disabled = true;
+        if (btnNext) btnNext.disabled = true;
+        return [];
+    }
+
     for (let i = start; i < end; i++) {
 
         const ed = editions[i] || {};
@@ -410,12 +434,14 @@ function renderEditions() {
 
         const imgSrc = ed.image || defaultEditionCover;
         const title = ed.title || `Edition ${i + 1}`;
+        const language = ed.language || 'English';
 
         li.innerHTML = `
         <div class="flex items-center gap-3">
             <img src="${imgSrc}" class="w-10 h-14 object-cover rounded">
             <div class="edition-info">
                 <p class="font-semibold">${title}</p>
+                <p class="text-sm text-gray-500">Language: ${language}</p>
             </div>
         </div>
 
@@ -427,7 +453,8 @@ function renderEditions() {
             </a>
 
             <a href="../reading/none-img.html?edition=${i + 1}&book=${globalBookId || ''}"
-               class="edition-read px-4 py-2 bg-black text-white font-semibold rounded-lg hover:opacity-80 transition">
+               class="edition-read px-4 py-2 font-semibold rounded-lg hover:opacity-80 transition"
+               style="background: linear-gradient(135deg, var(--secondary-color), var(--primary-color)); color: var(--white);">
                Read
             </a>
 
@@ -437,8 +464,8 @@ function renderEditions() {
         chapterList.appendChild(li);
     }
 
-    btnPrev.disabled = currentPage === 0;
-    btnNext.disabled = end >= totalEditions;
+    if (btnPrev) btnPrev.disabled = currentPage === 0;
+    if (btnNext) btnNext.disabled = end >= totalEditions;
 
     return chapterList.querySelectorAll("a");
 }
